@@ -1,0 +1,951 @@
+{
+  "common": {
+    "poweredBy": "powered by",
+    "home": "Home",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "proceed": "Proceed",
+    "cancel": "Cancel",
+    "save": "Save",
+    "submit": "Submit",
+    "skip": "Skip"
+  },
+  "landing": {
+    "welcome": "Welcome to the future!",
+    "beginConsultation": "Begin your AI Consultation",
+    "scalpView": "Microscopic scalp view",
+    "cameraSettings": "Settings",
+    "logout": "Logout"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "popupTitle": "Notification",
+    "close": "Close",
+    "loading": "Loading notifications…",
+    "empty": "No notifications yet.",
+    "loadError": "Could not load notifications. Please try again.",
+    "retry": "Try again",
+    "unread": "New"
+  },
+  "home": {
+    "title": "Home",
+    "instructions": "Instructions to click photo",
+    "instruction1": "Click a front facing photo, looking into the camera.",
+    "instruction2": "Untie your hair.",
+    "instruction3": "Make sure the room light is switched on and your face is well lit.",
+    "recommended": "Recommended",
+    "avoid": "Avoid"
+  },
+  "salonProducts": {
+    "title": "Salon Products",
+    "tabs": {
+      "hair": "Hair",
+      "skin": "Skin"
+    },
+    "empty": "No {type} products available for your salon.",
+    "emptyFiltered": "No products match these filters.",
+    "loadError": "Could not load products. Please try again.",
+    "filters": {
+      "brand": "Brand",
+      "category": "Category",
+      "subcategory": "Subcategory",
+      "sort": "Sort",
+      "sortDefault": "Default",
+      "all": "All",
+      "priceLowHigh": "Price: low to high",
+      "priceHighLow": "Price: high to low",
+      "clearFilters": "Clear filters"
+    }
+  },
+  "selectTool": {
+    "title": "Select an AI consultation tool",
+    "skinAnalyzer": "SKIN ANALYZER",
+    "hairAnalyzer": "HAIR ANALYZER",
+    "lookAdvisor": "LOOK ADVISOR",
+    "serviceDisabled": "This service has been disabled for your salon account. Please contact your administrator."
+  },
+  "skinAnalysis": {
+    "title": "AI Skin Analysis",
+    "analyzing": "Analyzing Your Skin",
+    "processingImage": "Please wait while we process your image...",
+    "progress": {
+      "uploading": "Uploading your photo…",
+      "detecting": "Detecting facial features…",
+      "analyzing": "Running skin condition analysis…",
+      "finalizing": "Preparing your results…",
+      "labels": {
+        "face": "Face"
+      }
+    },
+    "generatingVisualization": "Generating Skin Visualisation",
+    "visualizationInProgress": "AI diagnostic visualisation in progress…",
+    "visualizationAlt": "Skin Analysis Visualisation",
+    "visualizationUnavailable": "Visualisation unavailable",
+    "results": "Results",
+    "recommendations": "Recommendations",
+    "skinType": "Skin Type",
+    "concerns": "Concerns",
+    "texture": "Texture",
+    "moisture": "Moisture",
+    "oiliness": "Oiliness",
+    "sensitivity": "Sensitivity",
+    "questions": {
+      "skinExposure": {
+        "question": "Skin exposure to sunlight",
+        "rarely": "Rarely",
+        "occasionally": "Occasionally",
+        "frequently": "Frequently",
+        "veryFrequently": "Very Frequently"
+      },
+      "skinCareGoal": {
+        "question": "Select your skin care goal",
+        "glowingRadiant": "Glowing Radiant Skin",
+        "antiAging": "Anti-aging",
+        "acneControl": "Acne control",
+        "moistureBalance": "Moisture balance"
+      },
+      "skinConcerns": {
+        "question": "Any Personal Skin Concerns?",
+        "acne": "Acne",
+        "redness": "Redness",
+        "darkCircles": "Dark Circles",
+        "oiliness": "Oiliness",
+        "pigmentation": "Pigmentation",
+        "wrinkles": "Wrinkles",
+        "pores": "Pores",
+        "skinTexture": "Skin Texture"
+      }
+    }
+  },
+  "hairAnalysis": {
+    "title": "AI Hair Analysis",
+    "analyzing": "Analyzing Your Hair",
+    "processingImages": "Please wait while we process your images...",
+    "progress": {
+      "uploading": "Uploading your scalp photos…",
+      "detecting": "Reading scalp and hair regions…",
+      "analyzing": "Running hair & scalp analysis…",
+      "finalizing": "Preparing your results…",
+      "labels": {
+        "face": "Face"
+      }
+    },
+    "results": "Results",
+    "hairType": "Hair Type",
+    "condition": "Condition",
+    "thickness": "Thickness",
+    "density": "Density",
+    "scalp": "Scalp Condition",
+    "questions": {
+      "hairTreated": {
+        "question": "Hair treated/colored in the past 6 months",
+        "yesColoured": "Yes, coloured",
+        "chemicallyTreated": "Chemically treated",
+        "chemicalDescription": "keratin, perm, etc.",
+        "yesBoth": "Yes, both",
+        "no": "No"
+      },
+      "haircareGoal": {
+        "question": "Select your haircare goal",
+        "reducedHairFall": "Reduced hair fall",
+        "dandruffControl": "Dandruff control",
+        "increaseThickness": "Increase hair thickness",
+        "repairDamaged": "Repair damaged hair"
+      },
+      "hairConcerns": {
+        "question": "Any personal hair concerns",
+        "dandruff": "Dandruff",
+        "dryScalp": "Dry scalp",
+        "splitEnds": "Split ends",
+        "frizziness": "Frizziness",
+        "itchyScalp": "Itchy scalp",
+        "hairFall": "Hair fall"
+      }
+    }
+  },
+  "lookAdvisor": {
+    "title": "Look Advisor",
+    "selectHairstyle": "Select a hairstyle",
+    "selectColor": "Select a color",
+    "recommended": "Recommended Looks",
+    "customLook": "Custom Look",
+    "hairstyles": "Hairstyles",
+    "colors": "Colors",
+    "proceed": "Proceed",
+    "tryOn": "Try On",
+    "backToResults": "Back to results",
+    "tabs": {
+      "recommendedLook": "Recommended Look",
+      "customLook": "Custom Look",
+      "results": "Results",
+      "looks": "Suggested Looks"
+    },
+    "analyzing": "Analyzing your features to craft looks…",
+    "progress": {
+      "creatingLook": "Creating Your Look",
+      "craftingLooks": "Crafting Your Looks",
+      "craftingColors": "Finding Color Matches",
+      "uploading": "Preparing your photo…",
+      "detecting": "Reading facial features…",
+      "generating": "Generating your look…",
+      "matchingLooks": "Matching looks for you…",
+      "matchingColors": "Matching color shades…",
+      "finalizing": "Putting the finishing touches…"
+    },
+    "tryThisLook": "Try this look",
+    "lookLabel": "Look {index}",
+    "lookOf": "Look {current} of {total}",
+    "suggestedForYou": "Suggested for you",
+    "includesTheseShades": "Included shades",
+    "previousLook": "Previous",
+    "nextLook": "Next",
+    "noCombos": "No looks could be suggested. Please try again.",
+    "error": "Could not generate looks. Please try again.",
+    "retry": "Try again",
+    "changePreferences": "Change preferences",
+    "questions": {
+      "gender": {
+        "question": "Select your gender",
+        "female": "Female",
+        "male": "Male"
+      },
+      "service": {
+        "question": "Select your service",
+        "hairColour": "Hair Colour",
+        "haircutStyling": "Haircut/Styling",
+        "beard": "Beard",
+        "makeup": "Makeup",
+        "bridalMakeup": "Bridal Makeup"
+      },
+      "hairLength": {
+        "question": "Select your preferred hair length",
+        "short": "Short",
+        "medium": "Medium",
+        "long": "Long",
+        "shortHaircut": "Short Haircut",
+        "mediumHaircut": "Medium Haircut",
+        "longHaircut": "Long Haircut"
+      },
+      "ageGroup": {
+        "question": "Select your age group"
+      },
+      "colorFamily": {
+        "question": "Select your preferred colour family",
+        "naturalDarks": "Natural Darks",
+        "naturalDarksDesc": "Black and Dark Browns",
+        "warmShades": "Warm Shades",
+        "warmShadesDesc": "Golden And Caramels",
+        "redBurgundies": "Red & Burgundies",
+        "coolShades": "Cool Shades",
+        "coolShadesDesc": "Blonde And Ashes",
+        "fashionColours": "Fashion Colours",
+        "fashionColoursDesc": "Green,Blue and Purples"
+      },
+      "desiredLook": {
+        "title": "What makeup look do you intend to get?"
+      },
+      "outfitColor": {
+        "title": "What is the dominant color of the outfit you plan to wear?",
+        "options": {
+          "neutral": "Neutral",
+          "neutralDesc": "Black, White, Grey, Cream",
+          "beige": "Beige",
+          "beigeDesc": "Beige, Tan, Camel, Brown",
+          "red": "Red",
+          "redDesc": "Red, Burgundy, Maroon, Wine",
+          "pink": "Pink",
+          "pinkDesc": "Pink, Rose, Fuchsia",
+          "purple": "Purple",
+          "purpleDesc": "Lavender, Purple, Plum",
+          "blue": "Blue",
+          "blueDesc": "Sky Blue, Navy, Royal Blue",
+          "green": "Green",
+          "greenDesc": "Olive, Emerald, Teal",
+          "warm": "Warm",
+          "warmDesc": "Yellow, Orange, Gold, Mustard",
+          "multicolored": "Multicolored"
+        }
+      }
+    },
+    "messages": {
+      "hairstyleRecommendationError": "Failed to get hairstyle recommendations. Please try again.",
+      "haircolorRecommendationError": "Failed to get haircolor recommendations. Please try again.",
+      "sessionError": "Failed to create session. Please try again.",
+      "haircolorSuccess": "Haircolor processed successfully!",
+      "haircolorError": "Failed to process haircolor. Please try again.",
+      "hairstyleSuccess": "Hairstyle processed successfully!",
+      "hairstyleError": "Failed to process hairstyle. Please try again.",
+      "ratingThanks": "Thank you for your rating!",
+      "selectAllOptions": "Please select all options",
+      "selectAtLeastOneOption": "Please select at least one option",
+      "imageNotReady": "Photo isn't ready yet. Wait a moment and try again."
+    }
+  },
+  "hairAnalysisResults": {
+    "tabs": {
+      "hairMetrics": "Hair Metrics",
+      "analysis": "Analysis"
+    },
+    "labels": {
+      "front": "Front",
+      "back": "Back",
+      "side": "Side"
+    },
+    "hairHealthIndex": "Hair Health Index",
+    "generateQRCode": "Generate Report QR Code",
+    "downloadReport": "Download Report",
+    "qrDialog": {
+      "title": "Scan to Download Report",
+      "description": "Scan this QR code to access the report download form",
+      "instructions": "Users can scan this to enter their details and download the PDF report"
+    }
+  },
+  "skinAnalysisResult": {
+    "tabs": {
+      "skinMetrics": "Skin Metrics",
+      "recommendations": "Recommendations"
+    },
+    "skinScore": "SKIN SCORE",
+    "skinHealthIndex": "SKIN HEALTH INDEX",
+    "deepSkinAnalysis": "Deep Skin Analysis",
+    "skinAnalysis": "Skin Analysis",
+    "status": {
+      "needsAttention": "Needs Attention",
+      "average": "Average",
+      "good": "Good"
+    },
+    "generateQRCode": "Generate Report QR Code",
+    "downloadReport": "Download Report",
+    "qrDialog": {
+      "title": "Scan to Download Report",
+      "description": "Scan this QR code to access the report download form",
+      "instructions": "Users can scan this to enter their details and download the PDF report"
+    }
+  },
+  "productRecommendations": {
+    "reportTitle": "Your Analysis Report",
+    "reportSubtitle": "Scan the QR code or tap below to download your full report",
+    "downloadReport": "Download Report",
+    "selectedProducts": "Your Selected Products",
+    "total": "Total",
+    "backToHome": "Back to Home",
+    "cartTitle": "Your Cart",
+    "cartEmpty": "Cart is empty",
+    "saving": "SAVING…",
+    "continue": "CONTINUE",
+    "continueWithItems": "CONTINUE ({count} items)",
+    "topRecommendations": "Top Recommendations for You",
+    "noProducts": "No product recommendations available.",
+    "added": "Added",
+    "addToCart": "Add To Cart"
+  },
+  "cameraSetup": {
+    "title": "Settings",
+    "subtitle": "",
+    "detecting": "Detecting cameras…",
+    "noCamerasTitle": "No cameras detected.",
+    "noCamerasSubtitle": "Please connect a camera and try again.",
+    "retry": "Retry",
+    "refresh": "Refresh",
+    "infoBanner": "Connect all cameras before assigning. Refresh if a newly attached camera isn't showing up.",
+    "normalCamera": "Normal Camera",
+    "normalCameraDesc": "",
+    "microscopicCamera": "Microscopic Camera",
+    "microscopicCameraDesc": "",
+    "detectedCameras": "Detected cameras — {count} found",
+    "camera": "Camera",
+    "selectPlaceholder": "Select…",
+    "saved": "Saved — returning home…",
+    "saveButton": "Save",
+    "invertOnCapture": "Invert on Capture",
+    "invertOnCaptureDesc": "",
+    "cameraRotation": "Rotation",
+    "cameraRotationHint": "clockwise / counter-clockwise",
+    "screensaverIdle": "Screensaver idle time",
+    "screensaverIdleDesc": "Requires a screensaver video uploaded for this salon in superadmin.",
+    "screensaverOff": "Off",
+    "screensaverMinutes": "{count} min",
+    "experimental": "Experimental",
+    "experimentalDesc": "Calibration options. Microscope auto click only runs on the microscopic camera.",
+    "microscopeAutoClick": "Microscope auto click",
+    "microscopeAutoClickDesc": "Capture automatically when the dermascope image stays sharp.",
+    "showAdvanced": "Show advanced",
+    "hideAdvanced": "Hide advanced",
+    "sharpnessThreshold": "Sharpness threshold",
+    "sharpnessThresholdHint": "GOOD when the live score is at or above this value. Calibrate with real dermascope footage.",
+    "stabilityTime": "Stability time",
+    "stabilityTimeHint": "How long the image must stay sharp before a capture starts.",
+    "bestFrameWindow": "Best-frame window",
+    "bestFrameWindowHint": "Keeps the sharpest frame seen in this window, then captures it.",
+    "ms": "{ms} ms",
+    "focusSharp": "SHARP",
+    "focusFocusing": "FOCUSING",
+    "focusCapturing": "Capturing…",
+    "autoCapture": "Auto capture"
+  },
+  "captureImages": {
+    "instructions": "Set the focus & click photo",
+    "sampleRegion": "Sample Region",
+    "clickedPhotos": "Clicked Photos",
+    "addImage": "Add Image",
+    "noImage": "No Image",
+    "retake": "Retake",
+    "analyze": "Analyze",
+    "next": "Next",
+    "loadingImage": "Loading image…",
+    "captureAllImages": "Please capture all images",
+    "sameCameraWarning": "Normal and microscopic cameras are the same device.",
+    "sameCameraWarningHint": "This photo may not be from the dermascope. Pick the microscopic camera to retake — it will be used for the rest of this session.",
+    "changeCamera": "Change camera",
+    "normalCameraBadge": "Normal",
+    "noOtherCameras": "No other cameras found. Connect the dermascope, then pick it here.",
+    "cameraFallback": "Camera",
+    "skinRegions": {
+      "nose": "Nose",
+      "sideCheek": "Side Cheek",
+      "forehead": "Forehead"
+    },
+    "headParts": {
+      "frontal": "Frontal",
+      "occipital": "Occipital",
+      "parietal": "Parietal",
+      "temporal": "Temporal"
+    }
+  },
+  "hairstyleResult": {
+    "noPreviousResult": "No Previous Result",
+    "original": "Original",
+    "input": "Input",
+    "loadingPrevious": "Loading previous results...",
+    "noPreviousFound": "No previous results found",
+    "errorLoadingPrevious": "Failed to load previous results",
+    "addOn": "Continue with this image: choose another service",
+    "addOnHaircut": "Continue with this image: haircut try-on",
+    "addOnHaircolor": "Continue with this image: hair color try-on",
+    "addOnBeard": "Continue with this image: beard try-on"
+  },
+  "recommendedLooks": {
+    "analyzing": "Analyzing your photo and generating recommendations...",
+    "noRecommendations": "No hairstyle recommendations available",
+    "goBack": "Go Back",
+    "stylingOptions": "Styling Options",
+    "maintenance": "Maintenance",
+    "proceed": "Proceed"
+  },
+  "recommendedHaircolor": {
+    "analyzing": "Analyzing your photo and generating haircolor recommendations...",
+    "noRecommendations": "No haircolor recommendations available",
+    "goBack": "Go Back"
+  },
+  "reportForm": {
+    "title": "Download Your Report",
+    "description": "Enter your details to get your personalized skin analysis report",
+    "labels": {
+      "fullName": "Full Name",
+      "phoneNumber": "Phone Number"
+    },
+    "placeholders": {
+      "name": "John Doe",
+      "phone": "1234567890"
+    },
+    "errors": {
+      "nameRequired": "Name is required",
+      "phoneRequired": "Phone number is required",
+      "phoneInvalid": "Please enter a valid 10-digit phone number"
+    },
+    "buttons": {
+      "downloading": "Generating PDF...",
+      "download": "Download Report"
+    },
+    "securityNote": "Your information is secure and encrypted"
+  },
+  "reportPage": {
+    "loading": "Loading report...",
+    "notFound": "Report not found",
+    "userPhoto": "User Photo",
+    "report": "Report",
+    "skinAnalysisReport": "Skin Analysis",
+    "hairAnalysisReport": "Hair Analysis Report",
+    "majorConcerns": "Major Concerns",
+    "minorConcerns": "Minor Concerns",
+    "toDos": "To Do's",
+    "avoid": "Avoid",
+    "recommendedServices": "Recommended Services",
+    "dionaSkinFlyer": {
+      "servicesOneAlt": "Skin services — page 1",
+      "servicesTwoAlt": "Skin services — page 2",
+      "customLastPageAlt": "Salon services"
+    },
+    "status": {
+      "excellent": "Excellent",
+      "good": "Good",
+      "needAttention": "Need Attention",
+      "requiresTreatment": "Requires Treatment"
+    },
+    "services": {
+      "hydrafacial": {
+        "title": "Hydrafacial (Anti-Acne focus)",
+        "description": "Deep cleans pores and hydrates without clogging."
+      },
+      "ledTherapy": {
+        "title": "LED Light Therapy (Blue + Red Light)",
+        "description": "Combats acne-causing bacteria and reduces inflammation."
+      },
+      "chemicalPeel": {
+        "title": "Mild Chemical Peel (AHA/BHA)",
+        "description": "Improves skin texture and unclogs pores gently."
+      },
+      "oxyFacial": {
+        "title": "OxyFacial or Oxygen Dome Therapy",
+        "description": "Supports healing and reduces visible redness."
+      },
+      "eyeTreatment": {
+        "title": "Under-eye Hydration Treatment",
+        "description": "Helps brighten and reduce dark circles."
+      }
+    },
+    "defaultTodo": {
+      "title": "Maintain Current Routine",
+      "description": "Continue your current skincare practices to maintain healthy skin."
+    },
+    "avoidItems": {
+      "heavyCreams": "Heavy creams or thick moisturizers that can clog pores",
+      "faceOils": "Face oils in daily use, especially during active acne flare-ups",
+      "physicalScrubs": "Physical scrubs or harsh exfoliants that can irritate redness and worsen breakouts",
+      "fragrantProducts": "Fragranced skincare products which may cause sensitivity and inflammation",
+      "skippingSunscreen": "Skipping sunscreen, which can deepen pigmentation and slow healing"
+    }
+  },
+  "hairReportPage": {
+    "userPhoto": "User Photo",
+    "hairAnalysis": "Hair Analysis",
+    "report": "Report",
+    "yourHairScore": "Your Hair Score",
+    "averageHairHealthScore": "Average Hair Health Score",
+    "majorConcerns": "Major Concerns",
+    "minorConcerns": "Minor Concerns",
+    "toDos": "To Do's",
+    "avoid": "Avoid"
+  },
+  "customLookHaircolor": {
+    "selectColourShade": "Select a colour shade:",
+    "selectColourTechnique": "Select a colour technique:",
+    "proceed": "Proceed",
+    "selectAllOptions": "Please select all options",
+    "moreCategories": "More colour categories",
+    "previousCategories": "Previous colour categories",
+    "categories": {
+      "blackDeepBrown": "Black & Deep Brown",
+      "chocolateWarmBrown": "Chocolate & Warm Brown",
+      "blonde": "Blonde",
+      "copperAuburn": "Copper & Auburn",
+      "burgundyPlum": "Burgundy & Plum",
+      "fashion": "Fashion"
+    },
+    "shades": {
+      "naturalBlack": "Natural Black",
+      "softBlack": "Soft Black",
+      "espressoBrown": "Espresso Brown",
+      "darkChocolate": "Dark Chocolate",
+      "chocolateBrown": "Chocolate Brown",
+      "mochaBrown": "Mocha Brown",
+      "chestnutBrown": "Chestnut Brown",
+      "caramelBrown": "Caramel Brown",
+      "darkBlonde": "Dark Blonde",
+      "honeyBlonde": "Honey Blonde",
+      "goldenBlonde": "Golden Blonde",
+      "ashBlonde": "Ash Blonde",
+      "lightCopper": "Light Copper",
+      "copper": "Copper",
+      "cinnamonRed": "Cinnamon Red",
+      "auburn": "Auburn",
+      "deepRed": "Deep Red",
+      "burgundy": "Burgundy",
+      "wineRed": "Wine Red",
+      "plum": "Plum",
+      "rosePink": "Rose Pink",
+      "lavender": "Lavender",
+      "blue": "Blue",
+      "emeraldGreen": "Emerald Green"
+    },
+    "techniques": {
+      "global": "Global",
+      "ombre": "Ombre",
+      "balayage": "Balayage",
+      "streaks": "Streaks",
+      "highlights": "Highlights"
+    }
+  },
+  "hairstyleSelection": {
+    "selectHaircut": "Select a haircut:",
+    "stylingOptions": "Styling options:",
+    "addBangs": "Add bangs:",
+    "proceed": "Proceed",
+    "haircuts": {
+      "wolfCut": "Wolf cut",
+      "messyLob": "Messy Lob",
+      "frenchBob": "French Bob",
+      "aLineBob": "A-line Bob"
+    },
+    "styling": {
+      "blowDry": "Blow dry",
+      "straightening": "Straightening",
+      "curly": "Curly"
+    },
+    "bangs": {
+      "curtain": "Curtain",
+      "fringes": "Fringes",
+      "sideSwept": "Side swept"
+    }
+  },
+  "hairstyleSelector": {
+    "stylingOptions": "Styling options:",
+    "addBangs": "Add bangs:",
+    "fadeOptions": "Fade options:",
+    "none": "None",
+    "styling": {
+      "blowDry": "Blow dry",
+      "straightening": "Straightening",
+      "curly": "Curly"
+    },
+    "bangs": {
+      "curtain": "Curtain",
+      "fringes": "Fringes",
+      "sideSwept": "Side swept"
+    },
+    "fades": {
+      "taperFade": "Taper Fade",
+      "mediumFade": "Medium Fade",
+      "skinFade": "Skin Fade"
+    }
+  },
+  "haircutGrid": {
+    "selectHaircut": "Select a haircut:",
+    "selectHaircutOptional": "Select a haircut (optional):",
+    "female": {
+      "classicPixie": "Classic Pixie",
+      "frenchBob": "French Bob",
+      "aLineBob": "A-line Bob",
+      "messyLongBob": "Messy Long bob",
+      "bluntLob": "Blunt Lob",
+      "butterflyCut": "Butterfly Cut",
+      "longLayers": "Long Layers",
+      "wolfCut": "Wolf Cut"
+    },
+    "male": {
+      "crewCut": "Crew Cut",
+      "caesarCut": "Caesar Cut",
+      "frenchCrop": "French Crop",
+      "undercut": "Undercut",
+      "fadePompadour": "Fade Pompadour",
+      "quiff": "Textured Quiff",
+      "slickedBack": "Slicked Back",
+      "mullet": "Mullet",
+      "buzzCut": "Buzz Cut",
+      "centerParted": "Center Parted"
+    }
+  },
+  "beardGrid": {
+    "selectBeard": "Select a beard",
+    "previousPage": "Previous page",
+    "nextPage": "Next page",
+    "cleanShave": "Clean Shave",
+    "stubbleTrimmed": "Stubble / Trimmed",
+    "anchor": "Anchor",
+    "goatee": "Goatee",
+    "vanDyke": "Van Dyke",
+    "verdi": "Verdi",
+    "ducktail": "Ducktail",
+    "horseshoe": "Horseshoe",
+    "handlebarMustache": "Handlebar Mustache",
+    "lowTaperFade": "Low Taper Fade",
+    "midFade": "Mid Fade",
+    "italian": "Italian"
+  },
+  "report": {
+    "title": "Your Report",
+    "score": "Score",
+    "good": "Good",
+    "moderate": "Moderate",
+    "poor": "Poor",
+    "protect": "Protect",
+    "treat": "Treat",
+    "summary": "Summary",
+    "recommendations": "Recommendations",
+    "download": "Download Report",
+    "share": "Share Report"
+  },
+  "camera": {
+    "capture": "Capture",
+    "retake": "Retake",
+    "usePhoto": "Use Photo",
+    "switchCamera": "Switch Camera",
+    "permissionDenied": "Camera permission denied",
+    "permissionMessage": "Please allow camera access to take a photo"
+  },
+  "form": {
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "next": "Next",
+    "previous": "Previous",
+    "save": "Save",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "age": "Age",
+    "gender": "Gender",
+    "male": "Male",
+    "female": "Female",
+    "other": "Other"
+  },
+  "errors": {
+    "somethingWrong": "Something went wrong",
+    "tryAgain": "Please try again",
+    "networkError": "Network error. Please check your connection",
+    "invalidInput": "Invalid input",
+    "required": "This field is required"
+  },
+  "sessionResults": {
+    "title": "Session Results",
+    "hairstyle": "Hairstyles",
+    "haircolor": "Hair Colors",
+    "beard": "Beard try-ons",
+    "makeup": "Makeup",
+    "loading": "Loading...",
+    "noResults": "No results found",
+    "qrTitle": "Download your result",
+    "qrSubtitle": "Scan this QR code with your phone to view and download your session results instantly.",
+    "qrFooter": "Open your phone camera or QR app to scan and access your personalized styles."
+  },
+  "customLookMakeup": {
+    "selectShadeFor": "Select a {effect} shade:",
+    "proceed": "Proceed",
+    "selectShade": "Please select at least one shade",
+    "pageLabel": "Page {page}",
+    "categories": {
+      "lipstick": "Lipstick",
+      "blush": "Blush",
+      "eyeshadow": "Eyeshadow"
+    }
+  },
+  "bridalLook": {
+    "title": "Bridal Looks",
+    "selectTitle": "Select a bridal look",
+    "selectLook": "Please select a bridal look",
+    "proceed": "Proceed",
+    "previousPage": "Previous page",
+    "nextPage": "Next page",
+    "tabs": {
+      "looks": "Bridal Looks",
+      "results": "Results"
+    },
+    "messages": {
+      "sessionError": "Could not create session. Please try again.",
+      "imageNotReady": "Camera image not found. Please capture a photo first.",
+      "success": "Bridal look applied successfully!",
+      "error": "Failed to apply bridal look. Please try again."
+    }
+  },
+  "makeupAdvisor": {
+    "title": "Makeup Try-On",
+    "tabs": {
+      "customLook": "Custom Look",
+      "results": "Results"
+    },
+    "messages": {
+      "sessionError": "Could not create session. Please try again.",
+      "imageNotReady": "Camera image not found. Please capture a photo first.",
+      "success": "Makeup applied successfully!",
+      "error": "Failed to apply makeup. Please try again."
+    }
+  },
+  "makeupResult": {
+    "addOn": "Continue with this image: choose another service",
+    "addOnLipstick": "Add lipstick",
+    "addOnBlush": "Add blush",
+    "addOnEyeshadow": "Add eyeshadow",
+    "noPreviousResult": "No Previous Result",
+    "loadingPrevious": "Loading previous results...",
+    "noPreviousFound": "No previous results found",
+    "errorLoadingPrevious": "Failed to load previous results"
+  },
+  "studio": {
+    "common": {
+      "back": "Back",
+      "step": "Step {n} of {total}",
+      "compare": "Drag to compare",
+      "before": "Before",
+      "after": "After",
+      "compareToggle": "Compare",
+      "close": "Close"
+    },
+    "capture": {
+      "guide": "Centre your face in the oval",
+      "title": "Take a photo",
+      "sub": "Your beauty consultation starts here: one photo, then the mirror does the rest.",
+      "cta": "Take the photo",
+      "privacy": "The photo stays on this mirror and is deleted after the session",
+      "noCamera": "Camera not available",
+      "upload": "Upload a photo"
+    },
+    "profile": {
+      "captured": "Photo captured",
+      "capturedSub": "Front light, face well centred",
+      "retake": "Retake",
+      "title": "Your profile",
+      "woman": "Woman",
+      "man": "Man",
+      "note": "Used to suggest cuts, colours, make-up or beard styles that suit you.",
+      "pathTitle": "Choose your path",
+      "recommended": "Recommended"
+    },
+    "analysis": {
+      "title": "Analysis complete",
+      "done": "Complete",
+      "soon": "Coming soon",
+      "cta": "See the results",
+      "skin": "Skin",
+      "face": "Facial features",
+      "colour": "Colour harmony",
+      "scalp": "Scalp",
+      "running": "Analysing…",
+      "progress": "In progress",
+      "failed": "Not available"
+    },
+    "results": {
+      "tabSkin": "Skin",
+      "tabFace": "Face",
+      "tabColour": "Colour harmony",
+      "tabScalp": "Scalp"
+    },
+    "skin": {
+      "oily": "Oily T-zone",
+      "dry": "Dehydrated cheeks",
+      "productsTitle": "Recommended products",
+      "line": "Salon product line",
+      "add": "Add",
+      "added": "Added",
+      "cta": "Next: your face",
+      "noProducts": "This salon has no skin products in its catalogue yet."
+    },
+    "face": {
+      "ratio": "Length / width",
+      "cheek": "Cheekbones",
+      "jaw": "Jawline",
+      "saved": "Saved",
+      "cutsTitle": "Suggested cuts",
+      "beardTitle": "Beard",
+      "tap": "Tap to try",
+      "best": "Best match",
+      "cta": "Continue to colour harmony",
+      "values": {
+        "soft": "Soft",
+        "defined": "Defined",
+        "prominent": "Prominent",
+        "angular": "Angular"
+      }
+    },
+    "colour": {
+      "hairTitle": "Hair colour",
+      "hairSub": "Recommended shades",
+      "makeupTitle": "Make-up",
+      "makeupSub": "Recommended types, tap to try",
+      "dressTitle": "Clothing palette",
+      "dressSub": "Colour suggestions",
+      "try": "Try",
+      "saved": "Saved",
+      "custom": "Custom combination",
+      "cta": "Continue to your look"
+    },
+    "scalp": {
+      "phase": "Phase 2",
+      "title": "Scalp analysis",
+      "desc": "This module is not active in this version. Once available, the mirror will read the condition of your scalp and suggest a treatment protocol with the most suitable products.",
+      "index": "Index",
+      "outcome": "Outcome: in-salon treatment protocol and recommended products",
+      "cta": "Back to results"
+    },
+    "service": {
+      "live": "Live reflection",
+      "title": "What would you like to try?",
+      "desc": "Pick a service and customise it in a few taps.",
+      "colour": "Hair colour",
+      "colourSub": "Shades, highlights, balayage",
+      "cut": "Cut",
+      "cutSub": "Lengths, shapes, bangs",
+      "makeup": "Make-up",
+      "makeupSub": "Lips and eyes",
+      "beard": "Beard",
+      "beardSub": "Stubble, short, full",
+      "switch": "Prefer the full consultation? Switch to Beauty Consultant"
+    },
+    "tryon": {
+      "catCut": "Cut",
+      "catColour": "Colour",
+      "catMakeup": "Make-up",
+      "catBeard": "Beard",
+      "cutLabel": "Cut",
+      "shades": "Shades recommended by your colour harmony",
+      "keep": "Keep my colour",
+      "natural": "Natural colour",
+      "technique": "Technique",
+      "intensity": "Intensity",
+      "lips": "Lips",
+      "eyes": "Eyes",
+      "none": "None",
+      "beardLabel": "Beard style",
+      "density": "Density",
+      "original": "Original",
+      "originalSub": "As you are today",
+      "save": "Save and continue",
+      "yourHair": "Your current hair",
+      "shadesAll": "Shades",
+      "lipsWord": "lips",
+      "eyesWord": "eyes",
+      "generating": "Creating your look…",
+      "failed": "Could not create the look, try again",
+      "upload": "Upload a photo",
+      "yourPhoto": "Your photo",
+      "colour": "Colour",
+      "uploadShort": "Upload"
+    },
+    "look": {
+      "title": "Your look today",
+      "cut": "Cut",
+      "colour": "Hair colour",
+      "makeup": "Make-up",
+      "beard": "Beard",
+      "none": "No change",
+      "edit": "Edit",
+      "productsTitle": "Products for your skin",
+      "review": "Review",
+      "noProducts": "None",
+      "qr": "Scan with your phone to take your look and products home",
+      "email": "E-mail address",
+      "emailPh": "name@email.com",
+      "sendEmail": "Send by e-mail",
+      "send": "Send to stylist",
+      "sentNote": "Sent to the stylist's tablet",
+      "newSession": "New session",
+      "emailSent": "Sent to",
+      "hairProductsTitle": "Products for your hair"
+    },
+    "flows": {
+      "consultant": {
+        "name": "Beauty Consultant",
+        "desc": "Full consultation: the AI reads your skin, features and colour harmony, then suggests products, a cut and colours made for you."
+      },
+      "service": {
+        "name": "Simple Service",
+        "desc": "Straight to the point: try a colour, a cut, make-up or a beard on your reflection right away."
+      }
+    },
+    "stylist": {
+      "title": "Incoming looks",
+      "waiting": "{n} waiting",
+      "empty": "Looks sent from the mirror will appear here.",
+      "start": "Start service"
+    }
+  }
+}

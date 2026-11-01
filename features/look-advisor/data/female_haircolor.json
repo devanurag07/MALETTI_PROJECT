@@ -1,0 +1,74 @@
+{
+  "Black": {
+    "global": "Change her hair color to black and make sure smooth and salon like finish and keep hair length unchanged",
+    "ombre": null,
+    "balayage": null,
+    "highlights": null
+  },
+  "Brown": {
+    "global": "Change her hair color to dark chocolate brown and make sure smooth and salon like finish and keep hair length unchanged",
+    "ombre": "Give her black to light brown ombre hair",
+    "balayage": "Give her a subtle balayage, featuring light brown highlights blended into a darker base.",
+    "highlights": "Give her brown highlights as straight streaks running from her head to her ends, on only some strands, keeping her natural black hair as the base color for other strands"
+  },
+  "Cinnamon": {
+    "global": "Change her hair color to cinnamon red and make sure smooth and salon like finish and keep hair length unchanged",
+    "ombre": "Give her black to cinnamon red ombre hair",
+    "balayage": "Give her a subtle balayage, featuring cinnamon red highlights blended into a darker base.",
+    "highlights": "Give her cinnamon red highlights as straight streaks running from her head to her ends, on only some strands, keeping her natural black hair as the base color for other strands"
+  },
+  "Caramel": {
+    "global": "Change her hair color to caramel brown and make sure smooth and salon like finish and keep hair length unchanged",
+    "ombre": "Give her black to caramel brown ombre hair",
+    "balayage": "Give her a subtle balayage, featuring caramel brown highlights blended into a darker base.",
+    "highlights": "Give her caramel brown highlights as straight streaks running from her head to her ends, on only some strands, keeping her natural black hair as the base color for other strands"
+  },
+  "Copper": {
+    "global": "Change her hair color to copper and make sure smooth and salon like finish and keep hair length unchanged",
+    "ombre": "Give her black to copper ombre hair",
+    "balayage": "Give her a subtle balayage, featuring copper highlights blended into a darker base.",
+    "highlights": "Give her copper highlights as straight streaks running from her head to her ends, on only some strands, keeping her natural black hair as the base color for other strands"
+  },
+  "Golden": {
+    "global": "Change her hair color to golden and make sure smooth and salon like finish and keep hair length unchanged",
+    "ombre": "Give her black to golden ombre hair",
+    "balayage": "Give her a subtle balayage, featuring golden highlights blended into a darker base.",
+    "highlights": "Give her golden highlights as straight streaks running from her head to her ends, on only some strands, keeping her natural black hair as the base color for other strands"
+  },
+  "Ash Blonde": {
+    "global": "Change her hair color to ash blonde and make sure smooth and salon like finish and keep hair length unchanged",
+    "ombre": "Give her black to ash blonde ombre hair",
+    "balayage": "Give her a subtle balayage, featuring ash blonde highlights blended into a darker base.",
+    "highlights": "Give her ash blonde highlights as straight streaks running from her head to her ends, on only some strands, keeping her natural black hair as the base color for other strands"
+  },
+  "Creamy Ash": {
+    "global": "Change her hair color to creamy ash and make sure smooth and salon like finish and keep hair length unchanged",
+    "ombre": "Give her black to creamy ash ombre hair",
+    "balayage": "Give her a subtle balayage, featuring creamy ash highlights blended into a darker base.",
+    "highlights": "Give her creamy ash highlights as straight streaks running from her head to her ends, on only some strands, keeping her natural black hair as the base color for other strands"
+  },
+  "Burgundy": {
+    "global": "Change her hair color to burgundy and make sure smooth and salon like finish and keep hair length unchanged",
+    "ombre": "Give her black to burgundy ombre hair",
+    "balayage": "Give her a subtle balayage, featuring burgundy highlights blended into a darker base.",
+    "highlights": "Give her burgundy highlights as straight streaks running from her head to her ends, on only some strands, keeping her natural black hair as the base color for other strands"
+  },
+  "Red": {
+    "global": "Change her hair color to red and make sure smooth and salon like finish and keep hair length unchanged",
+    "ombre": "Give her black to red ombre hair",
+    "balayage": "Give her a subtle balayage, featuring red highlights blended into a darker base.",
+    "highlights": "Give her red highlights as straight streaks running from her head to her ends, on only some strands, keeping her natural black hair as the base color for other strands"
+  },
+  "Violet": {
+    "global": "Change her hair color to violet and make sure smooth and salon like finish and keep hair length unchanged",
+    "ombre": "Give her black to violet ombre hair",
+    "balayage": "Give her a subtle balayage, featuring violet highlights blended into a darker base.",
+    "highlights": "Give her violet highlights as straight streaks running from her head to her ends, on only some strands, keeping her natural black hair as the base color for other strands"
+  },
+  "Magenta": {
+    "global": "Change her hair color to magenta and make sure smooth and salon like finish and keep hair length unchanged",
+    "ombre": "Give her black to magenta ombre hair",
+    "balayage": "Give her a subtle balayage, featuring magenta highlights blended into a darker base.",
+    "highlights": "Give her magenta highlights as straight streaks running from her head to her ends, on only some strands, keeping her natural black hair as the base color for other strands"
+  }
+}

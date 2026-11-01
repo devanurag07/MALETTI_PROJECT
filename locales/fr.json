@@ -1,0 +1,488 @@
+{
+  "common": {
+    "poweredBy": "propulsé par",
+    "home": "Accueil",
+    "back": "Retour"
+  },
+  "landing": {
+    "welcome": "Bienvenue dans le futur!",
+    "beginConsultation": "Commencez votre Consultation IA",
+    "scalpView": "Vue microscopique du cuir chevelu",
+    "cameraSettings": "Paramètres de la caméra",
+    "logout": "Déconnexion"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "popupTitle": "Notification",
+    "close": "Fermer",
+    "loading": "Chargement des notifications…",
+    "empty": "Aucune notification pour le moment.",
+    "loadError": "Impossible de charger les notifications.",
+    "retry": "Réessayer",
+    "unread": "Nouveau"
+  },
+  "home": {
+    "title": "Accueil",
+    "instructions": "Instructions pour prendre la photo",
+    "instruction1": "Prenez une photo de face, en regardant la caméra.",
+    "instruction2": "Détachez vos cheveux.",
+    "instruction3": "Assurez-vous que la lumière de la pièce est allumée et que votre visage est bien éclairé.",
+    "recommended": "Recommandé",
+    "avoid": "À éviter"
+  },
+  "salonProducts": {
+    "title": "Produits du salon",
+    "tabs": {
+      "hair": "Cheveux",
+      "skin": "Peau"
+    },
+    "empty": "Aucun produit {type} disponible pour votre salon.",
+    "emptyFiltered": "Aucun produit ne correspond à ces filtres.",
+    "loadError": "Impossible de charger les produits. Veuillez réessayer.",
+    "filters": {
+      "brand": "Marque",
+      "category": "Catégorie",
+      "subcategory": "Sous-catégorie",
+      "sort": "Trier",
+      "sortDefault": "Par défaut",
+      "all": "Tous",
+      "priceLowHigh": "Prix : croissant",
+      "priceHighLow": "Prix : décroissant",
+      "clearFilters": "Effacer les filtres"
+    }
+  },
+  "selectTool": {
+    "title": "Sélectionnez un outil de consultation IA",
+    "skinAnalyzer": "ANALYSEUR DE PEAU",
+    "hairAnalyzer": "ANALYSEUR DE CHEVEUX",
+    "lookAdvisor": "CONSEILLER D'IMAGE",
+    "serviceDisabled": "This service has been disabled for your salon account. Please contact your administrator."
+  },
+  "skinAnalysis": {
+    "title": "Analyse de la Peau",
+    "analyzing": "Analyse de votre peau...",
+    "results": "Résultats",
+    "recommendations": "Recommandations",
+    "skinType": "Type de Peau",
+    "concerns": "Préoccupations",
+    "texture": "Texture",
+    "moisture": "Hydratation",
+    "oiliness": "Gras",
+    "sensitivity": "Sensibilité",
+    "progress": {
+      "uploading": "Téléchargement de la photo…",
+      "detecting": "Détection des traits du visage…",
+      "analyzing": "Analyse de l'état de la peau…",
+      "finalizing": "Préparation des résultats…",
+      "labels": {
+        "face": "Visage"
+      }
+    }
+  },
+  "hairAnalysis": {
+    "title": "Analyse des Cheveux",
+    "analyzing": "Analyse de vos cheveux...",
+    "results": "Résultats",
+    "hairType": "Type de Cheveux",
+    "condition": "Condition",
+    "thickness": "Épaisseur",
+    "density": "Densité",
+    "scalp": "État du Cuir Chevelu",
+    "progress": {
+      "uploading": "Téléchargement des photos du cuir chevelu…",
+      "detecting": "Lecture du cuir chevelu et des zones capillaires…",
+      "analyzing": "Analyse des cheveux et du cuir chevelu…",
+      "finalizing": "Préparation des résultats…",
+      "labels": {
+        "face": "Visage"
+      }
+    }
+  },
+  "lookAdvisor": {
+    "title": "Conseiller d'Image",
+    "selectHairstyle": "Sélectionnez une coiffure",
+    "selectColor": "Sélectionnez une couleur",
+    "recommended": "Looks Recommandés",
+    "customLook": "Look Personnalisé",
+    "hairstyles": "Coiffures",
+    "colors": "Couleurs",
+    "proceed": "Continuer",
+    "tryOn": "Essayer",
+    "backToResults": "Retour aux résultats",
+    "progress": {
+      "creatingLook": "Création de votre look",
+      "craftingLooks": "Création de vos looks",
+      "craftingColors": "Recherche de couleurs",
+      "uploading": "Préparation de votre photo…",
+      "detecting": "Lecture des traits du visage…",
+      "generating": "Génération de votre look…",
+      "matchingLooks": "Correspondance des looks…",
+      "matchingColors": "Correspondance des teintes…",
+      "finalizing": "Dernières retouches…"
+    },
+    "messages": {
+      "imageNotReady": "La photo n'est pas encore prête. Patientez un instant et réessayez.",
+      "selectAtLeastOneOption": "Veuillez sélectionner au moins une option"
+    }
+  },
+  "customLookHaircolor": {
+    "selectColourShade": "Sélectionnez une teinte de couleur:",
+    "selectColourTechnique": "Sélectionnez une technique de coloration:",
+    "proceed": "Continuer",
+    "selectAllOptions": "Veuillez sélectionner toutes les options",
+    "moreCategories": "Plus de catégories de couleur",
+    "previousCategories": "Catégories de couleur précédentes",
+    "categories": {
+      "blackDeepBrown": "Noir & Brun profond",
+      "chocolateWarmBrown": "Chocolat & Brun chaud",
+      "blonde": "Blond",
+      "copperAuburn": "Cuivre & Auburn",
+      "burgundyPlum": "Bordeaux & Prune",
+      "fashion": "Fashion"
+    },
+    "shades": {
+      "naturalBlack": "Noir naturel",
+      "softBlack": "Noir doux",
+      "espressoBrown": "Brun espresso",
+      "darkChocolate": "Chocolat foncé",
+      "chocolateBrown": "Brun chocolat",
+      "mochaBrown": "Brun mocha",
+      "chestnutBrown": "Brun châtain",
+      "caramelBrown": "Brun caramel",
+      "darkBlonde": "Blond foncé",
+      "honeyBlonde": "Blond miel",
+      "goldenBlonde": "Blond doré",
+      "ashBlonde": "Blond cendré",
+      "lightCopper": "Cuivre clair",
+      "copper": "Cuivre",
+      "cinnamonRed": "Rouge cannelle",
+      "auburn": "Auburn",
+      "deepRed": "Rouge profond",
+      "burgundy": "Bordeaux",
+      "wineRed": "Rouge vin",
+      "plum": "Prune",
+      "rosePink": "Rose",
+      "lavender": "Lavande",
+      "blue": "Bleu",
+      "emeraldGreen": "Vert émeraude"
+    },
+    "techniques": {
+      "global": "Global",
+      "ombre": "Ombré",
+      "balayage": "Balayage",
+      "streaks": "Mèches",
+      "highlights": "Reflets"
+    }
+  },
+  "hairstyleSelection": {
+    "selectHaircut": "Sélectionnez une coupe de cheveux:",
+    "stylingOptions": "Options de coiffage:",
+    "addBangs": "Ajouter une frange:",
+    "proceed": "Continuer",
+    "haircuts": {
+      "wolfCut": "Coupe Loup",
+      "messyLob": "Lob Décoiffé",
+      "frenchBob": "Bob Français",
+      "aLineBob": "Bob en Ligne A"
+    },
+    "styling": {
+      "blowDry": "Séchage",
+      "straightening": "Lissage",
+      "curly": "Bouclé"
+    },
+    "bangs": {
+      "curtain": "Rideau",
+      "fringes": "Frange",
+      "sideSwept": "Balayé sur le côté"
+    }
+  },
+  "hairstyleSelector": {
+    "stylingOptions": "Options de coiffage:",
+    "addBangs": "Ajouter une frange:",
+    "fadeOptions": "Options de dégradé:",
+    "none": "Aucun",
+    "styling": {
+      "blowDry": "Séchage",
+      "straightening": "Lissage",
+      "curly": "Bouclé"
+    },
+    "bangs": {
+      "curtain": "Rideau",
+      "fringes": "Frange",
+      "sideSwept": "Balayé sur le côté"
+    },
+    "fades": {
+      "taperFade": "Dégradé Taper",
+      "mediumFade": "Dégradé Moyen",
+      "skinFade": "Dégradé Skin"
+    }
+  },
+  "haircutGrid": {
+    "selectHaircut": "Sélectionnez une coupe de cheveux:",
+    "selectHaircutOptional": "Sélectionnez une coupe de cheveux (facultatif) :",
+    "female": {
+      "classicPixie": "Pixie Classique",
+      "frenchBob": "Bob Français",
+      "aLineBob": "Bob en Ligne A",
+      "messyLongBob": "Long Bob Décoiffé",
+      "bluntLob": "Lob Droit",
+      "butterflyCut": "Coupe Papillon",
+      "longLayers": "Couches Longues",
+      "wolfCut": "Coupe Loup"
+    },
+    "male": {
+      "crewCut": "Coupe Militaire",
+      "caesarCut": "Coupe César",
+      "frenchCrop": "Coupe Française",
+      "undercut": "Undercut",
+      "fadePompadour": "Pompadour Dégradé",
+      "quiff": "Quiff Texturé",
+      "slickedBack": "Coiffé en Arrière",
+      "mullet": "Mullet",
+      "buzzCut": "Coupe Buzz",
+      "centerParted": "Raie au Milieu"
+    }
+  },
+  "report": {
+    "title": "Votre Rapport",
+    "score": "Score",
+    "good": "Bon",
+    "moderate": "Modéré",
+    "poor": "Pauvre",
+    "protect": "Protéger",
+    "treat": "Traiter",
+    "summary": "Résumé",
+    "recommendations": "Recommandations",
+    "download": "Télécharger le Rapport",
+    "share": "Partager le Rapport"
+  },
+  "camera": {
+    "capture": "Capturer",
+    "retake": "Reprendre",
+    "usePhoto": "Utiliser la Photo",
+    "switchCamera": "Changer de Caméra",
+    "permissionDenied": "Permission de caméra refusée",
+    "permissionMessage": "Veuillez autoriser l'accès à la caméra pour prendre une photo"
+  },
+  "form": {
+    "submit": "Soumettre",
+    "cancel": "Annuler",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "save": "Enregistrer",
+    "name": "Nom",
+    "email": "Email",
+    "phone": "Téléphone",
+    "age": "Âge",
+    "gender": "Genre",
+    "male": "Masculin",
+    "female": "Féminin",
+    "other": "Autre"
+  },
+  "hairstyleResult": {
+    "noPreviousResult": "Aucun résultat précédent",
+    "original": "Original",
+    "input": "Entrée",
+    "loadingPrevious": "Chargement des résultats précédents...",
+    "noPreviousFound": "Aucun résultat précédent trouvé",
+    "errorLoadingPrevious": "Échec du chargement des résultats précédents",
+    "addOnHaircut": "Continuer avec cette image : essai coupe",
+    "addOnHaircolor": "Continuer avec cette image : essai couleur",
+    "addOnBeard": "Continuer avec cette image : essai barbe",
+    "addOn": "Continuer avec cette image : choisir un autre service"
+  },
+  "errors": {
+    "somethingWrong": "Quelque chose s'est mal passé",
+    "tryAgain": "Veuillez réessayer",
+    "networkError": "Erreur réseau. Veuillez vérifier votre connexion",
+    "invalidInput": "Entrée invalide",
+    "required": "Ce champ est obligatoire"
+  },
+  "sessionResults": {
+    "title": "Résultats de la Session",
+    "hairstyle": "Coiffures",
+    "haircolor": "Couleurs de Cheveux",
+    "beard": "Essai barbe",
+    "makeup": "Maquillage",
+    "loading": "Chargement...",
+    "noResults": "Aucun résultat trouvé",
+    "qrTitle": "Télécharger votre résultat",
+    "qrSubtitle": "Scannez ce QR code avec votre téléphone pour voir et télécharger vos résultats instantanément.",
+    "qrFooter": "Ouvrez l'appareil photo ou une app QR pour scanner et accéder à vos looks."
+  },
+  "productRecommendations": {
+    "reportTitle": "Votre Rapport d'Analyse",
+    "reportSubtitle": "Scannez le QR code ou appuyez ci-dessous pour télécharger votre rapport complet",
+    "downloadReport": "Télécharger le Rapport",
+    "selectedProducts": "Vos Produits Sélectionnés",
+    "total": "Total",
+    "backToHome": "Retour à l'Accueil",
+    "cartTitle": "Votre Panier",
+    "cartEmpty": "Le panier est vide",
+    "saving": "ENREGISTREMENT…",
+    "continue": "CONTINUER",
+    "continueWithItems": "CONTINUER ({count} articles)",
+    "topRecommendations": "Meilleures Recommandations pour Vous",
+    "noProducts": "Aucune recommandation de produit disponible.",
+    "added": "Ajouté",
+    "addToCart": "Ajouter au Panier"
+  },
+  "cameraSetup": {
+    "title": "Paramètres de la Caméra",
+    "subtitle": "Attribuer des caméras pour chaque cas d'utilisation",
+    "detecting": "Détection des caméras…",
+    "noCamerasTitle": "Aucune caméra détectée.",
+    "noCamerasSubtitle": "Veuillez connecter une caméra et réessayer.",
+    "retry": "Réessayer",
+    "refresh": "Actualiser",
+    "infoBanner": "Connectez toutes les caméras avant d'attribuer. Actualisez si une caméra nouvellement connectée n'apparaît pas.",
+    "normalCamera": "Caméra Normale",
+    "normalCameraDesc": "Analyse de Peau · Analyse des Cheveux · Conseiller d'Image",
+    "microscopicCamera": "Caméra Microscopique",
+    "microscopicCameraDesc": "Analyse du Cuir Chevelu · Vue du Cuir Chevelu",
+    "detectedCameras": "Caméras détectées — {count} trouvées",
+    "camera": "Caméra",
+    "selectPlaceholder": "Sélectionner…",
+    "saved": "Enregistré — retour à l'accueil…",
+    "saveButton": "Enregistrer les Attributions de Caméra",
+    "invertOnCapture": "Inverser à la capture",
+    "invertOnCaptureDesc": "Activé : inverse gauche/droite sur la photo enregistrée. Désactivé : la photo correspond à l'aperçu.",
+    "cameraRotation": "Rotation",
+    "cameraRotationHint": "sens horaire / antihoraire",
+    "experimental": "Expérimental",
+    "experimentalDesc": "Options de calibration. L’auto-clic microscope ne s’applique qu’à la caméra microscopique.",
+    "microscopeAutoClick": "Auto-clic microscope",
+    "microscopeAutoClickDesc": "Capture automatiquement lorsque l’image du dermatoscope reste nette.",
+    "showAdvanced": "Afficher les options avancées",
+    "hideAdvanced": "Masquer les options avancées",
+    "sharpnessThreshold": "Seuil de netteté",
+    "sharpnessThresholdHint": "BON lorsque le score live est supérieur ou égal à cette valeur. À calibrer avec un vrai flux dermatoscope.",
+    "stabilityTime": "Temps de stabilité",
+    "stabilityTimeHint": "Durée pendant laquelle l’image doit rester nette avant la capture.",
+    "bestFrameWindow": "Fenêtre de meilleure image",
+    "bestFrameWindowHint": "Conserve l’image la plus nette de cette fenêtre, puis la capture.",
+    "ms": "{ms} ms",
+    "focusSharp": "NET",
+    "focusFocusing": "MISE AU POINT",
+    "focusCapturing": "Capture…",
+    "autoCapture": "Capture auto"
+  },
+  "captureImages": {
+    "instructions": "Réglez la mise au point et prenez la photo",
+    "sampleRegion": "Région Échantillon",
+    "clickedPhotos": "Photos Prises",
+    "addImage": "Ajouter une Image",
+    "noImage": "Aucune Image",
+    "retake": "Reprendre",
+    "analyze": "Analyser",
+    "next": "Suivant",
+    "captureAllImages": "Veuillez capturer toutes les images",
+    "sameCameraWarning": "Les caméras normale et microscopique sont le même appareil.",
+    "sameCameraWarningHint": "Cette photo peut ne pas venir du dermatoscope. Choisissez la caméra microscopique pour reprendre — elle sera utilisée pour le reste de la session.",
+    "changeCamera": "Changer de caméra",
+    "normalCameraBadge": "Normale",
+    "noOtherCameras": "Aucune autre caméra. Branchez le dermatoscope et sélectionnez-le ici.",
+    "cameraFallback": "Caméra",
+    "skinRegions": {
+      "nose": "Nez",
+      "sideCheek": "Joue Latérale",
+      "forehead": "Front"
+    },
+    "headParts": {
+      "frontal": "Frontal",
+      "occipital": "Occipital",
+      "parietal": "Pariétal",
+      "temporal": "Temporal"
+    }
+  },
+  "reportForm": {
+    "title": "Télécharger votre rapport",
+    "description": "Entrez vos coordonnées pour obtenir votre rapport d'analyse de peau personnalisé",
+    "labels": {
+      "fullName": "Nom complet",
+      "phoneNumber": "Numéro de téléphone"
+    },
+    "placeholders": {
+      "name": "Jean Dupont",
+      "phone": "1234567890"
+    },
+    "errors": {
+      "nameRequired": "Le nom est requis",
+      "phoneRequired": "Le numéro de téléphone est requis",
+      "phoneInvalid": "Veuillez entrer un numéro de téléphone valide à 10 chiffres"
+    },
+    "buttons": {
+      "downloading": "Génération du PDF...",
+      "download": "Télécharger le rapport"
+    },
+    "securityNote": "Vos informations sont sécurisées et chiffrées"
+  },
+  "reportPage": {
+    "loading": "Chargement du rapport...",
+    "notFound": "Rapport introuvable",
+    "userPhoto": "Photo de l'utilisateur",
+    "report": "Rapport",
+    "skinAnalysisReport": "Analyse de peau",
+    "hairAnalysisReport": "Rapport d'analyse des cheveux",
+    "majorConcerns": "Préoccupations majeures",
+    "minorConcerns": "Préoccupations mineures",
+    "toDos": "À faire",
+    "avoid": "À éviter",
+    "recommendedServices": "Services recommandés",
+    "dionaSkinFlyer": {
+      "servicesOneAlt": "Soins de la peau — page 1",
+      "servicesTwoAlt": "Soins de la peau — page 2",
+      "customLastPageAlt": "Services du salon"
+    },
+    "status": {
+      "excellent": "Excellent",
+      "good": "Bon",
+      "needAttention": "Attention requise",
+      "requiresTreatment": "Traitement requis"
+    },
+    "services": {
+      "hydrafacial": {
+        "title": "Hydrafacial (focus anti-acné)",
+        "description": "Nettoie les pores en profondeur et hydrate sans les obstruer."
+      },
+      "ledTherapy": {
+        "title": "Thérapie LED (bleu + rouge)",
+        "description": "Combat les bactéries responsables de l'acné et réduit l'inflammation."
+      },
+      "chemicalPeel": {
+        "title": "Peeling chimique doux (AHA/BHA)",
+        "description": "Améliore la texture de la peau et débouche les pores en douceur."
+      },
+      "oxyFacial": {
+        "title": "OxyFacial ou thérapie dôme à oxygène",
+        "description": "Soutient la cicatrisation et réduit les rougeurs visibles."
+      },
+      "eyeTreatment": {
+        "title": "Traitement hydratant du contour des yeux",
+        "description": "Aide à éclaircir et réduire les cernes."
+      }
+    },
+    "defaultTodo": {
+      "title": "Maintenir la routine actuelle",
+      "description": "Continuez vos soins actuels pour maintenir une peau saine."
+    },
+    "avoidItems": {
+      "heavyCreams": "Crèmes lourdes ou hydratants épais qui peuvent obstruer les pores",
+      "faceOils": "Huiles pour le visage au quotidien, surtout pendant une poussée d'acné",
+      "physicalScrubs": "Gommages physiques ou exfoliants agressifs qui irritent les rougeurs et aggravent les boutons",
+      "fragrantProducts": "Produits parfumés qui peuvent causer sensibilité et inflammation",
+      "skippingSunscreen": "Omettre la protection solaire, ce qui peut renforcer la pigmentation et ralentir la guérison"
+    }
+  },
+  "hairReportPage": {
+    "userPhoto": "Photo de l'utilisateur",
+    "hairAnalysis": "Analyse des cheveux",
+    "report": "Rapport",
+    "yourHairScore": "Votre score capillaire",
+    "averageHairHealthScore": "Score moyen de santé capillaire",
+    "majorConcerns": "Préoccupations majeures",
+    "minorConcerns": "Préoccupations mineures",
+    "toDos": "À faire",
+    "avoid": "À éviter"
+  }
+}

@@ -1,0 +1,773 @@
+{
+  "common": {
+    "poweredBy": "με την υποστήριξη",
+    "home": "Αρχική",
+    "back": "Πίσω",
+    "next": "Επόμενο",
+    "previous": "Προηγούμενο",
+    "proceed": "Συνέχεια",
+    "cancel": "Ακύρωση",
+    "save": "Αποθήκευση",
+    "submit": "Υποβολή",
+    "skip": "Παράλειψη"
+  },
+  "landing": {
+    "welcome": "Καλώς ήρθατε στο μέλλον!",
+    "beginConsultation": "Ξεκινήστε τη συμβουλευτική AI",
+    "scalpView": "Μικροσκοπική εικόνα τριχωτού",
+    "cameraSettings": "Ρυθμίσεις",
+    "logout": "Αποσύνδεση"
+  },
+  "notifications": {
+    "title": "Ειδοποιήσεις",
+    "popupTitle": "Ειδοποίηση",
+    "close": "Κλείσιμο",
+    "loading": "Φόρτωση ειδοποιήσεων…",
+    "empty": "Δεν υπάρχουν ειδοποιήσεις ακόμα.",
+    "loadError": "Δεν ήταν δυνατή η φόρτωση των ειδοποιήσεων. Δοκιμάστε ξανά.",
+    "retry": "Δοκιμάστε ξανά",
+    "unread": "Νέα"
+  },
+  "home": {
+    "title": "Αρχική",
+    "instructions": "Οδηγίες για τη λήψη φωτογραφίας",
+    "instruction1": "Τραβήξτε μια φωτογραφία από μπροστά, κοιτάζοντας την κάμερα.",
+    "instruction2": "Λύστε τα μαλλιά σας.",
+    "instruction3": "Βεβαιωθείτε ότι το φως του χώρου είναι ανοιχτό και το πρόσωπό σας είναι καλά φωτισμένο.",
+    "recommended": "Προτεινόμενο",
+    "avoid": "Αποφύγετε"
+  },
+  "salonProducts": {
+    "title": "Προϊόντα κομμωτηρίου",
+    "tabs": {
+      "hair": "Μαλλιά",
+      "skin": "Επιδερμίδα"
+    },
+    "empty": "Δεν υπάρχουν προϊόντα {type} για το κομμωτήριό σας.",
+    "emptyFiltered": "Κανένα προϊόν δεν ταιριάζει με αυτά τα φίλτρα.",
+    "loadError": "Δεν ήταν δυνατή η φόρτωση των προϊόντων. Δοκιμάστε ξανά.",
+    "filters": {
+      "brand": "Μάρκα",
+      "category": "Κατηγορία",
+      "subcategory": "Υποκατηγορία",
+      "sort": "Ταξινόμηση",
+      "sortDefault": "Προεπιλογή",
+      "all": "Όλα",
+      "priceLowHigh": "Τιμή: χαμηλή προς υψηλή",
+      "priceHighLow": "Τιμή: υψηλή προς χαμηλή",
+      "clearFilters": "Καθαρισμός φίλτρων"
+    }
+  },
+  "selectTool": {
+    "title": "Επιλέξτε εργαλείο συμβουλευτικής AI",
+    "skinAnalyzer": "ΑΝΑΛΥΣΗ ΕΠΙΔΕΡΜΙΔΑΣ",
+    "hairAnalyzer": "ΑΝΑΛΥΣΗ ΜΑΛΛΙΩΝ",
+    "lookAdvisor": "ΣΥΜΒΟΥΛΟΣ ΕΜΦΑΝΙΣΗΣ",
+    "serviceDisabled": "Αυτή η υπηρεσία έχει απενεργοποιηθεί για τον λογαριασμό του κομμωτηρίου σας. Επικοινωνήστε με τον διαχειριστή."
+  },
+  "skinAnalysis": {
+    "title": "Ανάλυση επιδερμίδας AI",
+    "analyzing": "Ανάλυση της επιδερμίδας σας",
+    "processingImage": "Περιμένετε όσο επεξεργαζόμαστε την εικόνα σας...",
+    "progress": {
+      "uploading": "Μεταφόρτωση της φωτογραφίας σας…",
+      "detecting": "Ανίχνευση χαρακτηριστικών προσώπου…",
+      "analyzing": "Εκτέλεση ανάλυσης κατάστασης επιδερμίδας…",
+      "finalizing": "Προετοιμασία των αποτελεσμάτων σας…",
+      "labels": {
+        "face": "Πρόσωπο"
+      }
+    },
+    "generatingVisualization": "Δημιουργία οπτικοποίησης επιδερμίδας",
+    "visualizationInProgress": "Η διαγνωστική οπτικοποίηση AI είναι σε εξέλιξη…",
+    "visualizationAlt": "Οπτικοποίηση ανάλυσης επιδερμίδας",
+    "visualizationUnavailable": "Η οπτικοποίηση δεν είναι διαθέσιμη",
+    "results": "Αποτελέσματα",
+    "recommendations": "Προτάσεις",
+    "skinType": "Τύπος επιδερμίδας",
+    "concerns": "Ανησυχίες",
+    "texture": "Υφή",
+    "moisture": "Ενυδάτωση",
+    "oiliness": "Λιπαρότητα",
+    "sensitivity": "Ευαισθησία",
+    "questions": {
+      "skinExposure": {
+        "question": "Έκθεση της επιδερμίδας στον ήλιο",
+        "rarely": "Σπάνια",
+        "occasionally": "Περιστασιακά",
+        "frequently": "Συχνά",
+        "veryFrequently": "Πολύ συχνά"
+      },
+      "skinCareGoal": {
+        "question": "Επιλέξτε τον στόχο περιποίησης",
+        "glowingRadiant": "Λαμπερή επιδερμίδα",
+        "antiAging": "Αντιγήρανση",
+        "acneControl": "Έλεγχος ακμής",
+        "moistureBalance": "Ισορροπία ενυδάτωσης"
+      },
+      "skinConcerns": {
+        "question": "Προσωπικές ανησυχίες επιδερμίδας;",
+        "acne": "Ακμή",
+        "redness": "Ερυθρότητα",
+        "darkCircles": "Μαύροι κύκλοι",
+        "oiliness": "Λιπαρότητα",
+        "pigmentation": "Υπερχρωματισμός",
+        "wrinkles": "Ρυτίδες",
+        "pores": "Πόροι",
+        "skinTexture": "Υφή επιδερμίδας"
+      }
+    }
+  },
+  "hairAnalysis": {
+    "title": "Ανάλυση μαλλιών AI",
+    "analyzing": "Ανάλυση των μαλλιών σας",
+    "processingImages": "Περιμένετε όσο επεξεργαζόμαστε τις εικόνες σας...",
+    "progress": {
+      "uploading": "Μεταφόρτωση φωτογραφιών τριχωτού…",
+      "detecting": "Ανάγνωση περιοχών τριχωτού και μαλλιών…",
+      "analyzing": "Εκτέλεση ανάλυσης μαλλιών και τριχωτού…",
+      "finalizing": "Προετοιμασία των αποτελεσμάτων σας…",
+      "labels": {
+        "face": "Πρόσωπο"
+      }
+    },
+    "results": "Αποτελέσματα",
+    "hairType": "Τύπος μαλλιών",
+    "condition": "Κατάσταση",
+    "thickness": "Πάχος",
+    "density": "Πυκνότητα",
+    "scalp": "Κατάσταση τριχωτού",
+    "questions": {
+      "hairTreated": {
+        "question": "Τα μαλλιά βάφτηκαν/επεξεργάστηκαν τους τελευταίους 6 μήνες",
+        "yesColoured": "Ναι, βάφτηκαν",
+        "chemicallyTreated": "Χημική επεξεργασία",
+        "chemicalDescription": "κερατίνη, περμανάντ κ.λπ.",
+        "yesBoth": "Ναι, και τα δύο",
+        "no": "Όχι"
+      },
+      "haircareGoal": {
+        "question": "Επιλέξτε τον στόχο περιποίησης μαλλιών",
+        "reducedHairFall": "Μείωση τριχόπτωσης",
+        "dandruffControl": "Έλεγχος πιτυρίδας",
+        "increaseThickness": "Αύξηση πάχους μαλλιών",
+        "repairDamaged": "Επανόρθωση ταλαιπωρημένων μαλλιών"
+      },
+      "hairConcerns": {
+        "question": "Προσωπικές ανησυχίες μαλλιών",
+        "dandruff": "Πιτυρίδα",
+        "dryScalp": "Ξηρό τριχωτό",
+        "splitEnds": "Ψαλίδα",
+        "frizziness": "Φριζάρισμα",
+        "itchyScalp": "Φαγούρα στο τριχωτό",
+        "hairFall": "Τριχόπτωση"
+      }
+    }
+  },
+  "lookAdvisor": {
+    "title": "Σύμβουλος εμφάνισης",
+    "selectHairstyle": "Επιλέξτε χτένισμα",
+    "selectColor": "Επιλέξτε χρώμα",
+    "recommended": "Προτεινόμενα looks",
+    "customLook": "Προσαρμοσμένο look",
+    "hairstyles": "Χτενίσματα",
+    "colors": "Χρώματα",
+    "proceed": "Συνέχεια",
+    "tryOn": "Δοκιμή",
+    "backToResults": "Πίσω στα αποτελέσματα",
+    "tabs": {
+      "recommendedLook": "Προτεινόμενο look",
+      "customLook": "Προσαρμοσμένο look",
+      "results": "Αποτελέσματα",
+      "looks": "Προτεινόμενα looks"
+    },
+    "analyzing": "Ανάλυση των χαρακτηριστικών σας για δημιουργία looks…",
+    "progress": {
+      "creatingLook": "Δημιουργία του look σας",
+      "craftingLooks": "Δημιουργία των looks σας",
+      "craftingColors": "Εύρεση χρωματικών συνδυασμών",
+      "uploading": "Προετοιμασία της φωτογραφίας σας…",
+      "detecting": "Ανάγνωση χαρακτηριστικών προσώπου…",
+      "generating": "Δημιουργία του look σας…",
+      "matchingLooks": "Εύρεση looks για εσάς…",
+      "matchingColors": "Εύρεση αποχρώσεων…",
+      "finalizing": "Τελικές πινελιές…"
+    },
+    "tryThisLook": "Δοκιμάστε αυτό το look",
+    "lookLabel": "Look {index}",
+    "lookOf": "Look {current} από {total}",
+    "suggestedForYou": "Προτεινόμενο για εσάς",
+    "includesTheseShades": "Συμπεριλαμβανόμενες αποχρώσεις",
+    "previousLook": "Προηγούμενο",
+    "nextLook": "Επόμενο",
+    "noCombos": "Δεν ήταν δυνατή η πρόταση looks. Δοκιμάστε ξανά.",
+    "error": "Δεν ήταν δυνατή η δημιουργία looks. Δοκιμάστε ξανά.",
+    "retry": "Δοκιμάστε ξανά",
+    "changePreferences": "Αλλαγή προτιμήσεων",
+    "questions": {
+      "gender": {
+        "question": "Επιλέξτε το φύλο σας",
+        "female": "Γυναίκα",
+        "male": "Άνδρας"
+      },
+      "service": {
+        "question": "Επιλέξτε την υπηρεσία σας",
+        "hairColour": "Βαφή μαλλιών",
+        "haircutStyling": "Κούρεμα/Στυλ",
+        "beard": "Γένια",
+        "makeup": "Μακιγιάζ",
+        "bridalMakeup": "Νυφικό μακιγιάζ"
+      },
+      "hairLength": {
+        "question": "Επιλέξτε το επιθυμητό μήκος μαλλιών",
+        "short": "Κοντά",
+        "medium": "Μεσαία",
+        "long": "Μακριά",
+        "shortHaircut": "Κοντό κούρεμα",
+        "mediumHaircut": "Μεσαίο κούρεμα",
+        "longHaircut": "Μακρύ κούρεμα"
+      },
+      "ageGroup": {
+        "question": "Επιλέξτε την ηλικιακή ομάδα σας"
+      },
+      "colorFamily": {
+        "question": "Επιλέξτε την προτιμώμενη οικογένεια χρωμάτων",
+        "naturalDarks": "Φυσικά σκούρα",
+        "naturalDarksDesc": "Μαύρο και σκούρα καστανά",
+        "warmShades": "Θερμές αποχρώσεις",
+        "warmShadesDesc": "Χρυσό και καραμέλα",
+        "redBurgundies": "Κόκκινα και μπορντό",
+        "coolShades": "Ψυχρές αποχρώσεις",
+        "coolShadesDesc": "Ξανθό και σταχτί",
+        "fashionColours": "Fashion χρώματα",
+        "fashionColoursDesc": "Πράσινο, μπλε και μοβ"
+      },
+      "desiredLook": {
+        "title": "Τι look μακιγιάζ θέλετε;"
+      },
+      "outfitColor": {
+        "title": "Ποιο είναι το κυρίαρχο χρώμα του ρούχου που θα φορέσετε;",
+        "options": {
+          "neutral": "Ουδέτερο",
+          "neutralDesc": "Μαύρο, λευκό, γκρι, κρεμ",
+          "beige": "Μπεζ",
+          "beigeDesc": "Μπεζ, ταν, καμήλα, καφέ",
+          "red": "Κόκκινο",
+          "redDesc": "Κόκκινο, μπορντό, μαρόν, κρασί",
+          "pink": "Ροζ",
+          "pinkDesc": "Ροζ, τριανταφυλλί, φούξια",
+          "purple": "Μοβ",
+          "purpleDesc": "Λεβάντα, μοβ, δαμασκηνί",
+          "blue": "Μπλε",
+          "blueDesc": "Γαλάζιο, ναυτικό, ρουά",
+          "green": "Πράσινο",
+          "greenDesc": "Λαδί, σμαραγδί, πετρόλ",
+          "warm": "Θερμό",
+          "warmDesc": "Κίτρινο, πορτοκαλί, χρυσό, μουσταρδί",
+          "multicolored": "Πολύχρωμο"
+        }
+      }
+    },
+    "messages": {
+      "hairstyleRecommendationError": "Αποτυχία λήψης προτάσεων χτενίσματος. Δοκιμάστε ξανά.",
+      "haircolorRecommendationError": "Αποτυχία λήψης προτάσεων βαφής. Δοκιμάστε ξανά.",
+      "sessionError": "Αποτυχία δημιουργίας συνεδρίας. Δοκιμάστε ξανά.",
+      "haircolorSuccess": "Η βαφή μαλλιών ολοκληρώθηκε με επιτυχία!",
+      "haircolorError": "Αποτυχία επεξεργασίας βαφής μαλλιών. Δοκιμάστε ξανά.",
+      "hairstyleSuccess": "Το χτένισμα ολοκληρώθηκε με επιτυχία!",
+      "hairstyleError": "Αποτυχία επεξεργασίας χτενίσματος. Δοκιμάστε ξανά.",
+      "ratingThanks": "Ευχαριστούμε για την αξιολόγησή σας!",
+      "selectAllOptions": "Παρακαλώ επιλέξτε όλες τις επιλογές",
+      "selectAtLeastOneOption": "Παρακαλώ επιλέξτε τουλάχιστον μία επιλογή",
+      "imageNotReady": "Η φωτογραφία δεν είναι έτοιμη ακόμα. Περιμένετε λίγο και δοκιμάστε ξανά."
+    }
+  },
+  "hairAnalysisResults": {
+    "tabs": {
+      "hairMetrics": "Μετρικές μαλλιών",
+      "analysis": "Ανάλυση"
+    },
+    "labels": {
+      "front": "Μπροστά",
+      "back": "Πίσω",
+      "side": "Πλάι"
+    },
+    "hairHealthIndex": "Δείκτης υγείας μαλλιών",
+    "generateQRCode": "Δημιουργία QR κωδικού αναφοράς",
+    "downloadReport": "Λήψη αναφοράς",
+    "qrDialog": {
+      "title": "Σαρώστε για λήψη της αναφοράς",
+      "description": "Σαρώστε αυτόν τον QR κωδικό για πρόσβαση στη φόρμα λήψης",
+      "instructions": "Οι χρήστες μπορούν να σαρώσουν για να εισάγουν τα στοιχεία τους και να κατεβάσουν την αναφορά PDF"
+    }
+  },
+  "skinAnalysisResult": {
+    "tabs": {
+      "skinMetrics": "Μετρικές επιδερμίδας",
+      "recommendations": "Προτάσεις"
+    },
+    "skinScore": "ΒΑΘΜΟΣ ΕΠΙΔΕΡΜΙΔΑΣ",
+    "skinHealthIndex": "ΔΕΙΚΤΗΣ ΥΓΕΙΑΣ ΕΠΙΔΕΡΜΙΔΑΣ",
+    "deepSkinAnalysis": "Βαθιά ανάλυση επιδερμίδας",
+    "skinAnalysis": "Ανάλυση επιδερμίδας",
+    "status": {
+      "needsAttention": "Χρειάζεται προσοχή",
+      "average": "Μέτρια",
+      "good": "Καλή"
+    },
+    "generateQRCode": "Δημιουργία QR κωδικού αναφοράς",
+    "downloadReport": "Λήψη αναφοράς",
+    "qrDialog": {
+      "title": "Σαρώστε για λήψη της αναφοράς",
+      "description": "Σαρώστε αυτόν τον QR κωδικό για πρόσβαση στη φόρμα λήψης",
+      "instructions": "Οι χρήστες μπορούν να σαρώσουν για να εισάγουν τα στοιχεία τους και να κατεβάσουν την αναφορά PDF"
+    }
+  },
+  "productRecommendations": {
+    "reportTitle": "Η αναφορά ανάλυσής σας",
+    "reportSubtitle": "Σαρώστε τον QR κωδικό ή πατήστε παρακάτω για λήψη της πλήρους αναφοράς",
+    "downloadReport": "Λήψη αναφοράς",
+    "selectedProducts": "Τα επιλεγμένα προϊόντα σας",
+    "total": "Σύνολο",
+    "backToHome": "Πίσω στην αρχική",
+    "cartTitle": "Το καλάθι σας",
+    "cartEmpty": "Το καλάθι είναι άδειο",
+    "saving": "ΑΠΟΘΗΚΕΥΣΗ…",
+    "continue": "ΣΥΝΕΧΕΙΑ",
+    "continueWithItems": "ΣΥΝΕΧΕΙΑ ({count} προϊόντα)",
+    "topRecommendations": "Κορυφαίες προτάσεις για εσάς",
+    "noProducts": "Δεν υπάρχουν διαθέσιμες προτάσεις προϊόντων.",
+    "added": "Προστέθηκε",
+    "addToCart": "Προσθήκη στο καλάθι"
+  },
+  "cameraSetup": {
+    "title": "Ρυθμίσεις",
+    "subtitle": "",
+    "detecting": "Ανίχνευση καμερών…",
+    "noCamerasTitle": "Δεν εντοπίστηκαν κάμερες.",
+    "noCamerasSubtitle": "Συνδέστε μια κάμερα και δοκιμάστε ξανά.",
+    "retry": "Επανάληψη",
+    "refresh": "Ανανέωση",
+    "infoBanner": "Συνδέστε όλες τις κάμερες πριν την αντιστοίχιση. Ανανεώστε αν μια νέα κάμερα δεν εμφανίζεται.",
+    "normalCamera": "Κανονική κάμερα",
+    "normalCameraDesc": "",
+    "microscopicCamera": "Μικροσκοπική κάμερα",
+    "microscopicCameraDesc": "",
+    "detectedCameras": "Εντοπισμένες κάμερες — βρέθηκαν {count}",
+    "camera": "Κάμερα",
+    "selectPlaceholder": "Επιλογή…",
+    "saved": "Αποθηκεύτηκε — επιστροφή στην αρχική…",
+    "saveButton": "Αποθήκευση",
+    "invertOnCapture": "Αντιστροφή κατά τη λήψη",
+    "invertOnCaptureDesc": "",
+    "cameraRotation": "Περιστροφή",
+    "cameraRotationHint": "δεξιόστροφα / αριστερόστροφα",
+    "screensaverIdle": "Χρόνος αδράνειας προφύλαξης οθόνης",
+    "screensaverIdleDesc": "Απαιτείται βίντεο προφύλαξης οθόνης για αυτό το κομμωτήριο στο superadmin.",
+    "screensaverOff": "Ανενεργό",
+    "screensaverMinutes": "{count} λεπ.",
+    "experimental": "Πειραματικό",
+    "experimentalDesc": "Επιλογές βαθμονόμησης. Το αυτόματο κλικ μικροσκοπίου λειτουργεί μόνο στη μικροσκοπική κάμερα.",
+    "microscopeAutoClick": "Αυτόματο κλικ μικροσκοπίου",
+    "microscopeAutoClickDesc": "Λήψη αυτόματα όταν η εικόνα του δερματοσκοπίου παραμένει ευκρινής.",
+    "showAdvanced": "Εμφάνιση για προχωρημένους",
+    "hideAdvanced": "Απόκρυψη για προχωρημένους",
+    "sharpnessThreshold": "Όριο ευκρίνειας",
+    "sharpnessThresholdHint": "ΚΑΛΟ όταν το ζωντανό σκορ είναι ίσο ή πάνω από αυτή την τιμή. Βαθμονομήστε με πραγματικό υλικό δερματοσκοπίου.",
+    "stabilityTime": "Χρόνος σταθερότητας",
+    "stabilityTimeHint": "Πόσο πρέπει να μείνει ευκρινής η εικόνα πριν ξεκινήσει η λήψη.",
+    "bestFrameWindow": "Παράθυρο καλύτερου καρέ",
+    "bestFrameWindowHint": "Κρατά το πιο ευκρινές καρέ σε αυτό το παράθυρο και μετά το αποτυπώνει.",
+    "ms": "{ms} ms",
+    "focusSharp": "ΕΥΚΡΙΝΕΣ",
+    "focusFocusing": "Εστίαση",
+    "focusCapturing": "Λήψη…",
+    "autoCapture": "Αυτόματη λήψη"
+  },
+  "captureImages": {
+    "instructions": "Ρυθμίστε την εστίαση και τραβήξτε φωτογραφία",
+    "sampleRegion": "Δείγμα περιοχής",
+    "clickedPhotos": "Ληφθείσες φωτογραφίες",
+    "addImage": "Προσθήκη εικόνας",
+    "noImage": "Χωρίς εικόνα",
+    "retake": "Επανάληψη",
+    "analyze": "Ανάλυση",
+    "next": "Επόμενο",
+    "loadingImage": "Φόρτωση εικόνας…",
+    "captureAllImages": "Παρακαλώ τραβήξτε όλες τις εικόνες",
+    "sameCameraWarning": "Η κανονική και η μικροσκοπική κάμερα είναι η ίδια συσκευή.",
+    "sameCameraWarningHint": "Αυτή η φωτογραφία μπορεί να μην είναι από το δερματοσκόπιο. Επιλέξτε τη μικροσκοπική κάμερα για επανάληψη — θα χρησιμοποιηθεί για την υπόλοιπη συνεδρία.",
+    "changeCamera": "Αλλαγή κάμερας",
+    "normalCameraBadge": "Κανονική",
+    "noOtherCameras": "Δεν βρέθηκαν άλλες κάμερες. Συνδέστε το δερματοσκόπιο και επιλέξτε το εδώ.",
+    "cameraFallback": "Κάμερα",
+    "skinRegions": {
+      "nose": "Μύτη",
+      "sideCheek": "Πλάι μάγουλο",
+      "forehead": "Μέτωπο"
+    },
+    "headParts": {
+      "frontal": "Μετωπιαίο",
+      "occipital": "Ινιακό",
+      "parietal": "Βρεγματικό",
+      "temporal": "Κροταφικό"
+    }
+  },
+  "hairstyleResult": {
+    "noPreviousResult": "Κανένα προηγούμενο αποτέλεσμα",
+    "original": "Αρχικό",
+    "input": "Είσοδος",
+    "loadingPrevious": "Φόρτωση προηγούμενων αποτελεσμάτων...",
+    "noPreviousFound": "Δεν βρέθηκαν προηγούμενα αποτελέσματα",
+    "errorLoadingPrevious": "Αποτυχία φόρτωσης προηγούμενων αποτελεσμάτων",
+    "addOn": "Συνέχεια με αυτή την εικόνα: επιλέξτε άλλη υπηρεσία",
+    "addOnHaircut": "Συνέχεια με αυτή την εικόνα: δοκιμή κουρέματος",
+    "addOnHaircolor": "Συνέχεια με αυτή την εικόνα: δοκιμή βαφής μαλλιών",
+    "addOnBeard": "Συνέχεια με αυτή την εικόνα: δοκιμή γενιών"
+  },
+  "recommendedLooks": {
+    "analyzing": "Ανάλυση της φωτογραφίας σας και δημιουργία προτάσεων...",
+    "noRecommendations": "Δεν υπάρχουν διαθέσιμες προτάσεις χτενίσματος",
+    "goBack": "Επιστροφή",
+    "stylingOptions": "Επιλογές styling",
+    "maintenance": "Συντήρηση",
+    "proceed": "Συνέχεια"
+  },
+  "recommendedHaircolor": {
+    "analyzing": "Ανάλυση της φωτογραφίας σας και δημιουργία προτάσεων βαφής...",
+    "noRecommendations": "Δεν υπάρχουν διαθέσιμες προτάσεις βαφής",
+    "goBack": "Επιστροφή"
+  },
+  "reportForm": {
+    "title": "Λήψη της αναφοράς σας",
+    "description": "Εισαγάγετε τα στοιχεία σας για την εξατομικευμένη αναφορά ανάλυσης επιδερμίδας",
+    "labels": {
+      "fullName": "Ονοματεπώνυμο",
+      "phoneNumber": "Αριθμός τηλεφώνου"
+    },
+    "placeholders": {
+      "name": "Γιάννης Παπαδόπουλος",
+      "phone": "1234567890"
+    },
+    "errors": {
+      "nameRequired": "Το όνομα είναι υποχρεωτικό",
+      "phoneRequired": "Ο αριθμός τηλεφώνου είναι υποχρεωτικός",
+      "phoneInvalid": "Εισαγάγετε έγκυρο 10ψήφιο αριθμό τηλεφώνου"
+    },
+    "buttons": {
+      "downloading": "Δημιουργία PDF...",
+      "download": "Λήψη αναφοράς"
+    },
+    "securityNote": "Τα στοιχεία σας είναι ασφαλή και κρυπτογραφημένα"
+  },
+  "reportPage": {
+    "loading": "Φόρτωση αναφοράς...",
+    "notFound": "Η αναφορά δεν βρέθηκε",
+    "userPhoto": "Φωτογραφία χρήστη",
+    "report": "Αναφορά",
+    "skinAnalysisReport": "Ανάλυση επιδερμίδας",
+    "hairAnalysisReport": "Αναφορά ανάλυσης μαλλιών",
+    "majorConcerns": "Κύριες ανησυχίες",
+    "minorConcerns": "Δευτερεύουσες ανησυχίες",
+    "toDos": "Να κάνετε",
+    "avoid": "Αποφύγετε",
+    "recommendedServices": "Προτεινόμενες υπηρεσίες",
+    "dionaSkinFlyer": {
+      "servicesOneAlt": "Υπηρεσίες επιδερμίδας — σελίδα 1",
+      "servicesTwoAlt": "Υπηρεσίες επιδερμίδας — σελίδα 2",
+      "customLastPageAlt": "Υπηρεσίες κομμωτηρίου"
+    },
+    "status": {
+      "excellent": "Εξαιρετική",
+      "good": "Καλή",
+      "needAttention": "Χρειάζεται προσοχή",
+      "requiresTreatment": "Απαιτεί θεραπεία"
+    },
+    "services": {
+      "hydrafacial": {
+        "title": "Hydrafacial (εστίαση κατά της ακμής)",
+        "description": "Καθαρίζει βαθιά τους πόρους και ενυδατώνει χωρίς να τους φράζει."
+      },
+      "ledTherapy": {
+        "title": "Θεραπεία LED (μπλε + κόκκινο φως)",
+        "description": "Καταπολεμά τα βακτήρια της ακμής και μειώνει τη φλεγμονή."
+      },
+      "chemicalPeel": {
+        "title": "Ήπιο χημικό peeling (AHA/BHA)",
+        "description": "Βελτιώνει την υφή και ξεφραζει απαλά τους πόρους."
+      },
+      "oxyFacial": {
+        "title": "OxyFacial ή θεραπεία Oxygen Dome",
+        "description": "Υποστηρίζει την επούλωση και μειώνει την ορατή ερυθρότητα."
+      },
+      "eyeTreatment": {
+        "title": "Θεραπεία ενυδάτωσης κάτω από τα μάτια",
+        "description": "Βοηθά στη φωτεινότητα και στη μείωση των μαύρων κύκλων."
+      }
+    },
+    "defaultTodo": {
+      "title": "Διατηρήστε την τρέχουσα ρουτίνα",
+      "description": "Συνεχίστε τις τρέχουσες πρακτικές περιποίησης για υγιή επιδερμίδα."
+    },
+    "avoidItems": {
+      "heavyCreams": "Βαριές κρέμες ή παχιές ενυδατικές που μπορούν να φράξουν τους πόρους",
+      "faceOils": "Λάδια προσώπου στην καθημερινή χρήση, ειδικά σε έξαρση ακμής",
+      "physicalScrubs": "Φυσικά scrubs ή σκληρά απολεπιστικά που ερεθίζουν και επιδεινώνουν τα σπυράκια",
+      "fragrantProducts": "Αρωματισμένα προϊόντα που μπορεί να προκαλέσουν ευαισθησία και φλεγμονή",
+      "skippingSunscreen": "Παράλειψη αντηλιακού, που μπορεί να επιδεινώσει τον υπερχρωματισμό και να καθυστερήσει την επούλωση"
+    }
+  },
+  "hairReportPage": {
+    "userPhoto": "Φωτογραφία χρήστη",
+    "hairAnalysis": "Ανάλυση μαλλιών",
+    "report": "Αναφορά",
+    "yourHairScore": "Ο βαθμός μαλλιών σας",
+    "averageHairHealthScore": "Μέσος βαθμός υγείας μαλλιών",
+    "majorConcerns": "Κύριες ανησυχίες",
+    "minorConcerns": "Δευτερεύουσες ανησυχίες",
+    "toDos": "Να κάνετε",
+    "avoid": "Αποφύγετε"
+  },
+  "customLookHaircolor": {
+    "selectColourShade": "Επιλέξτε απόχρωση:",
+    "selectColourTechnique": "Επιλέξτε τεχνική βαφής:",
+    "proceed": "Συνέχεια",
+    "selectAllOptions": "Παρακαλώ επιλέξτε όλες τις επιλογές",
+    "moreCategories": "Περισσότερες κατηγορίες χρωμάτων",
+    "previousCategories": "Προηγούμενες κατηγορίες χρωμάτων",
+    "categories": {
+      "blackDeepBrown": "Μαύρο & βαθύ καστανό",
+      "chocolateWarmBrown": "Σοκολατί & θερμό καστανό",
+      "blonde": "Ξανθό",
+      "copperAuburn": "Χάλκινο & Auburn",
+      "burgundyPlum": "Μπορντό & δαμασκηνί",
+      "fashion": "Fashion"
+    },
+    "shades": {
+      "naturalBlack": "Φυσικό μαύρο",
+      "softBlack": "Απαλό μαύρο",
+      "espressoBrown": "Καστανό εσπρέσο",
+      "darkChocolate": "Σκούρα σοκολάτα",
+      "chocolateBrown": "Σοκολατί καστανό",
+      "mochaBrown": "Καστανό μόκα",
+      "chestnutBrown": "Καστανό κάστανο",
+      "caramelBrown": "Καστανό καραμέλα",
+      "darkBlonde": "Σκούρο ξανθό",
+      "honeyBlonde": "Ξανθό μέλι",
+      "goldenBlonde": "Χρυσό ξανθό",
+      "ashBlonde": "Σταχτί ξανθό",
+      "lightCopper": "Ανοιχτό χάλκινο",
+      "copper": "Χάλκινο",
+      "cinnamonRed": "Κόκκινο κανέλας",
+      "auburn": "Auburn",
+      "deepRed": "Βαθύ κόκκινο",
+      "burgundy": "Μπορντό",
+      "wineRed": "Κρασί",
+      "plum": "Δαμασκηνί",
+      "rosePink": "Ροζ τριαντάφυλλο",
+      "lavender": "Λεβάντα",
+      "blue": "Μπλε",
+      "emeraldGreen": "Σμαραγδί πράσινο"
+    },
+    "techniques": {
+      "global": "Ολική",
+      "ombre": "Ombre",
+      "balayage": "Balayage",
+      "streaks": "Ανταύγειες",
+      "highlights": "Highlights"
+    }
+  },
+  "hairstyleSelection": {
+    "selectHaircut": "Επιλέξτε κούρεμα:",
+    "stylingOptions": "Επιλογές styling:",
+    "addBangs": "Προσθήκη φράντζας:",
+    "proceed": "Συνέχεια",
+    "haircuts": {
+      "wolfCut": "Wolf cut",
+      "messyLob": "Messy Lob",
+      "frenchBob": "French Bob",
+      "aLineBob": "A-line Bob"
+    },
+    "styling": {
+      "blowDry": "Στέγνωμα",
+      "straightening": "Ίσιωμα",
+      "curly": "Σγουρό"
+    },
+    "bangs": {
+      "curtain": "Curtain",
+      "fringes": "Φράντζα",
+      "sideSwept": "Πλαϊνή"
+    }
+  },
+  "hairstyleSelector": {
+    "stylingOptions": "Επιλογές styling:",
+    "addBangs": "Προσθήκη φράντζας:",
+    "fadeOptions": "Επιλογές fade:",
+    "none": "Καμία",
+    "styling": {
+      "blowDry": "Στέγνωμα",
+      "straightening": "Ίσιωμα",
+      "curly": "Σγουρό"
+    },
+    "bangs": {
+      "curtain": "Curtain",
+      "fringes": "Φράντζα",
+      "sideSwept": "Πλαϊνή"
+    },
+    "fades": {
+      "taperFade": "Taper Fade",
+      "mediumFade": "Medium Fade",
+      "skinFade": "Skin Fade"
+    }
+  },
+  "haircutGrid": {
+    "selectHaircut": "Επιλέξτε κούρεμα:",
+    "selectHaircutOptional": "Επιλέξτε κούρεμα (προαιρετικό):",
+    "female": {
+      "classicPixie": "Classic Pixie",
+      "frenchBob": "French Bob",
+      "aLineBob": "A-line Bob",
+      "messyLongBob": "Messy Long bob",
+      "bluntLob": "Blunt Lob",
+      "butterflyCut": "Butterfly Cut",
+      "longLayers": "Long Layers",
+      "wolfCut": "Wolf Cut"
+    },
+    "male": {
+      "crewCut": "Crew Cut",
+      "caesarCut": "Caesar Cut",
+      "frenchCrop": "French Crop",
+      "undercut": "Undercut",
+      "fadePompadour": "Fade Pompadour",
+      "quiff": "Textured Quiff",
+      "slickedBack": "Slicked Back",
+      "mullet": "Mullet",
+      "buzzCut": "Buzz Cut",
+      "centerParted": "Center Parted"
+    }
+  },
+  "beardGrid": {
+    "selectBeard": "Επιλέξτε γένια",
+    "previousPage": "Προηγούμενη σελίδα",
+    "nextPage": "Επόμενη σελίδα",
+    "cleanShave": "Ξυρισμένο",
+    "stubbleTrimmed": "Απεριποίητο / Κοντό",
+    "anchor": "Anchor",
+    "goatee": "Goatee",
+    "vanDyke": "Van Dyke",
+    "verdi": "Verdi",
+    "ducktail": "Ducktail",
+    "horseshoe": "Horseshoe",
+    "handlebarMustache": "Handlebar Mustache",
+    "lowTaperFade": "Low Taper Fade",
+    "midFade": "Mid Fade",
+    "italian": "Italian"
+  },
+  "report": {
+    "title": "Η αναφορά σας",
+    "score": "Βαθμός",
+    "good": "Καλό",
+    "moderate": "Μέτριο",
+    "poor": "Κακό",
+    "protect": "Προστασία",
+    "treat": "Θεραπεία",
+    "summary": "Σύνοψη",
+    "recommendations": "Προτάσεις",
+    "download": "Λήψη αναφοράς",
+    "share": "Κοινοποίηση αναφοράς"
+  },
+  "camera": {
+    "capture": "Λήψη",
+    "retake": "Επανάληψη",
+    "usePhoto": "Χρήση φωτογραφίας",
+    "switchCamera": "Αλλαγή κάμερας",
+    "permissionDenied": "Η πρόσβαση στην κάμερα απορρίφθηκε",
+    "permissionMessage": "Επιτρέψτε την πρόσβαση στην κάμερα για λήψη φωτογραφίας"
+  },
+  "form": {
+    "submit": "Υποβολή",
+    "cancel": "Ακύρωση",
+    "next": "Επόμενο",
+    "previous": "Προηγούμενο",
+    "save": "Αποθήκευση",
+    "name": "Όνομα",
+    "email": "Email",
+    "phone": "Τηλέφωνο",
+    "age": "Ηλικία",
+    "gender": "Φύλο",
+    "male": "Άνδρας",
+    "female": "Γυναίκα",
+    "other": "Άλλο"
+  },
+  "errors": {
+    "somethingWrong": "Κάτι πήγε στραβά",
+    "tryAgain": "Παρακαλώ δοκιμάστε ξανά",
+    "networkError": "Σφάλμα δικτύου. Ελέγξτε τη σύνδεσή σας",
+    "invalidInput": "Μη έγκυρη εισαγωγή",
+    "required": "Αυτό το πεδίο είναι υποχρεωτικό"
+  },
+  "sessionResults": {
+    "title": "Αποτελέσματα συνεδρίας",
+    "hairstyle": "Χτενίσματα",
+    "haircolor": "Βαφές μαλλιών",
+    "beard": "Δοκιμές γενιών",
+    "makeup": "Μακιγιάζ",
+    "loading": "Φόρτωση...",
+    "noResults": "Δεν βρέθηκαν αποτελέσματα",
+    "qrTitle": "Λήψη του αποτελέσματός σας",
+    "qrSubtitle": "Σαρώστε αυτόν τον QR κωδικό με το τηλέφωνό σας για να δείτε και να κατεβάσετε τα αποτελέσματα της συνεδρίας.",
+    "qrFooter": "Ανοίξτε την κάμερα ή την εφαρμογή QR για σάρωση και πρόσβαση στα εξατομικευμένα στυλ σας."
+  },
+  "customLookMakeup": {
+    "selectShadeFor": "Επιλέξτε απόχρωση {effect}:",
+    "proceed": "Συνέχεια",
+    "selectShade": "Παρακαλώ επιλέξτε τουλάχιστον μία απόχρωση",
+    "pageLabel": "Σελίδα {page}",
+    "categories": {
+      "lipstick": "Κραγιόν",
+      "blush": "Ρουζ",
+      "eyeshadow": "Σκιά ματιών"
+    }
+  },
+  "bridalLook": {
+    "title": "Νυφικά looks",
+    "selectTitle": "Επιλέξτε νυφικό look",
+    "selectLook": "Παρακαλώ επιλέξτε νυφικό look",
+    "proceed": "Συνέχεια",
+    "previousPage": "Προηγούμενη σελίδα",
+    "nextPage": "Επόμενη σελίδα",
+    "tabs": {
+      "looks": "Νυφικά looks",
+      "results": "Αποτελέσματα"
+    },
+    "messages": {
+      "sessionError": "Δεν ήταν δυνατή η δημιουργία συνεδρίας. Δοκιμάστε ξανά.",
+      "imageNotReady": "Δεν βρέθηκε εικόνα κάμερας. Τραβήξτε πρώτα μια φωτογραφία.",
+      "success": "Το νυφικό look εφαρμόστηκε με επιτυχία!",
+      "error": "Αποτυχία εφαρμογής νυφικού look. Δοκιμάστε ξανά."
+    }
+  },
+  "makeupAdvisor": {
+    "title": "Δοκιμή μακιγιάζ",
+    "tabs": {
+      "customLook": "Προσαρμοσμένο look",
+      "results": "Αποτελέσματα"
+    },
+    "messages": {
+      "sessionError": "Δεν ήταν δυνατή η δημιουργία συνεδρίας. Δοκιμάστε ξανά.",
+      "imageNotReady": "Δεν βρέθηκε εικόνα κάμερας. Τραβήξτε πρώτα μια φωτογραφία.",
+      "success": "Το μακιγιάζ εφαρμόστηκε με επιτυχία!",
+      "error": "Αποτυχία εφαρμογής μακιγιάζ. Δοκιμάστε ξανά."
+    }
+  },
+  "makeupResult": {
+    "addOn": "Συνέχεια με αυτή την εικόνα: επιλέξτε άλλη υπηρεσία",
+    "addOnLipstick": "Προσθήκη κραγιόν",
+    "addOnBlush": "Προσθήκη ρουζ",
+    "addOnEyeshadow": "Προσθήκη σκιάς ματιών",
+    "noPreviousResult": "Κανένα προηγούμενο αποτέλεσμα",
+    "loadingPrevious": "Φόρτωση προηγούμενων αποτελεσμάτων...",
+    "noPreviousFound": "Δεν βρέθηκαν προηγούμενα αποτελέσματα",
+    "errorLoadingPrevious": "Αποτυχία φόρτωσης προηγούμενων αποτελεσμάτων"
+  }
+}

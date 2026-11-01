@@ -1,0 +1,462 @@
+{
+  "malayalam-bride": {
+    "about": "A fresh, luminous Kerala bridal look that lets the gold of the kasavu saree and temple jewellery shine. Skin stays dewy and natural, the eyes get a soft kohl definition, and the lips keep to warm, gentle tones for an elegant, timeless finish.",
+    "shades": {
+      "base": "Warm natural, satin finish",
+      "eyes": "Gold & bronze lids, thick kajal",
+      "lips": "Muted coral nude",
+      "cheeks": "Soft peach"
+    },
+    "products": [
+      "Long-wear primer",
+      "Full-coverage foundation",
+      "Colour corrector",
+      "Setting powder",
+      "Waterproof kajal & liner",
+      "Volumising mascara",
+      "Long-wear matte lipstick",
+      "Setting spray"
+    ],
+    "tips": [
+      "Prep with a hydrating primer for humid weather",
+      "Keep the base light and dewy to match the kasavu saree",
+      "Line the waterline with smudge-proof kajal and wing it slightly",
+      "Add a gold shimmer to the centre of the lid",
+      "Finish with a coral nude lip and a waterproof setting spray"
+    ]
+  },
+  "christian-bride": {
+    "about": "A soft, romantic look made for a white gown or silk saree and a veil. The focus is radiant, even skin, softly defined eyes and a rosy lip that photographs beautifully in daylight and in church.",
+    "shades": {
+      "base": "Luminous, even skin",
+      "eyes": "Champagne and soft brown, fluttery lashes",
+      "lips": "Rose pink",
+      "cheeks": "Soft rose"
+    },
+    "products": [
+      "Long-wear primer",
+      "Full-coverage foundation",
+      "Colour corrector",
+      "Setting powder",
+      "Waterproof kajal & liner",
+      "Volumising mascara",
+      "Long-wear matte lipstick",
+      "Setting spray"
+    ],
+    "tips": [
+      "Use a radiant base that photographs well against white",
+      "Keep eyes soft with champagne shimmer and brown crease",
+      "Apply individual lashes for a delicate effect",
+      "Choose a rose pink lip with a clear gloss topper",
+      "Set lightly so the skin stays glowy under the veil"
+    ]
+  },
+  "tamil-bride": {
+    "about": "A rich, traditional look to match a Kanjeevaram silk and temple jewellery. Expect a flawless, long-wear base, bold kohl-lined eyes and a deep classic lip, balanced with warm blush so the look holds through long ceremonies.",
+    "shades": {
+      "base": "Warm, medium coverage",
+      "eyes": "Deep bronze smoky eye, bold kajal",
+      "lips": "Deep red",
+      "cheeks": "Warm terracotta"
+    },
+    "products": [
+      "Long-wear primer",
+      "Full-coverage foundation",
+      "Colour corrector",
+      "Setting powder",
+      "Waterproof kajal & liner",
+      "Volumising mascara",
+      "Long-wear matte lipstick",
+      "Setting spray"
+    ],
+    "tips": [
+      "Colour-correct dark circles before foundation",
+      "Build a bronze smoky eye to balance temple jewellery",
+      "Wing the kajal outwards for a classic South Indian eye",
+      "Fill lips with a long-wear deep red",
+      "Bake the T-zone so the base lasts through long rituals"
+    ]
+  },
+  "iyengar-bride": {
+    "about": "A graceful, traditional look for madisar draping and temple jewellery. The base is clean and glowing, the eyes are framed with soft kohl, and the lips stay in warm rosy or red tones for a refined, classic bride.",
+    "shades": {
+      "base": "Natural, matte",
+      "eyes": "Soft brown with thick kajal",
+      "lips": "Maroon",
+      "cheeks": "Subtle warm"
+    },
+    "products": [
+      "Long-wear primer",
+      "Full-coverage foundation",
+      "Colour corrector",
+      "Setting powder",
+      "Waterproof kajal & liner",
+      "Volumising mascara",
+      "Long-wear matte lipstick",
+      "Setting spray"
+    ],
+    "tips": [
+      "Keep the base minimal and matte",
+      "Define brows naturally",
+      "Apply thick kajal on the waterline",
+      "Use a maroon lip to complement the madisar",
+      "Finish with setting spray for long ceremonies"
+    ]
+  },
+  "telugu-bride": {
+    "about": "A bright, festive bridal look that complements a silk saree and gold jewellery. A long-lasting base, defined eyes with a touch of shimmer and a warm red or maroon lip create a look that stays vivid through the muhurtham and beyond.",
+    "shades": {
+      "base": "Radiant, medium coverage",
+      "eyes": "Gold and red cut crease",
+      "lips": "Brick red",
+      "cheeks": "Peach-coral"
+    },
+    "products": [
+      "Long-wear primer",
+      "Full-coverage foundation",
+      "Colour corrector",
+      "Setting powder",
+      "Waterproof kajal & liner",
+      "Volumising mascara",
+      "Long-wear matte lipstick",
+      "Setting spray"
+    ],
+    "tips": [
+      "Leave space at the brow centre for the kalyana tilakam",
+      "Use a gold cut crease with a red outer V",
+      "Line and tightline with waterproof kajal",
+      "Choose a brick red lip",
+      "Highlight the cheekbones softly"
+    ]
+  },
+  "kannada-bride": {
+    "about": "An elegant look for a Mysore silk saree and traditional jewellery. Skin looks naturally radiant, the eyes are softly smoked and lined, and a warm lip ties the look together with the richness of the silk.",
+    "shades": {
+      "base": "Satin, warm",
+      "eyes": "Bronze-gold with kajal",
+      "lips": "Rosewood",
+      "cheeks": "Soft bronze"
+    },
+    "products": [
+      "Long-wear primer",
+      "Full-coverage foundation",
+      "Colour corrector",
+      "Setting powder",
+      "Waterproof kajal & liner",
+      "Volumising mascara",
+      "Long-wear matte lipstick",
+      "Setting spray"
+    ],
+    "tips": [
+      "Keep the base satin, not too matte",
+      "Blend bronze into the crease with gold on the lid",
+      "Add kajal and lashes",
+      "Apply a rosewood lip",
+      "Set with powder only where needed"
+    ]
+  },
+  "maharashtrian-bride": {
+    "about": "A classic look made for a Paithani saree, nath and mundavalya. A smooth, glowing base, kohl-defined eyes and a bold red or deep pink lip give a confident, traditional bridal finish.",
+    "shades": {
+      "base": "Fresh, natural glow",
+      "eyes": "Soft gold with winged liner",
+      "lips": "Classic red",
+      "cheeks": "Peach"
+    },
+    "products": [
+      "Long-wear primer",
+      "Full-coverage foundation",
+      "Colour corrector",
+      "Setting powder",
+      "Waterproof kajal & liner",
+      "Volumising mascara",
+      "Long-wear matte lipstick",
+      "Setting spray"
+    ],
+    "tips": [
+      "Leave space for the chandrakor bindi",
+      "Keep eyes soft gold with a neat wing",
+      "Use a classic red lip",
+      "Add a peach flush for freshness",
+      "Use waterproof products around the eyes"
+    ]
+  },
+  "reception-glam": {
+    "about": "A polished, high-glam evening look for the reception. Think a luminous, camera-ready base, sculpted cheeks, a softly smoked or shimmery eye and a statement lip — designed to glow under evening lights and flash photography.",
+    "shades": {
+      "base": "Full coverage, luminous",
+      "eyes": "Glitter smoky eye",
+      "lips": "Nude or berry",
+      "cheeks": "Highlighter-led"
+    },
+    "products": [
+      "Long-wear primer",
+      "Full-coverage foundation",
+      "Colour corrector",
+      "Setting powder",
+      "Waterproof kajal & liner",
+      "Volumising mascara",
+      "Long-wear matte lipstick",
+      "Setting spray",
+      "Pressed glitter"
+    ],
+    "tips": [
+      "Prime and use a luminous full-coverage base",
+      "Build a dark smoky eye and press glitter on the lid",
+      "Pick either a nude or berry lip, not both bold",
+      "Strobe the cheekbones for stage lighting",
+      "Lock the look with setting spray"
+    ]
+  },
+  "friend-of-bride": {
+    "about": "A soft, pretty look for the bridesmaid or close friend — festive enough for the celebration without competing with the bride. Fresh skin, a hint of shimmer on the eyes and a rosy or nude-pink lip keep it light and photo-ready.",
+    "shades": {
+      "base": "Light, dewy",
+      "eyes": "Soft shimmer",
+      "lips": "Pink nude",
+      "cheeks": "Rosy"
+    },
+    "products": [
+      "Tinted moisturiser",
+      "Concealer",
+      "Shimmer eyeshadow",
+      "Mascara",
+      "Lip gloss"
+    ],
+    "tips": [
+      "Keep the base light and dewy",
+      "Add one shimmer shade on the lid",
+      "Curl lashes and apply mascara",
+      "Finish with a pink nude gloss",
+      "Avoid upstaging the bride with bold colour"
+    ]
+  },
+  "punjabi-bride": {
+    "about": "A bold, celebratory look to match a red lehenga and kaleere. A long-wear radiant base, dramatic winged or smoky eyes and a classic red lip create a striking bride who still looks fresh through a long, high-energy day.",
+    "shades": {
+      "base": "Full coverage, glowing",
+      "eyes": "Bold smoky eye with colour pop",
+      "lips": "Red or deep pink",
+      "cheeks": "Rosy pink"
+    },
+    "products": [
+      "Long-wear primer",
+      "Full-coverage foundation",
+      "Colour corrector",
+      "Setting powder",
+      "Waterproof kajal & liner",
+      "Volumising mascara",
+      "Long-wear matte lipstick",
+      "Setting spray"
+    ],
+    "tips": [
+      "Colour-correct and use full coverage for long events",
+      "Create a bold smoky eye, add a colour pop matching the lehenga",
+      "Apply dramatic lashes",
+      "Choose red or deep pink lips",
+      "Highlight generously for the glow"
+    ]
+  },
+  "rajasthani-bride": {
+    "about": "A regal look inspired by Rajasthani royalty. A rich, warm base, deeply defined kohl eyes with gold accents and a deep red or berry lip complement heavy jewellery and a vibrant lehenga.",
+    "shades": {
+      "base": "Warm, matte",
+      "eyes": "Gold glitter with heavy kajal",
+      "lips": "Deep maroon",
+      "cheeks": "Warm bronze"
+    },
+    "products": [
+      "Long-wear primer",
+      "Full-coverage foundation",
+      "Colour corrector",
+      "Setting powder",
+      "Waterproof kajal & liner",
+      "Volumising mascara",
+      "Long-wear matte lipstick",
+      "Setting spray"
+    ],
+    "tips": [
+      "Keep the base matte to hold with heavy jewellery",
+      "Use gold glitter on the lid with heavy kajal",
+      "Define brows strongly",
+      "Pick a deep maroon lip",
+      "Contour softly to balance the borla"
+    ]
+  },
+  "bengali-bride": {
+    "about": "A traditional look built around the Bengali bride's signature details — a red-and-white saree, chandan art and a bold bindi. The base stays soft and glowing, the eyes are lined in kohl and the lip is a classic red.",
+    "shades": {
+      "base": "Matte, even",
+      "eyes": "Winged liner with soft brown",
+      "lips": "Bright red",
+      "cheeks": "Subtle"
+    },
+    "products": [
+      "Long-wear primer",
+      "Full-coverage foundation",
+      "Colour corrector",
+      "Setting powder",
+      "Waterproof kajal & liner",
+      "Volumising mascara",
+      "Long-wear matte lipstick",
+      "Setting spray",
+      "White & red alpana paint"
+    ],
+    "tips": [
+      "Keep the forehead clear for chandan alpana",
+      "Draw a sharp winged liner",
+      "Keep shadow minimal and soft brown",
+      "Use a bright red lip",
+      "Apply alpana designs last, after setting the base"
+    ]
+  },
+  "north-indian-bride": {
+    "about": "A timeless, glamorous North Indian bridal look. A flawless, luminous base, softly smoked eyes with a hint of shimmer and a rich red or maroon lip balance heavy jewellery and an ornate lehenga.",
+    "shades": {
+      "base": "Full coverage, radiant",
+      "eyes": "Rose gold smoky eye",
+      "lips": "Red",
+      "cheeks": "Rosy"
+    },
+    "products": [
+      "Long-wear primer",
+      "Full-coverage foundation",
+      "Colour corrector",
+      "Setting powder",
+      "Waterproof kajal & liner",
+      "Volumising mascara",
+      "Long-wear matte lipstick",
+      "Setting spray"
+    ],
+    "tips": [
+      "Prime and colour-correct",
+      "Blend a rose gold smoky eye",
+      "Add lashes and tightline",
+      "Apply a long-wear red lip",
+      "Highlight cheekbones and nose bridge"
+    ]
+  },
+  "minimal-pastel-bride": {
+    "about": "A modern, minimal look for the bride who wants to look like herself, only more radiant. Dewy skin, soft pastel or champagne eyes and a nude-pink lip pair beautifully with pastel outfits and diamond jewellery.",
+    "shades": {
+      "base": "Skin-like, dewy",
+      "eyes": "Pastel pink/lilac wash",
+      "lips": "Soft pink nude",
+      "cheeks": "Peach-pink"
+    },
+    "products": [
+      "Skin tint",
+      "Concealer",
+      "Cream blush",
+      "Pastel eyeshadow",
+      "Clear brow gel",
+      "Tinted lip balm",
+      "Setting spray"
+    ],
+    "tips": [
+      "Use a skin tint instead of heavy foundation",
+      "Wash pastel shadow over the lid",
+      "Groom brows with clear gel",
+      "Use cream blush high on the cheeks",
+      "Finish with a soft pink nude lip"
+    ]
+  },
+  "cocktail-look": {
+    "about": "A fun, party-ready look for cocktail nights. It pairs a luminous base and strobed high points with a metallic or coloured liner, finished with a bold berry or glossy nude lip — glamorous, modern and made for the dance floor.",
+    "shades": {
+      "base": "Luminous, medium coverage",
+      "eyes": "Metallic or coloured liner",
+      "lips": "Bold berry or nude gloss",
+      "cheeks": "Strobed"
+    },
+    "products": [
+      "Primer",
+      "Luminous foundation",
+      "Metallic eyeshadow",
+      "Coloured liner",
+      "Highlighter",
+      "Lip gloss"
+    ],
+    "tips": [
+      "Start with a luminous base",
+      "Use a metallic lid or a coloured graphic liner",
+      "Strobe high points",
+      "Pair with a berry lip or nude gloss",
+      "Keep brows sharp and defined"
+    ]
+  },
+  "mehendi-look": {
+    "about": "A bright, playful look for the mehendi. Fresh, glowing skin, a pop of colour or shimmer on the eyes and a soft coral or pink lip keep it cheerful and comfortable for a long, sunny celebration.",
+    "shades": {
+      "base": "Fresh, light coverage",
+      "eyes": "Green, yellow or gold pops",
+      "lips": "Coral or peach",
+      "cheeks": "Peach glow"
+    },
+    "products": [
+      "Light foundation",
+      "Colourful eyeshadow",
+      "Mascara",
+      "Peach blush",
+      "Coral lipstick"
+    ],
+    "tips": [
+      "Keep the base fresh and light",
+      "Add a colour pop (green, yellow or gold) to match the outfit",
+      "Use mascara instead of heavy lashes",
+      "Pick a coral or peach lip",
+      "Set lightly for a daytime glow"
+    ]
+  },
+  "engagement": {
+    "about": "A soft-glam look for the engagement — polished and photo-ready without feeling heavy. A satin base, rose gold or champagne eyes and a mauve or pink-nude lip give a fresh, elegant finish that suits most outfits.",
+    "shades": {
+      "base": "Soft glam, satin finish",
+      "eyes": "Rose gold or soft champagne",
+      "lips": "Mauve or pink nude",
+      "cheeks": "Soft rose"
+    },
+    "products": [
+      "Primer",
+      "Medium-coverage foundation",
+      "Concealer",
+      "Rose gold eyeshadow",
+      "Mascara or light lashes",
+      "Satin lipstick",
+      "Setting spray"
+    ],
+    "tips": [
+      "Prep and prime for photographs",
+      "Use a satin, medium-coverage base",
+      "Blend rose gold or champagne on the lids",
+      "Add light lashes for definition",
+      "Finish with a mauve or pink nude lip and setting spray"
+    ]
+  },
+  "party": {
+    "about": "A confident party look for evenings and functions. A smooth base, defined eyes with a touch of shimmer and a lip colour that matches your outfit make it easy to look put-together and photo-ready all night.",
+    "shades": {
+      "base": "Radiant, medium-full coverage",
+      "eyes": "Smoky or glitter eye",
+      "lips": "Bold red, berry or nude",
+      "cheeks": "Bronzed and highlighted"
+    },
+    "products": [
+      "Primer",
+      "Long-wear foundation",
+      "Contour & highlighter",
+      "Smoky eyeshadow palette",
+      "Eyeliner",
+      "Mascara",
+      "Long-wear lipstick",
+      "Setting spray"
+    ],
+    "tips": [
+      "Prime and use a long-wear base for evening events",
+      "Build a smoky or glitter eye",
+      "Contour and highlight for night lighting",
+      "Choose a bold lip or keep eyes bold with a nude lip",
+      "Lock everything with setting spray"
+    ]
+  }
+}

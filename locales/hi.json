@@ -1,0 +1,677 @@
+{
+  "common": {
+    "poweredBy": "द्वारा संचालित",
+    "home": "होम",
+    "back": "वापस",
+    "next": "अगला",
+    "previous": "पिछला",
+    "proceed": "आगे बढ़ें",
+    "cancel": "रद्द करें",
+    "save": "सहेजें",
+    "submit": "जमा करें"
+  },
+  "landing": {
+    "welcome": "भविष्य में आपका स्वागत है!",
+    "beginConsultation": "अपना AI परामर्श शुरू करें",
+    "scalpView": "सूक्ष्म दर्शी खोपड़ी दृश्य",
+    "cameraSettings": "कैमरा सेटिंग्स",
+    "logout": "लॉग आउट"
+  },
+  "notifications": {
+    "title": "सूचनाएँ",
+    "popupTitle": "सूचना",
+    "close": "बंद करें",
+    "loading": "सूचनाएँ लोड हो रही हैं…",
+    "empty": "अभी कोई सूचना नहीं।",
+    "loadError": "सूचनाएँ लोड नहीं हो सकीं।",
+    "retry": "फिर कोशिश करें",
+    "unread": "नया"
+  },
+  "home": {
+    "title": "होम",
+    "instructions": "फोटो लेने के निर्देश",
+    "instruction1": "सामने से फोटो लें, कैमरे की ओर देखते हुए।",
+    "instruction2": "अपने बालों को खोलें।",
+    "instruction3": "सुनिश्चित करें कि कमरे की रोशनी चालू है और आपका चेहरा अच्छी तरह से प्रकाशित है।",
+    "recommended": "अनुशंसित",
+    "avoid": "से बचें"
+  },
+  "salonProducts": {
+    "title": "सैलून उत्पाद",
+    "tabs": {
+      "hair": "बाल",
+      "skin": "त्वचा"
+    },
+    "empty": "आपके सैलून के लिए कोई {type} उत्पाद उपलब्ध नहीं हैं.",
+    "emptyFiltered": "इन फ़िल्टर से कोई उत्पाद मेल नहीं खाता.",
+    "loadError": "उत्पाद लोड नहीं हो सके। कृपया फिर कोशिश करें.",
+    "filters": {
+      "brand": "ब्रांड",
+      "category": "श्रेणी",
+      "subcategory": "उपश्रेणी",
+      "sort": "क्रम",
+      "sortDefault": "डिफ़ॉल्ट",
+      "all": "सभी",
+      "priceLowHigh": "कीमत: कम से अधिक",
+      "priceHighLow": "कीमत: अधिक से कम",
+      "clearFilters": "फ़िल्टर साफ़ करें"
+    }
+  },
+  "selectTool": {
+    "title": "एक AI परामर्श उपकरण चुनें",
+    "skinAnalyzer": "त्वचा विश्लेषक",
+    "hairAnalyzer": "बाल विश्लेषक",
+    "lookAdvisor": "लुक सलाहकार",
+    "serviceDisabled": "यह सेवा आपके सैलून खाते के लिए अक्षम कर दी गई है। कृपया अपने व्यवस्थापक से संपर्क करें।"
+  },
+  "skinAnalysis": {
+    "title": "AI त्वचा विश्लेषण",
+    "analyzing": "आपकी त्वचा का विश्लेषण किया जा रहा है",
+    "processingImage": "कृपया प्रतीक्षा करें, हम आपकी छवि संसाधित कर रहे हैं...",
+    "generatingVisualization": "त्वचा विज़ुअलाइज़ेशन तैयार हो रहा है",
+    "visualizationInProgress": "AI नैदानिक विज़ुअलाइज़ेशन प्रगति पर है…",
+    "visualizationAlt": "त्वचा विश्लेषण विज़ुअलाइज़ेशन",
+    "visualizationUnavailable": "विज़ुअलाइज़ेशन उपलब्ध नहीं है",
+    "results": "परिणाम",
+    "recommendations": "सिफारिशें",
+    "skinType": "त्वचा का प्रकार",
+    "concerns": "चिंताएं",
+    "texture": "बनावट",
+    "moisture": "नमी",
+    "oiliness": "तैलीयता",
+    "sensitivity": "संवेदनशीलता",
+    "questions": {
+      "skinExposure": {
+        "question": "धूप में त्वचा का संपर्क",
+        "rarely": "कभी-कभार",
+        "occasionally": "कभी-कभी",
+        "frequently": "अक्सर",
+        "veryFrequently": "बहुत अक्सर"
+      },
+      "skinCareGoal": {
+        "question": "अपना त्वचा देखभाल लक्ष्य चुनें",
+        "glowingRadiant": "चमकदार, दमकती त्वचा",
+        "antiAging": "एंटी-एजिंग",
+        "acneControl": "मुँहासे नियंत्रण",
+        "moistureBalance": "नमी संतुलन"
+      },
+      "skinConcerns": {
+        "question": "कोई व्यक्तिगत त्वचा संबंधी चिंता?",
+        "acne": "मुँहासे",
+        "redness": "लालिमा",
+        "darkCircles": "काले घेरे",
+        "oiliness": "तैलीयता",
+        "pigmentation": "पिगमेंटेशन",
+        "wrinkles": "झुर्रियाँ",
+        "pores": "रोम छिद्र",
+        "skinTexture": "त्वचा की बनावट"
+      }
+    },
+    "progress": {
+      "uploading": "आपकी फोटो अपलोड हो रही है…",
+      "detecting": "चेहरे की विशेषताएँ पहचानी जा रही हैं…",
+      "analyzing": "त्वचा विश्लेषण चल रहा है…",
+      "finalizing": "परिणाम तैयार किए जा रहे हैं…",
+      "labels": {
+        "face": "चेहरा"
+      }
+    }
+  },
+  "hairAnalysis": {
+    "title": "AI बाल विश्लेषण",
+    "analyzing": "आपके बालों का विश्लेषण किया जा रहा है",
+    "processingImages": "कृपया प्रतीक्षा करें, हम आपकी छवियाँ संसाधित कर रहे हैं...",
+    "results": "परिणाम",
+    "hairType": "बालों का प्रकार",
+    "condition": "स्थिति",
+    "thickness": "मोटाई",
+    "density": "घनत्व",
+    "scalp": "खोपड़ी की स्थिति",
+    "questions": {
+      "hairTreated": {
+        "question": "पिछले 6 महीनों में बालों का उपचार/रंग",
+        "yesColoured": "हाँ, रंगे हुए",
+        "chemicallyTreated": "रासायनिक उपचार",
+        "chemicalDescription": "केराटिन, परम, आदि",
+        "yesBoth": "हाँ, दोनों",
+        "no": "नहीं"
+      },
+      "haircareGoal": {
+        "question": "अपना बाल देखभाल लक्ष्य चुनें",
+        "reducedHairFall": "बाल झड़ना कम करें",
+        "dandruffControl": "रूसी नियंत्रण",
+        "increaseThickness": "बालों की मोटाई बढ़ाएँ",
+        "repairDamaged": "क्षतिग्रस्त बालों की मरम्मत"
+      },
+      "hairConcerns": {
+        "question": "कोई व्यक्तिगत बाल संबंधी चिंता",
+        "dandruff": "रूसी",
+        "dryScalp": "सूखी खोपड़ी",
+        "splitEnds": "दोमुंहे बाल",
+        "frizziness": "उलझन",
+        "itchyScalp": "खुजली वाली खोपड़ी",
+        "hairFall": "बाल झड़ना"
+      }
+    },
+    "progress": {
+      "uploading": "खोपड़ी की फोटो अपलोड हो रही हैं…",
+      "detecting": "खोपड़ी और बाल क्षेत्रों को पढ़ा जा रहा है…",
+      "analyzing": "बाल और खोपड़ी विश्लेषण चल रहा है…",
+      "finalizing": "परिणाम तैयार किए जा रहे हैं…",
+      "labels": {
+        "face": "चेहरा"
+      }
+    }
+  },
+  "lookAdvisor": {
+    "title": "लुक सलाहकार",
+    "selectHairstyle": "एक हेयरस्टाइल चुनें",
+    "selectColor": "एक रंग चुनें",
+    "recommended": "अनुशंसित लुक",
+    "customLook": "कस्टम लुक",
+    "hairstyles": "हेयरस्टाइल",
+    "colors": "रंग",
+    "proceed": "आगे बढ़ें",
+    "tryOn": "आज़माएं",
+    "backToResults": "परिणामों पर वापस जाएँ",
+    "tabs": {
+      "recommendedLook": "अनुशंसित लुक",
+      "customLook": "कस्टम लुक",
+      "results": "परिणाम"
+    },
+    "progress": {
+      "creatingLook": "आपका लुक बन रहा है",
+      "craftingLooks": "लुक तैयार हो रहे हैं",
+      "craftingColors": "रंग मिलान हो रहे हैं",
+      "uploading": "आपकी फ़ोटो तैयार हो रही है…",
+      "detecting": "चेहरे की विशेषताएँ पढ़ी जा रही हैं…",
+      "generating": "आपका लुक जनरेट हो रहा है…",
+      "matchingLooks": "आपके लिए लुक चुने जा रहे हैं…",
+      "matchingColors": "रंग शेड्स मिलाए जा रहे हैं…",
+      "finalizing": "अंतिम स्पर्श दिए जा रहे हैं…"
+    },
+    "questions": {
+      "gender": {
+        "question": "अपना लिंग चुनें",
+        "female": "महिला",
+        "male": "पुरुष"
+      },
+      "service": {
+        "question": "अपनी सेवा चुनें",
+        "hairColour": "बालों का रंग",
+        "haircutStyling": "हेयरकट/स्टाइलिंग",
+        "beard": "दाढ़ी",
+        "makeup": "मेकअप",
+        "bridalMakeup": "ब्राइडल मेकअप"
+      },
+      "hairLength": {
+        "question": "अपनी पसंदीदा बालों की लंबाई चुनें",
+        "short": "छोटे",
+        "medium": "मध्यम",
+        "long": "लंबे",
+        "shortHaircut": "छोटा हेयरकट",
+        "mediumHaircut": "मध्यम हेयरकट",
+        "longHaircut": "लंबा हेयरकट"
+      },
+      "ageGroup": {
+        "question": "अपना आयु समूह चुनें"
+      },
+      "colorFamily": {
+        "question": "अपना पसंदीदा रंग परिवार चुनें",
+        "naturalDarks": "प्राकृतिक गहरे",
+        "naturalDarksDesc": "काले और गहरे भूरे",
+        "warmShades": "गर्म शेड",
+        "warmShadesDesc": "गोल्डन और कैरमेल",
+        "redBurgundies": "लाल और बरगंडी",
+        "coolShades": "ठंडे शेड",
+        "coolShadesDesc": "ब्लॉन्ड और ऐश",
+        "fashionColours": "फैशन रंग",
+        "fashionColoursDesc": "हरा, नीला और बैंगनी"
+      }
+    },
+    "messages": {
+      "hairstyleRecommendationError": "हेयरस्टाइल सिफारिशें प्राप्त करने में विफल। कृपया पुनः प्रयास करें।",
+      "haircolorRecommendationError": "बाल रंग सिफारिशें प्राप्त करने में विफल। कृपया पुनः प्रयास करें।",
+      "sessionError": "सत्र बनाने में विफल। कृपया पुनः प्रयास करें।",
+      "haircolorSuccess": "बाल रंग सफलतापूर्वक संसाधित!",
+      "haircolorError": "बाल रंग संसाधित करने में विफल। कृपया पुनः प्रयास करें।",
+      "hairstyleSuccess": "हेयरस्टाइल सफलतापूर्वक संसाधित!",
+      "hairstyleError": "हेयरस्टाइल संसाधित करने में विफल। कृपया पुनः प्रयास करें।",
+      "ratingThanks": "आपकी रेटिंग के लिए धन्यवाद!",
+      "selectAllOptions": "कृपया सभी विकल्प चुनें",
+      "selectAtLeastOneOption": "कृपया कम से कम एक विकल्प चुनें",
+      "imageNotReady": "फ़ोटो अभी तैयार नहीं है। कृपया थोड़ा इंतज़ार करें और पुनः प्रयास करें।"
+    }
+  },
+  "hairAnalysisResults": {
+    "tabs": {
+      "hairMetrics": "बाल मेट्रिक्स",
+      "analysis": "विश्लेषण"
+    },
+    "labels": {
+      "front": "सामने",
+      "back": "पीछे",
+      "side": "बगल"
+    },
+    "hairHealthIndex": "बाल स्वास्थ्य सूचकांक",
+    "generateQRCode": "रिपोर्ट QR कोड जनरेट करें",
+    "downloadReport": "रिपोर्ट डाउनलोड करें",
+    "qrDialog": {
+      "title": "रिपोर्ट डाउनलोड करने के लिए स्कैन करें",
+      "description": "रिपोर्ट डाउनलोड फॉर्म तक पहुँचने के लिए इस QR कोड को स्कैन करें",
+      "instructions": "उपयोगकर्ता अपना विवरण दर्ज करके PDF रिपोर्ट डाउनलोड कर सकते हैं"
+    }
+  },
+  "skinAnalysisResult": {
+    "tabs": {
+      "skinMetrics": "त्वचा मेट्रिक्स",
+      "analysis": "विश्लेषण"
+    },
+    "skinScore": "त्वचा स्कोर",
+    "status": {
+      "needsAttention": "ध्यान देने की आवश्यकता",
+      "average": "औसत",
+      "good": "अच्छा"
+    },
+    "generateQRCode": "रिपोर्ट QR कोड जनरेट करें",
+    "downloadReport": "रिपोर्ट डाउनलोड करें",
+    "qrDialog": {
+      "title": "रिपोर्ट डाउनलोड करने के लिए स्कैन करें",
+      "description": "रिपोर्ट डाउनलोड फॉर्म तक पहुँचने के लिए इस QR कोड को स्कैन करें",
+      "instructions": "उपयोगकर्ता अपना विवरण दर्ज करके PDF रिपोर्ट डाउनलोड कर सकते हैं"
+    }
+  },
+  "productRecommendations": {
+    "reportTitle": "आपकी विश्लेषण रिपोर्ट",
+    "reportSubtitle": "अपनी पूरी रिपोर्ट डाउनलोड करने के लिए QR कोड स्कैन करें या नीचे टैप करें",
+    "downloadReport": "रिपोर्ट डाउनलोड करें",
+    "selectedProducts": "आपके चयनित उत्पाद",
+    "total": "कुल",
+    "backToHome": "होम पर वापस जाएं",
+    "cartTitle": "आपकी कार्ट",
+    "cartEmpty": "कार्ट खाली है",
+    "saving": "सहेजा जा रहा है…",
+    "continue": "जारी रखें",
+    "continueWithItems": "जारी रखें ({count} वस्तुएं)",
+    "topRecommendations": "आपके लिए शीर्ष सिफारिशें",
+    "noProducts": "कोई उत्पाद सिफारिश उपलब्ध नहीं।",
+    "added": "जोड़ा गया",
+    "addToCart": "कार्ट में जोड़ें"
+  },
+  "cameraSetup": {
+    "title": "कैमरा सेटिंग्स",
+    "subtitle": "प्रत्येक उपयोग के लिए कैमरे असाइन करें",
+    "detecting": "कैमरे खोजे जा रहे हैं…",
+    "noCamerasTitle": "कोई कैमरा नहीं मिला।",
+    "noCamerasSubtitle": "कृपया कैमरा कनेक्ट करें और पुनः प्रयास करें।",
+    "retry": "पुनः प्रयास करें",
+    "refresh": "रीफ्रेश",
+    "infoBanner": "असाइन करने से पहले सभी कैमरे कनेक्ट करें। यदि नया कैमरा नहीं दिख रहा है तो रीफ्रेश करें।",
+    "normalCamera": "सामान्य कैमरा",
+    "normalCameraDesc": "त्वचा विश्लेषण · बाल विश्लेषण · लुक सलाहकार",
+    "microscopicCamera": "माइक्रोस्कोपिक कैमरा",
+    "microscopicCameraDesc": "स्कैल्प विश्लेषण · स्कैल्प व्यू",
+    "detectedCameras": "पहचाने गए कैमरे — {count} मिले",
+    "camera": "कैमरा",
+    "selectPlaceholder": "चुनें…",
+    "saved": "सहेजा गया — होम पर वापस जा रहे हैं…",
+    "saveButton": "कैमरा असाइनमेंट सहेजें",
+    "invertOnCapture": "कैप्चर पर इनवर्ट",
+    "invertOnCaptureDesc": "चालू होने पर सेव फ़ोटो में बाएँ/दाएँ पलट जाते हैं। बंद होने पर फ़ोटो प्रीव्यू जैसा ही रहता है।",
+    "cameraRotation": "रोटेशन",
+    "cameraRotationHint": "दक्षिणावर्त / वामावर्त",
+    "experimental": "प्रयोगात्मक",
+    "experimentalDesc": "कैलिब्रेशन विकल्प। माइक्रोस्कोप ऑटो क्लिक केवल माइक्रोस्कोपिक कैमरा पर चलता है।",
+    "microscopeAutoClick": "माइक्रोस्कोप ऑटो क्लिक",
+    "microscopeAutoClickDesc": "डर्मास्कोप इमेज शार्प रहने पर अपने आप कैप्चर करता है।",
+    "showAdvanced": "एडवांस्ड दिखाएँ",
+    "hideAdvanced": "एडवांस्ड छिपाएँ",
+    "sharpnessThreshold": "शार्पनेस थ्रेशोल्ड",
+    "sharpnessThresholdHint": "लाइव स्कोर इस मान के बराबर या उससे अधिक होने पर GOOD। असली डर्मास्कोप फुटेज से कैलिब्रेट करें।",
+    "stabilityTime": "स्थिरता समय",
+    "stabilityTimeHint": "कैप्चर शुरू होने से पहले इमेज कितनी देर शार्प रहनी चाहिए।",
+    "bestFrameWindow": "बेस्ट-फ्रेम विंडो",
+    "bestFrameWindowHint": "इस विंडो में दिखी सबसे शार्प फ्रेम रखता है, फिर कैप्चर करता है।",
+    "ms": "{ms} मि.से.",
+    "focusSharp": "शार्प",
+    "focusFocusing": "फोकस हो रहा है",
+    "focusCapturing": "कैप्चर हो रहा है…",
+    "autoCapture": "ऑटो कैप्चर"
+  },
+  "captureImages": {
+    "instructions": "फोकस सेट करें और फोटो लें",
+    "sampleRegion": "नमूना क्षेत्र",
+    "clickedPhotos": "ली गई फ़ोटो",
+    "addImage": "छवि जोड़ें",
+    "noImage": "कोई छवि नहीं",
+    "retake": "फिर से लें",
+    "analyze": "विश्लेषण करें",
+    "next": "अगला",
+    "captureAllImages": "कृपया सभी छवियाँ कैप्चर करें",
+    "sameCameraWarning": "सामान्य और माइक्रोस्कोपिक कैमरा एक ही डिवाइस हैं।",
+    "sameCameraWarningHint": "यह फ़ोटो डर्मास्कोप की नहीं हो सकती। रीटेक के लिए माइक्रोस्कोपिक कैमरा चुनें — बाकी सेशन में वही इस्तेमाल होगा।",
+    "changeCamera": "कैमरा बदलें",
+    "normalCameraBadge": "सामान्य",
+    "noOtherCameras": "कोई और कैमरा नहीं मिला। डर्मास्कोप कनेक्ट कर यहाँ चुनें।",
+    "cameraFallback": "कैमरा",
+    "skinRegions": {
+      "nose": "नाक",
+      "sideCheek": "साइड गाल",
+      "forehead": "माथा"
+    },
+    "headParts": {
+      "frontal": "अग्रभाग",
+      "occipital": "पश्चभाग",
+      "parietal": "शीर्षभाग",
+      "temporal": "कर्णभाग"
+    }
+  },
+  "hairstyleResult": {
+    "noPreviousResult": "कोई पिछला परिणाम नहीं",
+    "original": "मूल",
+    "input": "इनपुट",
+    "loadingPrevious": "पिछले परिणाम लोड हो रहे हैं...",
+    "noPreviousFound": "कोई पिछला परिणाम नहीं मिला",
+    "errorLoadingPrevious": "पिछले परिणाम लोड करने में विफल",
+    "addOnHaircut": "इस छवि के साथ जारी रखें: हेयरकट ट्राई-ऑन",
+    "addOnHaircolor": "इस छवि के साथ जारी रखें: बाल रंग ट्राई-ऑन",
+    "addOnBeard": "इस छवि के साथ जारी रखें: दाढ़ी ट्राई-ऑन",
+    "addOn": "इस छवि के साथ जारी रखें: कोई अन्य सेवा चुनें"
+  },
+  "recommendedLooks": {
+    "analyzing": "आपकी फ़ोटो का विश्लेषण करके सिफारिशें तैयार की जा रही हैं...",
+    "noRecommendations": "कोई हेयरस्टाइल सिफारिश उपलब्ध नहीं",
+    "goBack": "वापस जाएँ",
+    "stylingOptions": "स्टाइलिंग विकल्प",
+    "maintenance": "रखरखाव",
+    "proceed": "आगे बढ़ें"
+  },
+  "recommendedHaircolor": {
+    "analyzing": "आपकी फ़ोटो का विश्लेषण करके बाल रंग सिफारिशें तैयार की जा रही हैं...",
+    "noRecommendations": "कोई बाल रंग सिफारिश उपलब्ध नहीं",
+    "goBack": "वापस जाएँ"
+  },
+  "reportForm": {
+    "title": "अपनी रिपोर्ट डाउनलोड करें",
+    "description": "अपनी व्यक्तिगत त्वचा विश्लेषण रिपोर्ट पाने के लिए अपना विवरण दर्ज करें",
+    "labels": {
+      "fullName": "पूरा नाम",
+      "phoneNumber": "फ़ोन नंबर"
+    },
+    "placeholders": {
+      "name": "राम कुमार",
+      "phone": "9876543210"
+    },
+    "errors": {
+      "nameRequired": "नाम आवश्यक है",
+      "phoneRequired": "फ़ोन नंबर आवश्यक है",
+      "phoneInvalid": "कृपया मान्य 10 अंकों का फ़ोन नंबर दर्ज करें"
+    },
+    "buttons": {
+      "downloading": "PDF तैयार हो रहा है...",
+      "download": "रिपोर्ट डाउनलोड करें"
+    },
+    "securityNote": "आपकी जानकारी सुरक्षित और एन्क्रिप्टेड है"
+  },
+  "reportPage": {
+    "loading": "रिपोर्ट लोड हो रही है...",
+    "notFound": "रिपोर्ट नहीं मिली",
+    "userPhoto": "उपयोगकर्ता फ़ोटो",
+    "report": "रिपोर्ट",
+    "skinAnalysisReport": "त्वचा विश्लेषण",
+    "hairAnalysisReport": "बाल विश्लेषण रिपोर्ट",
+    "majorConcerns": "प्रमुख चिंताएँ",
+    "minorConcerns": "गौण चिंताएँ",
+    "toDos": "करने योग्य",
+    "avoid": "से बचें",
+    "recommendedServices": "अनुशंसित सेवाएँ",
+    "dionaSkinFlyer": {
+      "servicesOneAlt": "त्वचा सेवाएँ — पृष्ठ 1",
+      "servicesTwoAlt": "त्वचा सेवाएँ — पृष्ठ 2",
+      "customLastPageAlt": "सैलून सेवाएँ"
+    },
+    "status": {
+      "excellent": "उत्कृष्ट",
+      "good": "अच्छा",
+      "needAttention": "ध्यान देने की आवश्यकता",
+      "requiresTreatment": "उपचार की आवश्यकता"
+    },
+    "services": {
+      "hydrafacial": {
+        "title": "हाइड्राफेशियल (एंटी-एक्ने फोकस)",
+        "description": "रोम छिद्रों की गहरी सफाई करता है और बिना रोक के हाइड्रेट करता है।"
+      },
+      "ledTherapy": {
+        "title": "LED लाइट थेरेपी (नीली + लाल रोशनी)",
+        "description": "मुँहासे पैदा करने वाले बैक्टीरिया से लड़ता है और सूजन कम करता है।"
+      },
+      "chemicalPeel": {
+        "title": "हल्का केमिकल पील (AHA/BHA)",
+        "description": "त्वचा की बनावट सुधारता है और रोम छिद्रों को धीरे से साफ करता है।"
+      },
+      "oxyFacial": {
+        "title": "ऑक्सीफेशियल या ऑक्सीजन डोम थेरेपी",
+        "description": "उपचार में सहायता करता है और दिखाई देने वाली लालिमा कम करता है।"
+      },
+      "eyeTreatment": {
+        "title": "आँखों के नीचे हाइड्रेशन उपचार",
+        "description": "काले घेरों को हल्का करने और चमक बढ़ाने में मदद करता है।"
+      }
+    },
+    "defaultTodo": {
+      "title": "वर्तमान दिनचर्या बनाए रखें",
+      "description": "स्वस्थ त्वचा बनाए रखने के लिए अपनी वर्तमान स्किनकेयर आदतें जारी रखें।"
+    },
+    "avoidItems": {
+      "heavyCreams": "भारी क्रीम या मोटे मॉइस्चराइज़र जो रोम छिद्रों को बंद कर सकते हैं",
+      "faceOils": "दैनिक उपयोग में फेस ऑयल, विशेषकर सक्रिय मुँहासे के दौरान",
+      "physicalScrubs": "भौतिक स्क्रब या कठोर एक्सफोलिएंट जो लालिमा बढ़ा सकते हैं",
+      "fragrantProducts": "सुगंधित स्किनकेयर उत्पाद जो संवेदनशीलता पैदा कर सकते हैं",
+      "skippingSunscreen": "सनस्क्रीन छोड़ना, जो पिगमेंटेशन गहरा कर सकता है"
+    }
+  },
+  "hairReportPage": {
+    "userPhoto": "उपयोगकर्ता फ़ोटो",
+    "hairAnalysis": "बाल विश्लेषण",
+    "report": "रिपोर्ट",
+    "yourHairScore": "आपका बाल स्कोर",
+    "averageHairHealthScore": "औसत बाल स्वास्थ्य स्कोर",
+    "majorConcerns": "प्रमुख चिंताएँ",
+    "minorConcerns": "गौण चिंताएँ",
+    "toDos": "करने योग्य",
+    "avoid": "से बचें"
+  },
+  "customLookHaircolor": {
+    "selectColourShade": "एक रंग छाया चुनें:",
+    "selectColourTechnique": "एक रंग तकनीक चुनें:",
+    "proceed": "आगे बढ़ें",
+    "selectAllOptions": "कृपया सभी विकल्प चुनें",
+    "moreCategories": "और रंग श्रेणियाँ",
+    "previousCategories": "पिछली रंग श्रेणियाँ",
+    "categories": {
+      "blackDeepBrown": "काला और गहरा भूरा",
+      "chocolateWarmBrown": "चॉकलेट और वार्म ब्राउन",
+      "blonde": "ब्लॉन्ड",
+      "copperAuburn": "कॉपर और ऑबर्न",
+      "burgundyPlum": "बरगंडी और प्लम",
+      "fashion": "फैशन"
+    },
+    "shades": {
+      "naturalBlack": "नेचुरल ब्लैक",
+      "softBlack": "सॉफ्ट ब्लैक",
+      "espressoBrown": "एस्प्रेसो ब्राउन",
+      "darkChocolate": "डार्क चॉकलेट",
+      "chocolateBrown": "चॉकलेट ब्राउन",
+      "mochaBrown": "मोका ब्राउन",
+      "chestnutBrown": "चेस्टनट ब्राउन",
+      "caramelBrown": "कारमेल ब्राउन",
+      "darkBlonde": "डार्क ब्लॉन्ड",
+      "honeyBlonde": "हनी ब्लॉन्ड",
+      "goldenBlonde": "गोल्डन ब्लॉन्ड",
+      "ashBlonde": "ऐश ब्लॉन्ड",
+      "lightCopper": "लाइट कॉपर",
+      "copper": "कॉपर",
+      "cinnamonRed": "सिनमन रेड",
+      "auburn": "ऑबर्न",
+      "deepRed": "डीप रेड",
+      "burgundy": "बरगंडी",
+      "wineRed": "वाइन रेड",
+      "plum": "प्लम",
+      "rosePink": "रोज़ पिंक",
+      "lavender": "लैवेंडर",
+      "blue": "ब्लू",
+      "emeraldGreen": "एमराल्ड ग्रीन"
+    },
+    "techniques": {
+      "global": "ग्लोबल",
+      "ombre": "ओम्ब्रे",
+      "balayage": "बालायाज",
+      "streaks": "स्ट्रीक्स",
+      "highlights": "हाइलाइट्स"
+    }
+  },
+  "hairstyleSelection": {
+    "selectHaircut": "एक हेयरकट चुनें:",
+    "stylingOptions": "स्टाइलिंग विकल्प:",
+    "addBangs": "बैंग्स जोड़ें:",
+    "proceed": "आगे बढ़ें",
+    "haircuts": {
+      "wolfCut": "वुल्फ कट",
+      "messyLob": "मेसी लॉब",
+      "frenchBob": "फ्रेंच बॉब",
+      "aLineBob": "ए-लाइन बॉब"
+    },
+    "styling": {
+      "blowDry": "ब्लो ड्राई",
+      "straightening": "स्ट्रेटनिंग",
+      "curly": "कर्ली"
+    },
+    "bangs": {
+      "curtain": "कर्टन",
+      "fringes": "फ्रिंजेस",
+      "sideSwept": "साइड स्वेप्ट"
+    }
+  },
+  "hairstyleSelector": {
+    "stylingOptions": "स्टाइलिंग विकल्प:",
+    "addBangs": "बैंग्स जोड़ें:",
+    "fadeOptions": "फेड विकल्प:",
+    "none": "कोई नहीं",
+    "styling": {
+      "blowDry": "ब्लो ड्राई",
+      "straightening": "स्ट्रेटनिंग",
+      "curly": "कर्ली"
+    },
+    "bangs": {
+      "curtain": "कर्टन",
+      "fringes": "फ्रिंजेस",
+      "sideSwept": "साइड स्वेप्ट"
+    },
+    "fades": {
+      "taperFade": "टेपर फेड",
+      "mediumFade": "मीडियम फेड",
+      "skinFade": "स्किन फेड"
+    }
+  },
+  "haircutGrid": {
+    "selectHaircut": "एक हेयरकट चुनें:",
+    "selectHaircutOptional": "एक हेयरकट चुनें (वैकल्पिक):",
+    "female": {
+      "classicPixie": "क्लासिक पिक्सी",
+      "frenchBob": "फ्रेंच बॉब",
+      "aLineBob": "ए-लाइन बॉब",
+      "messyLongBob": "मेसी लॉन्ग बॉब",
+      "bluntLob": "ब्लंट लॉब",
+      "butterflyCut": "बटरफ्लाई कट",
+      "longLayers": "लॉन्ग लेयर्स",
+      "wolfCut": "वुल्फ कट"
+    },
+    "male": {
+      "crewCut": "क्रू कट",
+      "caesarCut": "सीज़र कट",
+      "frenchCrop": "फ्रेंच क्रॉप",
+      "undercut": "अंडरकट",
+      "fadePompadour": "फेड पोम्पाडोर",
+      "quiff": "टेक्सचर्ड क्विफ",
+      "slickedBack": "स्लिक्ड बैक",
+      "mullet": "मुलेट",
+      "buzzCut": "बज़ कट",
+      "centerParted": "सेंटर पार्टेड"
+    }
+  },
+  "beardGrid": {
+    "selectBeard": "एक दाढ़ी चुनें",
+    "previousPage": "पिछला पृष्ठ",
+    "nextPage": "अगला पृष्ठ",
+    "cleanShave": "क्लीन शेव",
+    "stubbleTrimmed": "स्टबल / ट्रिम्ड",
+    "anchor": "एंकर",
+    "goatee": "गोटी",
+    "vanDyke": "वैन डाइक",
+    "verdi": "वर्डी",
+    "ducktail": "डकटेल",
+    "horseshoe": "हॉर्सशू",
+    "naturalMustache": "प्राकृतिक मूँछ",
+    "handlebarMustache": "हैंडलबार मूँछ",
+    "muttonChops": "मटन चॉप्स",
+    "frenchFork": "फ्रेंच फोर्क",
+    "lowTaperFade": "लो टेपर फेड",
+    "midFade": "मिड फेड",
+    "italian": "इटैलियन"
+  },
+  "report": {
+    "title": "आपकी रिपोर्ट",
+    "score": "स्कोर",
+    "good": "अच्छा",
+    "moderate": "मध्यम",
+    "poor": "खराब",
+    "protect": "सुरक्षा करें",
+    "treat": "उपचार करें",
+    "summary": "सारांश",
+    "recommendations": "सिफारिशें",
+    "download": "रिपोर्ट डाउनलोड करें",
+    "share": "रिपोर्ट साझा करें"
+  },
+  "camera": {
+    "capture": "कैप्चर करें",
+    "retake": "फिर से लें",
+    "usePhoto": "फोटो का उपयोग करें",
+    "switchCamera": "कैमरा बदलें",
+    "permissionDenied": "कैमरा अनुमति अस्वीकृत",
+    "permissionMessage": "कृपया फोटो लेने के लिए कैमरा एक्सेस की अनुमति दें"
+  },
+  "form": {
+    "submit": "जमा करें",
+    "cancel": "रद्द करें",
+    "next": "अगला",
+    "previous": "पिछला",
+    "save": "सहेजें",
+    "name": "नाम",
+    "email": "ईमेल",
+    "phone": "फोन",
+    "age": "उम्र",
+    "gender": "लिंग",
+    "male": "पुरुष",
+    "female": "महिला",
+    "other": "अन्य"
+  },
+  "errors": {
+    "somethingWrong": "कुछ गलत हो गया",
+    "tryAgain": "कृपया पुनः प्रयास करें",
+    "networkError": "नेटवर्क त्रुटि। कृपया अपना कनेक्शन जांचें",
+    "invalidInput": "अमान्य इनपुट",
+    "required": "यह फ़ील्ड आवश्यक है"
+  },
+  "sessionResults": {
+    "title": "سत्र परिणाम",
+    "hairstyle": "हेयरस्टाइल",
+    "haircolor": "बालों के रंग",
+    "beard": "दाढ़ी ट्राई-ऑन",
+    "makeup": "मेकअप",
+    "loading": "लोड हो रहा है...",
+    "noResults": "कोई परिणाम नहीं मिला",
+    "qrTitle": "अपना परिणाम डाउनलोड करें",
+    "qrSubtitle": "अपने फ़ोन से इस QR कोड को स्कैन करें और सत्र परिणाम तुरंत देखें व डाउनलोड करें।",
+    "qrFooter": "स्कैन करने और अपने लुक खोलने के लिए कैमरा या QR ऐप खोलें।"
+  }
+}

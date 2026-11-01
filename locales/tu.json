@@ -1,0 +1,679 @@
+{
+  "common": {
+    "poweredBy": "ద్వారా నడపబడింది",
+    "home": "హోమ్",
+    "back": "వెనక్కి",
+    "next": "తదుపరి",
+    "previous": "మునుపటి",
+    "proceed": "కొనసాగించు",
+    "cancel": "రద్దు చేయి",
+    "save": "సేవ్ చేయి",
+    "submit": "సమర్పించు"
+  },
+  "landing": {
+    "welcome": "భవిష్యత్తుకు స్వాగతం!",
+    "beginConsultation": "మీ AI సంప్రదింపు ప్రారంభించండి",
+    "scalpView": "మైక్రోస్కోపిక్ స్కాల్ప్ వీక్షణ",
+    "cameraSettings": "కెమెరా సెట్టింగ్‌లు",
+    "logout": "లాగ్ అవుట్"
+  },
+  "notifications": {
+    "title": "నోటిఫికేషన్లు",
+    "popupTitle": "నోటిఫికేషన్",
+    "close": "మూసివేయి",
+    "loading": "నోటిఫికేషన్లు లోడ్ అవుతున్నాయి…",
+    "empty": "ఇంకా నోటిఫికేషన్లు లేవు.",
+    "loadError": "నోటిఫికేషన్లు లోడ్ కాలేదు.",
+    "retry": "మళ్లీ ప్రయత్నించండి",
+    "unread": "కొత్త"
+  },
+  "home": {
+    "title": "హోమ్",
+    "instructions": "ఫోటో తీయడానికి సూచనలు",
+    "instruction1": "ముందు వైపు ఫోటో తీయండి, కెమెరా వైపు చూస్తూ.",
+    "instruction2": "మీ జుట్టును విప్పండి.",
+    "instruction3": "గది వెలుతురు వేసి, మీ ముఖం సరిగ్గా కనిపించేలా చేయండి.",
+    "recommended": "సిఫారసు చేయబడింది",
+    "avoid": "నివారించండి"
+  },
+  "salonProducts": {
+    "title": "సెలూన్ ఉత్పత్తులు",
+    "tabs": {
+      "hair": "జుట్టు",
+      "skin": "చర్మం"
+    },
+    "empty": "మీ సెలూన్‌కు {type} ఉత్పత్తులు అందుబాటులో లేవు.",
+    "emptyFiltered": "ఈ ఫిల్టర్‌లకు సరిపోయే ఉత్పత్తులు లేవు.",
+    "loadError": "ఉత్పత్తులు లోడ్ కాలేదు. దయచేసి మళ్లీ ప్రయత్నించండి.",
+    "filters": {
+      "brand": "బ్రాండ్",
+      "category": "వర్గం",
+      "subcategory": "ఉపవర్గం",
+      "sort": "క్రమం",
+      "sortDefault": "డిఫాల్ట్",
+      "all": "అన్నీ",
+      "priceLowHigh": "ధర: తక్కువ నుంచి ఎక్కువ",
+      "priceHighLow": "ధర: ఎక్కువ నుంచి తక్కువ",
+      "clearFilters": "ఫిల్టర్‌లు క్లియర్ చేయండి"
+    }
+  },
+  "selectTool": {
+    "title": "AI సంప్రదింపు సాధనం ఎంచుకోండి",
+    "skinAnalyzer": "చర్మ విశ్లేషకుడు",
+    "hairAnalyzer": "జుట్టు విశ్లేషకుడు",
+    "lookAdvisor": "లుక్ సలహాదారు",
+    "serviceDisabled": "ఈ సేవ మీ సెలూన్ ఖాతాకు నిలిపివేయబడింది. దయచేసి మీ నిర్వాహకుడిని సంప్రదించండి."
+  },
+  "skinAnalysis": {
+    "title": "AI చర్మ విశ్లేషణ",
+    "analyzing": "మీ చర్మాన్ని విశ్లేషిస్తున్నారు",
+    "processingImage": "దయచేసి వేచి ఉండండి, మేము మీ చిత్రాన్ని ప్రాసెస్ చేస్తున్నాము...",
+    "generatingVisualization": "చర్మ విజువలైజేషన్ తయారవుతోంది",
+    "visualizationInProgress": "AI క్లినికల్ విజువలైజేషన్ జరుగుతోంది…",
+    "visualizationAlt": "చర్మ విశ్లేషణ విజువలైజేషన్",
+    "visualizationUnavailable": "విజువలైజేషన్ అందుబాటులో లేదు",
+    "results": "ఫలితాలు",
+    "recommendations": "సిఫారసులు",
+    "skinType": "చర్మ రకం",
+    "concerns": "ఆందోళనలు",
+    "texture": "ఆకృతి",
+    "moisture": "తేమ",
+    "oiliness": "నూనెతనం",
+    "sensitivity": "సున్నితత్వం",
+    "questions": {
+      "skinExposure": {
+        "question": "సూర్యకాంతికి చర్మ బహిర్గతం",
+        "rarely": "అరుదుగా",
+        "occasionally": "అప్పుడప్పుడు",
+        "frequently": "తరచుగా",
+        "veryFrequently": "చాలా తరచుగా"
+      },
+      "skinCareGoal": {
+        "question": "మీ చర్మ సంరక్షణ లక్ష్యాన్ని ఎంచుకోండి",
+        "glowingRadiant": "మెరిసే, వెలుగుతున్న చర్మం",
+        "antiAging": "యాంటీ-ఏజింగ్",
+        "acneControl": "మొటిమల నియంత్రణ",
+        "moistureBalance": "తేమ సమతుల్యత"
+      },
+      "skinConcerns": {
+        "question": "వ్యక్తిగత చర్మ ఆందోళన ఏదైనా?",
+        "acne": "మొటిమలు",
+        "redness": "ఎరుపు",
+        "darkCircles": "చీకటి వలయాలు",
+        "oiliness": "నూనెతనం",
+        "pigmentation": "పిగ్మెంటేషన్",
+        "wrinkles": "ముడతలు",
+        "pores": "రంధ్రాలు",
+        "skinTexture": "చర్మ ఆకృతి"
+      }
+    },
+    "progress": {
+      "uploading": "మీ ఫోటో అప్‌లోడ్ అవుతోంది…",
+      "detecting": "ముఖ లక్షణాలు గుర్తించబడుతున్నాయి…",
+      "analyzing": "చర్మ విశ్లేషణ జరుగుతోంది…",
+      "finalizing": "ఫలితాలు సిద్ధం చేస్తున్నాం…",
+      "labels": {
+        "face": "ముఖం"
+      }
+    }
+  },
+  "hairAnalysis": {
+    "title": "AI జుట్టు విశ్లేషణ",
+    "analyzing": "మీ జుట్టును విశ్లేషిస్తున్నారు",
+    "processingImages": "దయచేసి వేచి ఉండండి, మేము మీ చిత్రాలను ప్రాసెస్ చేస్తున్నాము...",
+    "results": "ఫలితాలు",
+    "hairType": "జుట్టు రకం",
+    "condition": "స్థితి",
+    "thickness": "మందం",
+    "density": "సాంద్రత",
+    "scalp": "స్కాల్ప్ స్థితి",
+    "questions": {
+      "hairTreated": {
+        "question": "గత 6 నెలల్లో జుట్టు చికిత్స/రంగు",
+        "yesColoured": "అవును, రంగేశాను",
+        "chemicallyTreated": "రసాయనిక చికిత్స",
+        "chemicalDescription": "కెరాటిన్, పెర్మ్, మొదలైనవి",
+        "yesBoth": "అవును, రెండూ",
+        "no": "లేదు"
+      },
+      "haircareGoal": {
+        "question": "మీ జుట్టు సంరక్షణ లక్ష్యాన్ని ఎంచుకోండి",
+        "reducedHairFall": "జుట్టు రాలడం తగ్గించుకోండి",
+        "dandruffControl": "చుండ్రు నియంత్రణ",
+        "increaseThickness": "జుట్టు మందం పెంచండి",
+        "repairDamaged": "దెబ్బతిన్న జుట్టును మరమ్మతు చేయండి"
+      },
+      "hairConcerns": {
+        "question": "వ్యక్తిగత జుట్టు ఆందోళన ఏదైనా",
+        "dandruff": "చుండ్రు",
+        "dryScalp": "పొడి స్కాల్ప్",
+        "splitEnds": "చీలిన చివరలు",
+        "frizziness": "ఫ్రిజ్జీనెస్",
+        "itchyScalp": "దురద స్కాల్ప్",
+        "hairFall": "జుట్టు రాలడం"
+      }
+    },
+    "progress": {
+      "uploading": "స్కాల్ప్ ఫోటోలు అప్‌లోడ్ అవుతున్నాయి…",
+      "detecting": "స్కాల్ప్ మరియు జుట్టు ప్రాంతాలు చదవబడుతున్నాయి…",
+      "analyzing": "జుట్టు & స్కాల్ప్ విశ్లేషణ జరుగుతోంది…",
+      "finalizing": "ఫలితాలు సిద్ధం చేస్తున్నాం…",
+      "labels": {
+        "face": "ముఖం"
+      }
+    }
+  },
+  "lookAdvisor": {
+    "title": "లుక్ సలహాదారు",
+    "selectHairstyle": "హెయిర్‌స్టైల్ ఎంచుకోండి",
+    "selectColor": "రంగు ఎంచుకోండి",
+    "recommended": "సిఫారసు చేయబడిన లుక్",
+    "customLook": "కస్టమ్ లుక్",
+    "hairstyles": "హెయిర్‌స్టైళ్ళు",
+    "colors": "రంగులు",
+    "proceed": "కొనసాగించు",
+    "tryOn": "ప్రయత్నించండి",
+    "backToResults": "ఫలితాలకు తిరిగి వెళ్ళు",
+    "tabs": {
+      "recommendedLook": "సిఫారసు చేయబడిన లుక్",
+      "customLook": "కస్టమ్ లుక్",
+      "results": "ఫలితాలు"
+    },
+    "progress": {
+      "creatingLook": "మీ లుక్ సృష్టిస్తున్నాం",
+      "craftingLooks": "లుక్‌లు సిద్ధం చేస్తున్నాం",
+      "craftingColors": "రంగులు కనుగొనుతున్నాం",
+      "uploading": "మీ ఫోటో సిద్ధం చేస్తున్నాం…",
+      "detecting": "ముఖ లక్షణాలు చదువుతున్నాం…",
+      "generating": "మీ లుక్ జనరేట్ చేస్తున్నాం…",
+      "matchingLooks": "సరిపోయే లుక్‌లు చూస్తున్నాం…",
+      "matchingColors": "రంగు షేడ్‌లు సరిపోలుస్తున్నాం…",
+      "finalizing": "చివరి అంచనాలు…"
+    },
+    "questions": {
+      "gender": {
+        "question": "మీ లింగాన్ని ఎంచుకోండి",
+        "female": "స్త్రీ",
+        "male": "పురుషుడు"
+      },
+      "service": {
+        "question": "మీ సేవను ఎంచుకోండి",
+        "hairColour": "జుట్టు రంగు",
+        "haircutStyling": "హెయిర్‌కట్/స్టైలింగ్",
+        "beard": "గడ్డం",
+        "makeup": "మేకప్",
+        "bridalMakeup": "బ్రైడల్ మేకప్"
+      },
+      "hairLength": {
+        "question": "మీకు ఇష్టమైన జుట్టు పొడవును ఎంచుకోండి",
+        "short": "పొట్టి",
+        "medium": "మధ్యమం",
+        "long": "పొడవు",
+        "shortHaircut": "పొట్టి హెయిర్‌కట్",
+        "mediumHaircut": "మధ్యమ హెయిర్‌కట్",
+        "longHaircut": "పొడవు హెయిర్‌కట్"
+      },
+      "ageGroup": {
+        "question": "మీ వయసు సమూహాన్ని ఎంచుకోండి"
+      },
+      "colorFamily": {
+        "question": "మీకు ఇష్టమైన రంగు కుటుంబాన్ని ఎంచుకోండి",
+        "naturalDarks": "సహజ చీకటి రంగులు",
+        "naturalDarksDesc": "నలుపు మరియు చీకటి గోధుమ",
+        "warmShades": "వెచ్చని షేడ్‌లు",
+        "warmShadesDesc": "గోల్డెన్ మరియు కారమెల్",
+        "redBurgundies": "ఎరుపు మరియు బర్గండీ",
+        "coolShades": "చల్లని షేడ్‌లు",
+        "coolShadesDesc": "బ్లాండ్ మరియు యాష్",
+        "fashionColours": "ఫ్యాషన్ రంగులు",
+        "fashionColoursDesc": "ఆకుపచ్చ, నీలం మరియు వైలెట్"
+      }
+    },
+    "messages": {
+      "hairstyleRecommendationError": "హెయిర్‌స్టైల్ సిఫారసులు పొందడంలో విఫలమైంది. దయచేసి మళ్ళీ ప్రయత్నించండి.",
+      "haircolorRecommendationError": "జుట్టు రంగు సిఫారసులు పొందడంలో విఫలమైంది. దయచేసి మళ్ళీ ప్రయత్నించండి.",
+      "sessionError": "సెషన్ సృష్టించడంలో విఫలమైంది. దయచేసి మళ్ళీ ప్రయత్నించండి.",
+      "haircolorSuccess": "జుట్టు రంగు విజయవంతంగా ప్రాసెస్ చేయబడింది!",
+      "haircolorError": "జుట్టు రంగు ప్రాసెస్ చేయడంలో విఫలమైంది. దయచేసి మళ్ళీ ప్రయత్నించండి.",
+      "hairstyleSuccess": "హెయిర్‌స్టైల్ విజయవంతంగా ప్రాసెస్ చేయబడింది!",
+      "hairstyleError": "హెయిర్‌స్టైల్ ప్రాసెస్ చేయడంలో విఫలమైంది. దయచేసి మళ్ళీ ప్రయత్నించండి.",
+      "ratingThanks": "మీ రేటింగ్‌కు ధన్యవాదాలు!",
+      "selectAllOptions": "దయచేసి అన్ని ఎంపికలు ఎంచుకోండి",
+      "selectAtLeastOneOption": "దయచేసి కనీసం ఒక ఎంపికను ఎంచుకోండి",
+      "imageNotReady": "ఫోటో ఇంకా సిద్ధంగా లేదు. దయచేసి కొంత సేపు వేచి ఉండి మళ్ళీ ప్రయత్నించండి."
+    }
+  },
+  "hairAnalysisResults": {
+    "tabs": {
+      "hairMetrics": "జుట్టు మెట్రిక్స్",
+      "analysis": "విశ్లేషణ"
+    },
+    "labels": {
+      "front": "ముందు",
+      "back": "వెనక",
+      "side": "పక్క"
+    },
+    "hairHealthIndex": "జుట్టు ఆరోగ్య సూచిక",
+    "generateQRCode": "రిపోర్ట్ QR కోడ్ రూపొందించండి",
+    "downloadReport": "రిపోర్ట్ డౌన్‌లోడ్ చేయండి",
+    "qrDialog": {
+      "title": "రిపోర్ట్ డౌన్‌లోడ్ చేయడానికి స్కాన్ చేయండి",
+      "description": "రిపోర్ట్ డౌన్‌లోడ్ ఫారమ్‌ను యాక్సెస్ చేయడానికి ఈ QR కోడ్ స్కాన్ చేయండి",
+      "instructions": "వినియోగదారులు తమ వివరాలు నమోదు చేసి PDF రిపోర్ట్ డౌన్‌లోడ్ చేసుకోవచ్చు"
+    }
+  },
+  "skinAnalysisResult": {
+    "tabs": {
+      "skinMetrics": "చర్మ మెట్రిక్స్",
+      "recommendations": "సిఫారసులు"
+    },
+    "skinScore": "చర్మ స్కోర్",
+    "skinHealthIndex": "చర్మ ఆరోగ్య సూచిక",
+    "deepSkinAnalysis": "లోతైన చర్మ విశ్లేషణ:",
+    "status": {
+      "needsAttention": "శ్రద్ధ అవసరం",
+      "average": "సగటు",
+      "good": "మంచిది"
+    },
+    "generateQRCode": "రిపోర్ట్ QR కోడ్ రూపొందించండి",
+    "downloadReport": "రిపోర్ట్ డౌన్‌లోడ్ చేయండి",
+    "qrDialog": {
+      "title": "రిపోర్ట్ డౌన్‌లోడ్ చేయడానికి స్కాన్ చేయండి",
+      "description": "రిపోర్ట్ డౌన్‌లోడ్ ఫారమ్‌ను యాక్సెస్ చేయడానికి ఈ QR కోడ్ స్కాన్ చేయండి",
+      "instructions": "వినియోగదారులు తమ వివరాలు నమోదు చేసి PDF రిపోర్ట్ డౌన్‌లోడ్ చేసుకోవచ్చు"
+    }
+  },
+  "productRecommendations": {
+    "reportTitle": "మీ విశ్లేషణ రిపోర్ట్",
+    "reportSubtitle": "మీ పూర్తి రిపోర్ట్ డౌన్‌లోడ్ చేయడానికి QR కోడ్ స్కాన్ చేయండి లేదా దిగువ నొక్కండి",
+    "downloadReport": "రిపోర్ట్ డౌన్‌లోడ్ చేయండి",
+    "selectedProducts": "మీరు ఎంచుకున్న ఉత్పత్తులు",
+    "total": "మొత్తం",
+    "backToHome": "హోమ్‌కు తిరిగి వెళ్ళు",
+    "cartTitle": "మీ కార్ట్",
+    "cartEmpty": "కార్ట్ ఖాళీగా ఉంది",
+    "saving": "సేవ్ చేస్తున్నాము…",
+    "continue": "కొనసాగించు",
+    "continueWithItems": "కొనసాగించు ({count} వస్తువులు)",
+    "topRecommendations": "మీకు అగ్రశ్రేణి సిఫారసులు",
+    "noProducts": "ఉత్పత్తి సిఫారసులు అందుబాటులో లేవు.",
+    "added": "జోడించబడింది",
+    "addToCart": "కార్ట్‌కు జోడించు"
+  },
+  "cameraSetup": {
+    "title": "కెమెరా సెట్టింగ్‌లు",
+    "subtitle": "ప్రతి వినియోగ సందర్భానికి కెమెరాలు కేటాయించండి",
+    "detecting": "కెమెరాలు గుర్తిస్తున్నాము…",
+    "noCamerasTitle": "కెమెరాలు కనుగొనబడలేదు.",
+    "noCamerasSubtitle": "దయచేసి కెమెరా కనెక్ట్ చేసి మళ్ళీ ప్రయత్నించండి.",
+    "retry": "మళ్ళీ ప్రయత్నించు",
+    "refresh": "రిఫ్రెష్",
+    "infoBanner": "కేటాయించే ముందు అన్ని కెమెరాలు కనెక్ట్ చేయండి. కొత్తగా అనుసంధానించిన కెమెరా కనుపించకపోతే రిఫ్రెష్ చేయండి.",
+    "normalCamera": "సాధారణ కెమెరా",
+    "normalCameraDesc": "చర్మ విశ్లేషణ · జుట్టు విశ్లేషణ · లుక్ సలహాదారు",
+    "microscopicCamera": "మైక్రోస్కోపిక్ కెమెరా",
+    "microscopicCameraDesc": "స్కాల్ప్ విశ్లేషణ · స్కాల్ప్ వీక్షణ",
+    "detectedCameras": "గుర్తించబడిన కెమెరాలు — {count} కనుగొనబడ్డాయి",
+    "camera": "కెమెరా",
+    "selectPlaceholder": "ఎంచుకోండి…",
+    "saved": "సేవ్ చేయబడింది — హోమ్‌కు తిరిగి వెళ్తున్నాము…",
+    "saveButton": "కెమెరా కేటాయింపులు సేవ్ చేయండి",
+    "invertOnCapture": "క్యాప్చర్‌లో ఇన్వర్ట్",
+    "invertOnCaptureDesc": "ఆన్ చేస్తే సేవ్ అయిన ఫోటోలో ఎడమ/కుడి తిరుగుతాయి. ఆఫ్ ఉంటే ఫోటో ప్రివ్యూతో సరిపోతుంది.",
+    "cameraRotation": "రొటేషన్",
+    "cameraRotationHint": "క్లాక్‌వైజ్ / కౌంటర్‌క్లాక్‌వైజ్",
+    "experimental": "ప్రయోగాత్మకం",
+    "experimentalDesc": "క్యాలిబ్రేషన్ ఎంపికలు. మైక్రోస్కోప్ ఆటో క్లిక్ కేవలం మైక్రోస్కోపిక్ కెమెరాపైనే పనిచేస్తుంది.",
+    "microscopeAutoClick": "మైక్రోస్కోప్ ఆటో క్లిక్",
+    "microscopeAutoClickDesc": "డెర్మాస్కోప్ ఇమేజ్ షార్ప్‌గా ఉన్నప్పుడు ఆటోమేటిక్‌గా క్యాప్చర్ చేస్తుంది.",
+    "showAdvanced": "అడ్వాన్స్‌డ్ చూపించు",
+    "hideAdvanced": "అడ్వాన్స్‌డ్ దాచు",
+    "sharpnessThreshold": "షార్ప్‌నెస్ థ్రెషోల్డ్",
+    "sharpnessThresholdHint": "లైవ్ స్కోర్ ఈ విలువకు సమానం లేదా ఎక్కువగా ఉంటే GOOD. అసలు డెర్మాస్కోప్ ఫుటేజ్‌తో క్యాలిబ్రేట్ చేయండి.",
+    "stabilityTime": "స్థిరత్వ సమయం",
+    "stabilityTimeHint": "క్యాప్చర్ మొదలవ్వడానికి ముందు ఇమేజ్ ఎంతసేపు షార్ప్‌గా ఉండాలి.",
+    "bestFrameWindow": "బెస్ట్-ఫ్రేమ్ విండో",
+    "bestFrameWindowHint": "ఈ విండోలో కనిపించిన అత్యంత షార్ప్ ఫ్రేమ్‌ను ఉంచి ఆపై క్యాప్చర్ చేస్తుంది.",
+    "ms": "{ms} మి.సె.",
+    "focusSharp": "షార్ప్",
+    "focusFocusing": "ఫోకస్ అవుతోంది",
+    "focusCapturing": "క్యాప్చర్ అవుతోంది…",
+    "autoCapture": "ఆటో క్యాప్చర్"
+  },
+  "captureImages": {
+    "instructions": "ఫోకస్ సెట్ చేయండి మరియు ఫోటో తీయండి",
+    "sampleRegion": "నమూనా ప్రాంతం",
+    "clickedPhotos": "తీసిన ఫోటోలు",
+    "addImage": "చిత్రం జోడించండి",
+    "noImage": "చిత్రం లేదు",
+    "retake": "మళ్ళీ తీయండి",
+    "analyze": "విశ్లేషించండి",
+    "next": "తదుపరి",
+    "captureAllImages": "దయచేసి అన్ని చిత్రాలు క్యాప్చర్ చేయండి",
+    "sameCameraWarning": "సాధారణ మరియు మైక్రోస్కోపిక్ కెమెరాలు ఒకే పరికరం.",
+    "sameCameraWarningHint": "ఈ ఫోటో డెర్మాస్కోప్ నుండి కాకపోవచ్చు. మళ్లీ తీయడానికి మైక్రోస్కోపిక్ కెమెరా ఎంచుకోండి — ఈ సెషన్ మొత్తం అదే వాడబడుతుంది.",
+    "changeCamera": "కెమెరా మార్చండి",
+    "normalCameraBadge": "సాధారణం",
+    "noOtherCameras": "ఇతర కెమెరాలు లేవు. డెర్మాస్కోప్ కనెక్ట్ చేసి ఇక్కడ ఎంచుకోండి.",
+    "cameraFallback": "కెమెరా",
+    "skinRegions": {
+      "nose": "ముక్కు",
+      "sideCheek": "పక్క చెక్కిళ్ళు",
+      "forehead": "నుదురు"
+    },
+    "headParts": {
+      "frontal": "ముందు భాగం",
+      "occipital": "వెనక భాగం",
+      "parietal": "శిఖర భాగం",
+      "temporal": "కణత భాగం"
+    }
+  },
+  "hairstyleResult": {
+    "noPreviousResult": "మునుపటి ఫలితం లేదు",
+    "original": "అసలైన",
+    "input": "ఇన్‌పుట్",
+    "loadingPrevious": "మునుపటి ఫలితాలు లోడ్ అవుతున్నాయి...",
+    "noPreviousFound": "మునుపటి ఫలితాలు కనుగొనబడలేదు",
+    "errorLoadingPrevious": "మునుపటి ఫలితాలు లోడ్ చేయడంలో విఫలమైంది",
+    "addOnHaircut": "ఈ చిత్రంతో కొనసాగించండి: హెయిర్‌కట్ ట్రై-ఆన్",
+    "addOnHaircolor": "ఈ చిత్రంతో కొనసాగించండి: జుట్టు రంగు ట్రై-ఆన్",
+    "addOnBeard": "ఈ చిత్రంతో కొనసాగించండి: గడ్డం ట్రై-ఆన్",
+    "addOn": "ఈ చిత్రంతో కొనసాగించండి: మరొక సేవను ఎంచుకోండి"
+  },
+  "recommendedLooks": {
+    "analyzing": "మీ ఫోటోను విశ్లేషించి సిఫారసులు తయారు చేస్తున్నారు...",
+    "noRecommendations": "హెయిర్‌స్టైల్ సిఫారసులు అందుబాటులో లేవు",
+    "goBack": "వెనక్కి వెళ్ళు",
+    "stylingOptions": "స్టైలింగ్ ఎంపికలు",
+    "maintenance": "నిర్వహణ",
+    "proceed": "కొనసాగించు"
+  },
+  "recommendedHaircolor": {
+    "analyzing": "మీ ఫోటోను విశ్లేషించి జుట్టు రంగు సిఫారసులు తయారు చేస్తున్నారు...",
+    "noRecommendations": "జుట్టు రంగు సిఫారసులు అందుబాటులో లేవు",
+    "goBack": "వెనక్కి వెళ్ళు"
+  },
+  "reportForm": {
+    "title": "మీ రిపోర్ట్ డౌన్‌లోడ్ చేయండి",
+    "description": "మీ వ్యక్తిగత చర్మ విశ్లేషణ రిపోర్ట్ పొందడానికి మీ వివరాలు నమోదు చేయండి",
+    "labels": {
+      "fullName": "పూర్తి పేరు",
+      "phoneNumber": "ఫోన్ నంబర్"
+    },
+    "placeholders": {
+      "name": "రామ్ కుమార్",
+      "phone": "9876543210"
+    },
+    "errors": {
+      "nameRequired": "పేరు అవసరం",
+      "phoneRequired": "ఫోన్ నంబర్ అవసరం",
+      "phoneInvalid": "దయచేసి చెల్లుబాటు అయ్యే 10 అంకెల ఫోన్ నంబర్ నమోదు చేయండి"
+    },
+    "buttons": {
+      "downloading": "PDF తయారవుతోంది...",
+      "download": "రిపోర్ట్ డౌన్‌లోడ్ చేయండి"
+    },
+    "securityNote": "మీ సమాచారం సురక్షితంగా మరియు గుప్తీకరించబడింది"
+  },
+  "reportPage": {
+    "loading": "రిపోర్ట్ లోడ్ అవుతోంది...",
+    "notFound": "రిపోర్ట్ కనుగొనబడలేదు",
+    "userPhoto": "వినియోగదారు ఫోటో",
+    "report": "రిపోర్ట్",
+    "skinAnalysisReport": "చర్మ విశ్లేషణ",
+    "hairAnalysisReport": "జుట్టు విశ్లేషణ రిపోర్ట్",
+    "majorConcerns": "ప్రధాన ఆందోళనలు",
+    "minorConcerns": "చిన్న ఆందోళనలు",
+    "toDos": "చేయవలసినవి",
+    "avoid": "నివారించండి",
+    "recommendedServices": "సిఫారసు చేయబడిన సేవలు",
+    "dionaSkinFlyer": {
+      "servicesOneAlt": "చర్మ సేవలు — పేజీ 1",
+      "servicesTwoAlt": "చర్మ సేవలు — పేజీ 2",
+      "customLastPageAlt": "సెలూన్ సేవలు"
+    },
+    "status": {
+      "excellent": "అత్యుత్తమం",
+      "good": "మంచిది",
+      "needAttention": "శ్రద్ధ అవసరం",
+      "requiresTreatment": "చికిత్స అవసరం"
+    },
+    "services": {
+      "hydrafacial": {
+        "title": "హైడ్రాఫేషియల్ (యాంటీ-యాక్నె ఫోకస్)",
+        "description": "రంధ్రాలను లోతుగా శుభ్రపరుస్తుంది మరియు అడ్డుపడకుండా హైడ్రేట్ చేస్తుంది."
+      },
+      "ledTherapy": {
+        "title": "LED లైట్ థెరపీ (నీలం + ఎరుపు వెలుతురు)",
+        "description": "మొటిమలు కలిగించే బ్యాక్టీరియాతో పోరాడుతుంది మరియు వాపును తగ్గిస్తుంది."
+      },
+      "chemicalPeel": {
+        "title": "తేలికపాటి కెమికల్ పీల్ (AHA/BHA)",
+        "description": "చర్మ ఆకృతిని మెరుగుపరుస్తుంది మరియు రంధ్రాలను మెత్తగా శుభ్రపరుస్తుంది."
+      },
+      "oxyFacial": {
+        "title": "ఆక్సీఫేషియల్ లేదా ఆక్సిజన్ డోమ్ థెరపీ",
+        "description": "నయం చేయడంలో సహాయపడుతుంది మరియు కనిపించే ఎరుపును తగ్గిస్తుంది."
+      },
+      "eyeTreatment": {
+        "title": "కళ్ళ కింద హైడ్రేషన్ చికిత్స",
+        "description": "చీకటి వలయాలను తేలికపరచడంలో మరియు ప్రకాశాన్ని పెంచడంలో సహాయపడుతుంది."
+      }
+    },
+    "defaultTodo": {
+      "title": "ప్రస్తుత దినచర్యను కొనసాగించండి",
+      "description": "ఆరోగ్యకరమైన చర్మాన్ని కాపాడుకోవడానికి మీ ప్రస్తుత స్కిన్‌కేర్ అలవాట్లు కొనసాగించండి."
+    },
+    "avoidItems": {
+      "heavyCreams": "రంధ్రాలను మూసే పెద్ద క్రీమ్‌లు లేదా మందమైన మాయిశ్చరైజర్‌లు",
+      "faceOils": "రోజువారీ వినియోగంలో ఫేస్ ఆయిల్‌లు, ముఖ్యంగా యాక్టివ్ మొటిమల సమయంలో",
+      "physicalScrubs": "ఎరుపును పెంచే శారీరక స్క్రబ్‌లు లేదా కఠినమైన ఎక్స్‌ఫోలియంట్‌లు",
+      "fragrantProducts": "సున్నితత్వాన్ని కలిగించే సుగంధభరిత స్కిన్‌కేర్ ఉత్పత్తులు",
+      "skippingSunscreen": "పిగ్మెంటేషన్‌ను మరింత చీకటి చేయగల సన్‌స్క్రీన్‌ను వదిలివేయడం"
+    }
+  },
+  "hairReportPage": {
+    "userPhoto": "వినియోగదారు ఫోటో",
+    "hairAnalysis": "జుట్టు విశ్లేషణ",
+    "report": "రిపోర్ట్",
+    "yourHairScore": "మీ జుట్టు స్కోర్",
+    "averageHairHealthScore": "సగటు జుట్టు ఆరోగ్య స్కోర్",
+    "majorConcerns": "ప్రధాన ఆందోళనలు",
+    "minorConcerns": "చిన్న ఆందోళనలు",
+    "toDos": "చేయవలసినవి",
+    "avoid": "నివారించండి"
+  },
+  "customLookHaircolor": {
+    "selectColourShade": "రంగు షేడ్ ఎంచుకోండి:",
+    "selectColourTechnique": "రంగు సాంకేతికతను ఎంచుకోండి:",
+    "proceed": "కొనసాగించు",
+    "selectAllOptions": "దయచేసి అన్ని ఎంపికలు ఎంచుకోండి",
+    "moreCategories": "మరిన్ని రంగు వర్గాలు",
+    "previousCategories": "మునుపటి రంగు వర్గాలు",
+    "categories": {
+      "blackDeepBrown": "నలుపు & డీప్ బ్రౌన్",
+      "chocolateWarmBrown": "చాక్లెట్ & వార్మ్ బ్రౌన్",
+      "blonde": "బ్లాండ్",
+      "copperAuburn": "కాపర్ & ఆబర్న్",
+      "burgundyPlum": "బర్గండీ & ప్లమ్",
+      "fashion": "ఫ్యాషన్"
+    },
+    "shades": {
+      "naturalBlack": "నేచురల్ బ్లాక్",
+      "softBlack": "సాఫ్ట్ బ్లాక్",
+      "espressoBrown": "ఎస్ప్రెసో బ్రౌన్",
+      "darkChocolate": "డార్క్ చాక్లెట్",
+      "chocolateBrown": "చాక్లెట్ బ్రౌన్",
+      "mochaBrown": "మోకా బ్రౌన్",
+      "chestnutBrown": "చెస్ట్‌నట్ బ్రౌన్",
+      "caramelBrown": "కారమెల్ బ్రౌన్",
+      "darkBlonde": "డార్క్ బ్లాండ్",
+      "honeyBlonde": "హనీ బ్లాండ్",
+      "goldenBlonde": "గోల్డెన్ బ్లాండ్",
+      "ashBlonde": "యాష్ బ్లాండ్",
+      "lightCopper": "లైట్ కాపర్",
+      "copper": "కాపర్",
+      "cinnamonRed": "సినమన్ రెడ్",
+      "auburn": "ఆబర్న్",
+      "deepRed": "డీప్ రెడ్",
+      "burgundy": "బర్గండీ",
+      "wineRed": "వైన్ రెడ్",
+      "plum": "ప్లమ్",
+      "rosePink": "రోజ్ పింక్",
+      "lavender": "లావెండర్",
+      "blue": "బ్లూ",
+      "emeraldGreen": "ఎమరాల్డ్ గ్రీన్"
+    },
+    "techniques": {
+      "global": "గ్లోబల్",
+      "ombre": "ఓంబ్రే",
+      "balayage": "బాలాయాజ్",
+      "streaks": "స్ట్రీక్స్",
+      "highlights": "హైలైట్స్"
+    }
+  },
+  "hairstyleSelection": {
+    "selectHaircut": "హెయిర్‌కట్ ఎంచుకోండి:",
+    "stylingOptions": "స్టైలింగ్ ఎంపికలు:",
+    "addBangs": "బ్యాంగ్స్ జోడించండి:",
+    "proceed": "కొనసాగించు",
+    "haircuts": {
+      "wolfCut": "వుల్ఫ్ కట్",
+      "messyLob": "మెస్సీ లాబ్",
+      "frenchBob": "ఫ్రెంచ్ బాబ్",
+      "aLineBob": "ఎ-లైన్ బాబ్"
+    },
+    "styling": {
+      "blowDry": "బ్లో డ్రై",
+      "straightening": "స్ట్రెయిటెనింగ్",
+      "curly": "కర్లీ"
+    },
+    "bangs": {
+      "curtain": "కర్టెన్",
+      "fringes": "ఫ్రింజెస్",
+      "sideSwept": "సైడ్ స్వెప్ట్"
+    }
+  },
+  "hairstyleSelector": {
+    "stylingOptions": "స్టైలింగ్ ఎంపికలు:",
+    "addBangs": "బ్యాంగ్స్ జోడించండి:",
+    "fadeOptions": "ఫేడ్ ఎంపికలు:",
+    "none": "ఏదీ కాదు",
+    "styling": {
+      "blowDry": "బ్లో డ్రై",
+      "straightening": "స్ట్రెయిటెనింగ్",
+      "curly": "కర్లీ"
+    },
+    "bangs": {
+      "curtain": "కర్టెన్",
+      "fringes": "ఫ్రింజెస్",
+      "sideSwept": "సైడ్ స్వెప్ట్"
+    },
+    "fades": {
+      "taperFade": "టేపర్ ఫేడ్",
+      "mediumFade": "మీడియం ఫేడ్",
+      "skinFade": "స్కిన్ ఫేడ్"
+    }
+  },
+  "haircutGrid": {
+    "selectHaircut": "హెయిర్‌కట్ ఎంచుకోండి:",
+    "selectHaircutOptional": "హెయిర్‌కట్ ఎంచుకోండి (ఐచ్ఛికం):",
+    "female": {
+      "classicPixie": "క్లాసిక్ పిక్సీ",
+      "frenchBob": "ఫ్రెంచ్ బాబ్",
+      "aLineBob": "ఎ-లైన్ బాబ్",
+      "messyLongBob": "మెస్సీ లాంగ్ బాబ్",
+      "bluntLob": "బ్లంట్ లాబ్",
+      "butterflyCut": "బటర్‌ఫ్లై కట్",
+      "longLayers": "లాంగ్ లేయర్స్",
+      "wolfCut": "వుల్ఫ్ కట్"
+    },
+    "male": {
+      "crewCut": "క్రూ కట్",
+      "caesarCut": "సీజర్ కట్",
+      "frenchCrop": "ఫ్రెంచ్ క్రాప్",
+      "undercut": "అండర్‌కట్",
+      "fadePompadour": "ఫేడ్ పాంపడోర్",
+      "quiff": "టెక్స్‌చర్డ్ క్విఫ్",
+      "slickedBack": "స్లిక్డ్ బ్యాక్",
+      "mullet": "మల్లెట్",
+      "buzzCut": "బజ్ కట్",
+      "centerParted": "సెంటర్ పార్టెడ్"
+    }
+  },
+  "beardGrid": {
+    "selectBeard": "గడ్డం ఎంచుకోండి",
+    "previousPage": "మునుపటి పేజీ",
+    "nextPage": "తదుపరి పేజీ",
+    "cleanShave": "క్లీన్ షేవ్",
+    "stubbleTrimmed": "స్టబుల్ / ట్రిమ్డ్",
+    "anchor": "యాంకర్",
+    "goatee": "గోటీ",
+    "vanDyke": "వాన్ డైక్",
+    "verdi": "వెర్డీ",
+    "ducktail": "డక్‌టెయిల్",
+    "horseshoe": "హార్స్‌షూ",
+    "naturalMustache": "సహజ మీసాలు",
+    "handlebarMustache": "హ్యాండిల్‌బార్ మీసాలు",
+    "muttonChops": "మటన్ చాప్స్",
+    "frenchFork": "ఫ్రెంచ్ ఫోర్క్",
+    "lowTaperFade": "లో టేపర్ ఫేడ్",
+    "midFade": "మిడ్ ఫేడ్",
+    "italian": "ఇటాలియన్"
+  },
+  "report": {
+    "title": "మీ రిపోర్ట్",
+    "score": "స్కోర్",
+    "good": "మంచిది",
+    "moderate": "మధ్యమం",
+    "poor": "చెడు",
+    "protect": "రక్షించుకోండి",
+    "treat": "చికిత్స చేయండి",
+    "summary": "సారాంశం",
+    "recommendations": "సిఫారసులు",
+    "download": "రిపోర్ట్ డౌన్‌లోడ్ చేయండి",
+    "share": "రిపోర్ట్ పంచుకోండి"
+  },
+  "camera": {
+    "capture": "క్యాప్చర్ చేయండి",
+    "retake": "మళ్ళీ తీయండి",
+    "usePhoto": "ఫోటో వినియోగించండి",
+    "switchCamera": "కెమెరా మార్చండి",
+    "permissionDenied": "కెమెరా అనుమతి నిరాకరించబడింది",
+    "permissionMessage": "దయచేసి ఫోటో తీయడానికి కెమెరా యాక్సెస్ అనుమతించండి"
+  },
+  "form": {
+    "submit": "సమర్పించు",
+    "cancel": "రద్దు చేయి",
+    "next": "తదుపరి",
+    "previous": "మునుపటి",
+    "save": "సేవ్ చేయి",
+    "name": "పేరు",
+    "email": "ఇమెయిల్",
+    "phone": "ఫోన్",
+    "age": "వయసు",
+    "gender": "లింగం",
+    "male": "పురుషుడు",
+    "female": "స్త్రీ",
+    "other": "ఇతర"
+  },
+  "errors": {
+    "somethingWrong": "ఏదో తప్పు జరిగింది",
+    "tryAgain": "దయచేసి మళ్ళీ ప్రయత్నించండి",
+    "networkError": "నెట్‌వర్క్ లోపం. దయచేసి మీ కనెక్షన్ తనిఖీ చేయండి",
+    "invalidInput": "చెల్లుబాటు కాని ఇన్‌పుట్",
+    "required": "ఈ ఫీల్డ్ అవసరం"
+  },
+  "sessionResults": {
+    "title": "సెషన్ ఫలితాలు",
+    "hairstyle": "హెయిర్‌స్టైల్",
+    "haircolor": "జుట్టు రంగులు",
+    "beard": "గడ్డం ట్రై-ఆన్",
+    "makeup": "మేకప్",
+    "loading": "లోడ్ అవుతోంది...",
+    "noResults": "ఫలితాలు కనుగొనబడలేదు",
+    "qrTitle": "మీ ఫలితాన్ని డౌన్‌లోడ్ చేయండి",
+    "qrSubtitle": "సెషన్ ఫలితాలను వెంటనే చూడటానికి మరియు డౌన్‌లోడ్ చేయడానికి మీ ఫోన్‌తో ఈ QR కోడ్‌ను స్కాన్ చేయండి.",
+    "qrFooter": "స్కాన్ చేసి మీ లుక్‌లను తెరవడానికి కెమెరా లేదా QR యాప్ తెరవండి."
+  }
+}

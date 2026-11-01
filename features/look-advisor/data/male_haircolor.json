@@ -1,0 +1,50 @@
+{
+    "Black": {
+        "global": "Change his hair color to black and make sure smooth and salon like finish and keep hair length unchanged",
+        "highlights": null
+    },
+    "Brown": {
+        "global": "Change his hair color to dark chocolate brown and make sure smooth and salon like finish and keep hair length unchanged",
+        "highlights": "Give his hair brown highlights"
+    },
+    "Cinnamon": {
+        "global": "Change his hair color to cinnamon red and make sure smooth and salon like finish and keep hair length unchanged",
+        "highlights": "Give his hair cinnamon red highlights"
+    },
+    "Caramel": {
+        "global": "Change his hair color to caramel brown and make sure smooth and salon like finish and keep hair length unchanged",
+        "highlights": "Give his hair caramel brown highlights"
+    },
+    "Copper": {
+        "global": "Change his hair color to copper and make sure smooth and salon like finish and keep hair length unchanged",
+        "highlights": "Give his hair copper highlights"
+    },
+    "Golden": {
+        "global": "Change his hair color to golden and make sure smooth and salon like finish and keep hair length unchanged",
+        "highlights": "Give his hair golden highlights"
+    },
+    "Ash Blonde": {
+        "global": "Change his hair color to ash blonde and make sure smooth and salon like finish and keep hair length unchanged",
+        "highlights": "Give his hair ash blonde highlights"
+    },
+    "Creamy Ash": {
+        "global": "Change his hair color to creamy ash and make sure smooth and salon like finish and keep hair length unchanged",
+        "highlights": "Give his hair creamy ash highlights"
+    },
+    "Burgundy": {
+        "global": "Change his hair color to burgundy and make sure smooth and salon like finish and keep hair length unchanged",
+        "highlights": "Give his hair burgundy highlights"
+    },
+    "Red": {
+        "global": "Change his hair color to red and make sure smooth and salon like finish and keep hair length unchanged",
+        "highlights": "Give his hair red highlights"
+    },
+    "Violet": {
+        "global": "Change his hair color to violet and make sure smooth and salon like finish and keep hair length unchanged",
+        "highlights": "Give his hair violet highlights"
+    },
+    "Magenta": {
+        "global": "Change his hair color to magenta and make sure smooth and salon like finish and keep hair length unchanged",
+        "highlights": "Give his hair magenta highlights"
+    }
+}

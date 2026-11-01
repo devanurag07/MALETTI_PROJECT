@@ -1,0 +1,677 @@
+{
+  "common": {
+    "poweredBy": "مدعوم من",
+    "home": "الرئيسية",
+    "back": "رجوع",
+    "next": "التالي",
+    "previous": "السابق",
+    "proceed": "متابعة",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "submit": "إرسال"
+  },
+  "landing": {
+    "welcome": "مرحباً بك في المستقبل!",
+    "beginConsultation": "ابدأ استشارتك بالذكاء الاصطناعي",
+    "scalpView": "عرض فروة الرأس المجهري",
+    "cameraSettings": "إعدادات الكاميرا",
+    "logout": "تسجيل الخروج"
+  },
+  "notifications": {
+    "title": "الإشعارات",
+    "popupTitle": "إشعار",
+    "close": "إغلاق",
+    "loading": "جارٍ تحميل الإشعارات…",
+    "empty": "لا توجد إشعارات بعد.",
+    "loadError": "تعذر تحميل الإشعارات.",
+    "retry": "حاول مرة أخرى",
+    "unread": "جديد"
+  },
+  "home": {
+    "title": "الرئيسية",
+    "instructions": "تعليمات التقاط الصورة",
+    "instruction1": "التقط صورة أمامية وانظر إلى الكاميرا.",
+    "instruction2": "افكّي شعرك.",
+    "instruction3": "تأكدي من تشغيل إضاءة الغرفة وأن وجهك مضاء جيداً.",
+    "recommended": "موصى به",
+    "avoid": "تجنّب"
+  },
+  "salonProducts": {
+    "title": "منتجات الصالون",
+    "tabs": {
+      "hair": "شعر",
+      "skin": "بشرة"
+    },
+    "empty": "لا توجد منتجات {type} متاحة لصالونك.",
+    "emptyFiltered": "لا توجد منتجات تطابق هذه الفلاتر.",
+    "loadError": "تعذر تحميل المنتجات. يرجى المحاولة مرة أخرى.",
+    "filters": {
+      "brand": "العلامة التجارية",
+      "category": "الفئة",
+      "subcategory": "الفئة الفرعية",
+      "sort": "ترتيب",
+      "sortDefault": "افتراضي",
+      "all": "الكل",
+      "priceLowHigh": "السعر: من الأقل إلى الأعلى",
+      "priceHighLow": "السعر: من الأعلى إلى الأقل",
+      "clearFilters": "مسح الفلاتر"
+    }
+  },
+  "selectTool": {
+    "title": "اختر أداة استشارة بالذكاء الاصطناعي",
+    "skinAnalyzer": "محلل البشرة",
+    "hairAnalyzer": "محلل الشعر",
+    "lookAdvisor": "مستشار المظهر",
+    "serviceDisabled": "تم تعطيل هذه الخدمة لحساب صالونك. يرجى التواصل مع المسؤول."
+  },
+  "skinAnalysis": {
+    "title": "تحليل البشرة بالذكاء الاصطناعي",
+    "analyzing": "جارٍ تحليل بشرتك",
+    "processingImage": "يرجى الانتظار بينما نعالج صورتك...",
+    "generatingVisualization": "جارٍ إنشاء تصور البشرة",
+    "visualizationInProgress": "التصور التشخيصي بالذكاء الاصطناعي قيد التنفيذ…",
+    "visualizationAlt": "تصور تحليل البشرة",
+    "visualizationUnavailable": "التصور غير متاح",
+    "results": "النتائج",
+    "recommendations": "التوصيات",
+    "skinType": "نوع البشرة",
+    "concerns": "المخاوف",
+    "texture": "الملمس",
+    "moisture": "الترطيب",
+    "oiliness": "الدهنية",
+    "sensitivity": "الحساسية",
+    "questions": {
+      "skinExposure": {
+        "question": "تعرض البشرة لأشعة الشمس",
+        "rarely": "نادراً",
+        "occasionally": "أحياناً",
+        "frequently": "كثيراً",
+        "veryFrequently": "كثيراً جداً"
+      },
+      "skinCareGoal": {
+        "question": "اختر هدف العناية ببشرتك",
+        "glowingRadiant": "بشرة متوهجة ومشرقة",
+        "antiAging": "مكافحة الشيخوخة",
+        "acneControl": "التحكم في حب الشباب",
+        "moistureBalance": "توازن الترطيب"
+      },
+      "skinConcerns": {
+        "question": "هل لديك مخاوف شخصية متعلقة بالبشرة؟",
+        "acne": "حب الشباب",
+        "redness": "احمرار",
+        "darkCircles": "هالات سوداء",
+        "oiliness": "دهنية",
+        "pigmentation": "تصبغات",
+        "wrinkles": "تجاعيد",
+        "pores": "المسام",
+        "skinTexture": "ملمس البشرة"
+      }
+    },
+    "progress": {
+      "uploading": "جارٍ رفع صورتك…",
+      "detecting": "جارٍ اكتشاف ملامح الوجه…",
+      "analyzing": "جارٍ تحليل حالة البشرة…",
+      "finalizing": "جارٍ تجهيز النتائج…",
+      "labels": {
+        "face": "الوجه"
+      }
+    }
+  },
+  "hairAnalysis": {
+    "title": "تحليل الشعر بالذكاء الاصطناعي",
+    "analyzing": "جارٍ تحليل شعرك",
+    "processingImages": "يرجى الانتظار بينما نعالج صورك...",
+    "results": "النتائج",
+    "hairType": "نوع الشعر",
+    "condition": "الحالة",
+    "thickness": "السماكة",
+    "density": "الكثافة",
+    "scalp": "حالة فروة الرأس",
+    "questions": {
+      "hairTreated": {
+        "question": "هل عُولج شعرك أو صُبغ خلال الـ 6 أشهر الماضية؟",
+        "yesColoured": "نعم، مُصبغ",
+        "chemicallyTreated": "معالج كيميائياً",
+        "chemicalDescription": "كيراتين، بيرم، إلخ.",
+        "yesBoth": "نعم، كلاهما",
+        "no": "لا"
+      },
+      "haircareGoal": {
+        "question": "اختر هدف العناية بشعرك",
+        "reducedHairFall": "تقليل تساقط الشعر",
+        "dandruffControl": "التحكم في القشرة",
+        "increaseThickness": "زيادة سماكة الشعر",
+        "repairDamaged": "إصلاح الشعر التالف"
+      },
+      "hairConcerns": {
+        "question": "أي مخاوف شخصية متعلقة بالشعر",
+        "dandruff": "قشرة",
+        "dryScalp": "فروة رأس جافة",
+        "splitEnds": "تقصف الأطراف",
+        "frizziness": "تجعد",
+        "itchyScalp": "حكة فروة الرأس",
+        "hairFall": "تساقط الشعر"
+      }
+    },
+    "progress": {
+      "uploading": "جارٍ رفع صور فروة الرأس…",
+      "detecting": "جارٍ قراءة فروة الرأس ومناطق الشعر…",
+      "analyzing": "جارٍ تحليل الشعر وفروة الرأس…",
+      "finalizing": "جارٍ تجهيز النتائج…",
+      "labels": {
+        "face": "الوجه"
+      }
+    }
+  },
+  "lookAdvisor": {
+    "title": "مستشار المظهر",
+    "selectHairstyle": "اختر تسريحة",
+    "selectColor": "اختر لوناً",
+    "recommended": "مظاهر موصى بها",
+    "customLook": "مظهر مخصص",
+    "hairstyles": "تسريحات الشعر",
+    "colors": "الألوان",
+    "proceed": "متابعة",
+    "tryOn": "جرّب",
+    "backToResults": "العودة إلى النتائج",
+    "tabs": {
+      "recommendedLook": "مظهر موصى به",
+      "customLook": "مظهر مخصص",
+      "results": "النتائج"
+    },
+    "progress": {
+      "creatingLook": "جارٍ إنشاء مظهرك",
+      "craftingLooks": "جارٍ إعداد المظاهر",
+      "craftingColors": "جارٍ إيجاد الألوان",
+      "uploading": "جارٍ تجهيز صورتك…",
+      "detecting": "جارٍ قراءة ملامح الوجه…",
+      "generating": "جارٍ توليد مظهرك…",
+      "matchingLooks": "جارٍ مطابقة المظاهر…",
+      "matchingColors": "جارٍ مطابقة درجات اللون…",
+      "finalizing": "اللمسات الأخيرة…"
+    },
+    "questions": {
+      "gender": {
+        "question": "اختر جنسك",
+        "female": "أنثى",
+        "male": "ذكر"
+      },
+      "service": {
+        "question": "اختر خدمتك",
+        "hairColour": "لون الشعر",
+        "haircutStyling": "قص/تصفيف الشعر",
+        "beard": "اللحية",
+        "makeup": "مكياج",
+        "bridalMakeup": "مكياج العروس"
+      },
+      "hairLength": {
+        "question": "اختر طول الشعر المفضل",
+        "short": "قصير",
+        "medium": "متوسط",
+        "long": "طويل",
+        "shortHaircut": "قصة شعر قصيرة",
+        "mediumHaircut": "قصة شعر متوسطة",
+        "longHaircut": "قصة شعر طويلة"
+      },
+      "ageGroup": {
+        "question": "اختر فئتك العمرية"
+      },
+      "colorFamily": {
+        "question": "اختر عائلة الألوان المفضلة",
+        "naturalDarks": "ألوان داكنة طبيعية",
+        "naturalDarksDesc": "أسود وبني داكن",
+        "warmShades": "درجات دافئة",
+        "warmShadesDesc": "ذهبي وكراميل",
+        "redBurgundies": "أحمر ونبيذي",
+        "coolShades": "درجات باردة",
+        "coolShadesDesc": "أشقر ورمادي",
+        "fashionColours": "ألوان عصرية",
+        "fashionColoursDesc": "أخضر وأزرق وبنفسجي"
+      }
+    },
+    "messages": {
+      "hairstyleRecommendationError": "فشل الحصول على توصيات التسريحة. يرجى المحاولة مرة أخرى.",
+      "haircolorRecommendationError": "فشل الحصول على توصيات لون الشعر. يرجى المحاولة مرة أخرى.",
+      "sessionError": "فشل إنشاء الجلسة. يرجى المحاولة مرة أخرى.",
+      "haircolorSuccess": "تم معالجة لون الشعر بنجاح!",
+      "haircolorError": "فشل معالجة لون الشعر. يرجى المحاولة مرة أخرى.",
+      "hairstyleSuccess": "تم معالجة التسريحة بنجاح!",
+      "hairstyleError": "فشل معالجة التسريحة. يرجى المحاولة مرة أخرى.",
+      "ratingThanks": "شكراً لتقييمك!",
+      "selectAllOptions": "يرجى اختيار جميع الخيارات",
+      "selectAtLeastOneOption": "يرجى اختيار خيار واحد على الأقل",
+      "imageNotReady": "الصورة غير جاهزة بعد. انتظر قليلاً وحاول مرة أخرى."
+    }
+  },
+  "hairAnalysisResults": {
+    "tabs": {
+      "hairMetrics": "مقاييس الشعر",
+      "analysis": "التحليل"
+    },
+    "labels": {
+      "front": "أمامي",
+      "back": "خلفي",
+      "side": "جانبي"
+    },
+    "hairHealthIndex": "مؤشر صحة الشعر",
+    "generateQRCode": "إنشاء رمز QR للتقرير",
+    "downloadReport": "تحميل التقرير",
+    "qrDialog": {
+      "title": "امسح لتحميل التقرير",
+      "description": "امسح رمز QR للوصول إلى نموذج تحميل التقرير",
+      "instructions": "يمكن للمستخدمين المسح لإدخال بياناتهم وتحميل تقرير PDF"
+    }
+  },
+  "skinAnalysisResult": {
+    "tabs": {
+      "skinMetrics": "مقاييس البشرة",
+      "analysis": "التحليل"
+    },
+    "skinScore": "درجة البشرة",
+    "status": {
+      "needsAttention": "يحتاج اهتماماً",
+      "average": "متوسط",
+      "good": "جيد"
+    },
+    "generateQRCode": "إنشاء رمز QR للتقرير",
+    "downloadReport": "تحميل التقرير",
+    "qrDialog": {
+      "title": "امسح لتحميل التقرير",
+      "description": "امسح رمز QR للوصول إلى نموذج تحميل التقرير",
+      "instructions": "يمكن للمستخدمين المسح لإدخال بياناتهم وتحميل تقرير PDF"
+    }
+  },
+  "productRecommendations": {
+    "reportTitle": "تقرير تحليلك",
+    "reportSubtitle": "امسح رمز QR أو اضغط أدناه لتنزيل تقريرك الكامل",
+    "downloadReport": "تنزيل التقرير",
+    "selectedProducts": "منتجاتك المختارة",
+    "total": "الإجمالي",
+    "backToHome": "العودة إلى الصفحة الرئيسية",
+    "cartTitle": "سلة التسوق",
+    "cartEmpty": "السلة فارغة",
+    "saving": "جارٍ الحفظ…",
+    "continue": "استمرار",
+    "continueWithItems": "استمرار ({count} عناصر)",
+    "topRecommendations": "أفضل التوصيات لك",
+    "noProducts": "لا توجد توصيات منتجات متاحة.",
+    "added": "تمت الإضافة",
+    "addToCart": "أضف إلى السلة"
+  },
+  "cameraSetup": {
+    "title": "إعدادات الكاميرا",
+    "subtitle": "تعيين الكاميرات لكل حالة استخدام",
+    "detecting": "جارٍ اكتشاف الكاميرات…",
+    "noCamerasTitle": "لم يتم اكتشاف أي كاميرا.",
+    "noCamerasSubtitle": "يرجى توصيل كاميرا والمحاولة مرة أخرى.",
+    "retry": "إعادة المحاولة",
+    "refresh": "تحديث",
+    "infoBanner": "قم بتوصيل جميع الكاميرات قبل التعيين. قم بالتحديث إذا لم تظهر كاميرا متصلة حديثاً.",
+    "normalCamera": "الكاميرا العادية",
+    "normalCameraDesc": "تحليل البشرة · تحليل الشعر · مستشار المظهر",
+    "microscopicCamera": "الكاميرا المجهرية",
+    "microscopicCameraDesc": "تحليل فروة الرأس · عرض فروة الرأس",
+    "detectedCameras": "الكاميرات المكتشفة — {count} وجدت",
+    "camera": "كاميرا",
+    "selectPlaceholder": "اختر…",
+    "saved": "تم الحفظ — العودة إلى الصفحة الرئيسية…",
+    "saveButton": "حفظ تعيينات الكاميرا",
+    "invertOnCapture": "عكس عند الالتقاط",
+    "invertOnCaptureDesc": "عند التشغيل، يقلب اليسار/اليمين في الصورة المحفوظة. عند الإيقاف، تطابق الصورة المعاينة.",
+    "cameraRotation": "دوران",
+    "cameraRotationHint": "مع عقارب الساعة / عكس عقارب الساعة",
+    "experimental": "تجريبي",
+    "experimentalDesc": "خيارات المعايرة. النقر التلقائي للمجهر يعمل فقط على الكاميرا المجهرية.",
+    "microscopeAutoClick": "نقر المجهر التلقائي",
+    "microscopeAutoClickDesc": "يلتقط تلقائياً عندما تبقى صورة منظار الجلد حادة.",
+    "showAdvanced": "إظهار المتقدم",
+    "hideAdvanced": "إخفاء المتقدم",
+    "sharpnessThreshold": "عتبة الحدة",
+    "sharpnessThresholdHint": "جيد عندما تكون النتيجة المباشرة أعلى من هذه القيمة أو مساوية لها. عاير باستخدام لقطات حقيقية.",
+    "stabilityTime": "وقت الاستقرار",
+    "stabilityTimeHint": "المدة التي يجب أن تبقى فيها الصورة حادة قبل الالتقاط.",
+    "bestFrameWindow": "نافذة أفضل إطار",
+    "bestFrameWindowHint": "يحتفظ بأحدّ إطار في هذه النافذة ثم يلتقطه.",
+    "ms": "{ms} مللي ثانية",
+    "focusSharp": "حاد",
+    "focusFocusing": "تركيز",
+    "focusCapturing": "جاري الالتقاط…",
+    "autoCapture": "التقاط تلقائي"
+  },
+  "captureImages": {
+    "instructions": "اضبط التركيز والتقط الصورة",
+    "sampleRegion": "منطقة العينة",
+    "clickedPhotos": "الصور الملتقطة",
+    "addImage": "إضافة صورة",
+    "noImage": "لا توجد صورة",
+    "retake": "إعادة التقاط",
+    "analyze": "تحليل",
+    "next": "التالي",
+    "captureAllImages": "يرجى التقاط جميع الصور",
+    "sameCameraWarning": "الكاميرا العادية والمجهرية هما نفس الجهاز.",
+    "sameCameraWarningHint": "قد لا تكون هذه الصورة من منظار الجلد. اختر الكاميرا المجهرية لإعادة الالتقاط — وستُستخدم لبقية الجلسة.",
+    "changeCamera": "تغيير الكاميرا",
+    "normalCameraBadge": "عادية",
+    "noOtherCameras": "لا توجد كاميرات أخرى. وصّل منظار الجلد ثم اختره هنا.",
+    "cameraFallback": "كاميرا",
+    "skinRegions": {
+      "nose": "الأنف",
+      "sideCheek": "الخد الجانبي",
+      "forehead": "الجبهة"
+    },
+    "headParts": {
+      "frontal": "الجبهي",
+      "occipital": "القذالي",
+      "parietal": "الجداري",
+      "temporal": "الصدغي"
+    }
+  },
+  "hairstyleResult": {
+    "noPreviousResult": "لا توجد نتيجة سابقة",
+    "original": "الأصلية",
+    "input": "المدخل",
+    "loadingPrevious": "جارٍ تحميل النتائج السابقة...",
+    "noPreviousFound": "لم يتم العثور على نتائج سابقة",
+    "errorLoadingPrevious": "فشل تحميل النتائج السابقة",
+    "addOnHaircut": "المتابعة بهذه الصورة: تجربة قصة الشعر",
+    "addOnHaircolor": "المتابعة بهذه الصورة: تجربة لون الشعر",
+    "addOnBeard": "المتابعة بهذه الصورة: تجربة اللحية",
+    "addOn": "المتابعة بهذه الصورة: اختر خدمة أخرى"
+  },
+  "recommendedLooks": {
+    "analyzing": "جارٍ تحليل صورتك وإنشاء التوصيات...",
+    "noRecommendations": "لا توجد توصيات تسريحات متاحة",
+    "goBack": "رجوع",
+    "stylingOptions": "خيارات التصفيف",
+    "maintenance": "الصيانة",
+    "proceed": "متابعة"
+  },
+  "recommendedHaircolor": {
+    "analyzing": "جارٍ تحليل صورتك وإنشاء توصيات لون الشعر...",
+    "noRecommendations": "لا توجد توصيات ألوان شعر متاحة",
+    "goBack": "رجوع"
+  },
+  "reportForm": {
+    "title": "حمّل تقريرك",
+    "description": "أدخل بياناتك للحصول على تقرير تحليل البشرة المخصص",
+    "labels": {
+      "fullName": "الاسم الكامل",
+      "phoneNumber": "رقم الهاتف"
+    },
+    "placeholders": {
+      "name": "أحمد محمد",
+      "phone": "501234567"
+    },
+    "errors": {
+      "nameRequired": "الاسم مطلوب",
+      "phoneRequired": "رقم الهاتف مطلوب",
+      "phoneInvalid": "يرجى إدخال رقم هاتف صالح مكون من 10 أرقام"
+    },
+    "buttons": {
+      "downloading": "جارٍ إنشاء PDF...",
+      "download": "تحميل التقرير"
+    },
+    "securityNote": "معلوماتك آمنة ومشفرة"
+  },
+  "reportPage": {
+    "loading": "جارٍ تحميل التقرير...",
+    "notFound": "التقرير غير موجود",
+    "userPhoto": "صورة المستخدم",
+    "report": "تقرير",
+    "skinAnalysisReport": "تحليل البشرة",
+    "hairAnalysisReport": "تقرير تحليل الشعر",
+    "majorConcerns": "مخاوف رئيسية",
+    "minorConcerns": "مخاوف ثانوية",
+    "toDos": "مهام",
+    "avoid": "تجنّب",
+    "recommendedServices": "خدمات موصى بها",
+    "dionaSkinFlyer": {
+      "servicesOneAlt": "خدمات البشرة — صفحة 1",
+      "servicesTwoAlt": "خدمات البشرة — صفحة 2",
+      "customLastPageAlt": "خدمات الصالون"
+    },
+    "status": {
+      "excellent": "ممتاز",
+      "good": "جيد",
+      "needAttention": "يحتاج اهتماماً",
+      "requiresTreatment": "يتطلب علاجاً"
+    },
+    "services": {
+      "hydrafacial": {
+        "title": "هايدرافيشل (تركيز مكافحة حب الشباب)",
+        "description": "ينظف المسام بعمق ويرطب دون انسداد."
+      },
+      "ledTherapy": {
+        "title": "علاج الضوء LED (أزرق + أحمر)",
+        "description": "يحارب بكتيريا حب الشباب ويقلل الالتهاب."
+      },
+      "chemicalPeel": {
+        "title": "تقشير كيميائي خفيف (AHA/BHA)",
+        "description": "يحسّن ملمس البشرة وينظف المسام بلطف."
+      },
+      "oxyFacial": {
+        "title": "أوكسي فيشل أو علاج قبة الأكسجين",
+        "description": "يدعم الشفاء ويقلل الاحمرار الظاهر."
+      },
+      "eyeTreatment": {
+        "title": "علاج ترطيب تحت العين",
+        "description": "يساعد على التفتيح وتقليل الهالات السوداء."
+      }
+    },
+    "defaultTodo": {
+      "title": "حافظ على روتينك الحالي",
+      "description": "واصلي ممارسات العناية بالبشرة الحالية للحفاظ على بشرة صحية."
+    },
+    "avoidItems": {
+      "heavyCreams": "كريمات ثقيلة أو مرطبات سميكة قد تسد المسام",
+      "faceOils": "زيوت الوجه للاستخدام اليومي، خاصة أثناء نوبات حب الشباب",
+      "physicalScrubs": "مقشرات فيزيائية أو قاسية قد تهيج الاحمرار وتفاقم البثور",
+      "fragrantProducts": "منتجات العناية بالبشرة المعطرة التي قد تسبب الحساسية",
+      "skippingSunscreen": "تخطي واقي الشمس، مما يعمق التصبغات ويبطئ الشفاء"
+    }
+  },
+  "hairReportPage": {
+    "userPhoto": "صورة المستخدم",
+    "hairAnalysis": "تحليل الشعر",
+    "report": "تقرير",
+    "yourHairScore": "درجة شعرك",
+    "averageHairHealthScore": "متوسط درجة صحة الشعر",
+    "majorConcerns": "مخاوف رئيسية",
+    "minorConcerns": "مخاوف ثانوية",
+    "toDos": "مهام",
+    "avoid": "تجنّب"
+  },
+  "customLookHaircolor": {
+    "selectColourShade": "اختر درجة اللون:",
+    "selectColourTechnique": "اختر تقنية اللون:",
+    "proceed": "متابعة",
+    "selectAllOptions": "يرجى اختيار جميع الخيارات",
+    "moreCategories": "المزيد من فئات الألوان",
+    "previousCategories": "فئات الألوان السابقة",
+    "categories": {
+      "blackDeepBrown": "أسود وبني داكن",
+      "chocolateWarmBrown": "شوكولاتة وبني دافئ",
+      "blonde": "أشقر",
+      "copperAuburn": "نحاسي وكستنائي",
+      "burgundyPlum": "نبيذي وبرقوقي",
+      "fashion": "فاشن"
+    },
+    "shades": {
+      "naturalBlack": "أسود طبيعي",
+      "softBlack": "أسود ناعم",
+      "espressoBrown": "بني إسبريسو",
+      "darkChocolate": "شوكولاتة داكنة",
+      "chocolateBrown": "بني شوكولاتة",
+      "mochaBrown": "بني موكا",
+      "chestnutBrown": "كستنائي",
+      "caramelBrown": "بني كراميل",
+      "darkBlonde": "أشقر داكن",
+      "honeyBlonde": "أشقر عسلي",
+      "goldenBlonde": "أشقر ذهبي",
+      "ashBlonde": "أشقر رمادي",
+      "lightCopper": "نحاسي فاتح",
+      "copper": "نحاسي",
+      "cinnamonRed": "أحمر قرفة",
+      "auburn": "كستنائي",
+      "deepRed": "أحمر عميق",
+      "burgundy": "نبيذي",
+      "wineRed": "أحمر نبيذي",
+      "plum": "برقوقي",
+      "rosePink": "وردي",
+      "lavender": "لافندر",
+      "blue": "أزرق",
+      "emeraldGreen": "أخضر زمردي"
+    },
+    "techniques": {
+      "global": "كامل",
+      "ombre": "أومبري",
+      "balayage": "بالياج",
+      "streaks": "خصل",
+      "highlights": "هايلايت"
+    }
+  },
+  "hairstyleSelection": {
+    "selectHaircut": "اختر قصة شعر:",
+    "stylingOptions": "خيارات التصفيف:",
+    "addBangs": "إضافة غرة:",
+    "proceed": "متابعة",
+    "haircuts": {
+      "wolfCut": "قصة الذئب",
+      "messyLob": "لوب عشوائي",
+      "frenchBob": "بوب فرنسي",
+      "aLineBob": "بوب A-line"
+    },
+    "styling": {
+      "blowDry": "تجفيف بالمجفف",
+      "straightening": "تمليس",
+      "curly": "مجعد"
+    },
+    "bangs": {
+      "curtain": "ستارة",
+      "fringes": "غرة",
+      "sideSwept": "جانبي"
+    }
+  },
+  "hairstyleSelector": {
+    "stylingOptions": "خيارات التصفيف:",
+    "addBangs": "إضافة غرة:",
+    "fadeOptions": "خيارات التدرج:",
+    "none": "لا شيء",
+    "styling": {
+      "blowDry": "تجفيف بالمجفف",
+      "straightening": "تمليس",
+      "curly": "مجعد"
+    },
+    "bangs": {
+      "curtain": "ستارة",
+      "fringes": "غرة",
+      "sideSwept": "جانبي"
+    },
+    "fades": {
+      "taperFade": "تدرج تدريجي",
+      "mediumFade": "تدرج متوسط",
+      "skinFade": "تدرج جلدي"
+    }
+  },
+  "haircutGrid": {
+    "selectHaircut": "اختر قصة شعر:",
+    "selectHaircutOptional": "اختر قصة شعر (اختياري):",
+    "female": {
+      "classicPixie": "بيكسي كلاسيكي",
+      "frenchBob": "بوب فرنسي",
+      "aLineBob": "بوب A-line",
+      "messyLongBob": "لوب طويل عشوائي",
+      "bluntLob": "لوب مستقيم",
+      "butterflyCut": "قصة الفراشة",
+      "longLayers": "طبقات طويلة",
+      "wolfCut": "قصة الذئب"
+    },
+    "male": {
+      "crewCut": "قصة كرو",
+      "caesarCut": "قصة قيصر",
+      "frenchCrop": "فرنش كروب",
+      "undercut": "أندركت",
+      "fadePompadour": "فيد بومبادور",
+      "quiff": "كويف محكم",
+      "slickedBack": "مشدود للخلف",
+      "mullet": "موليت",
+      "buzzCut": "قصة باز",
+      "centerParted": "فرق من المنتصف"
+    }
+  },
+  "beardGrid": {
+    "selectBeard": "اختر لحية",
+    "previousPage": "الصفحة السابقة",
+    "nextPage": "الصفحة التالية",
+    "cleanShave": "حلاقة كاملة",
+    "stubbleTrimmed": "ذقن خفيف / مُشذّب",
+    "anchor": "مرساة",
+    "goatee": "سكسوكة",
+    "vanDyke": "فان دايك",
+    "verdi": "فيردي",
+    "ducktail": "ذيل البطة",
+    "horseshoe": "حدوة الحصان",
+    "naturalMustache": "شارب طبيعي",
+    "handlebarMustache": "شارب مقبض الدراجة",
+    "muttonChops": "لحية ضفيرتين",
+    "frenchFork": "شوكة فرنسية",
+    "lowTaperFade": "تدرج منخفض",
+    "midFade": "تدرج متوسط",
+    "italian": "إيطالي"
+  },
+  "report": {
+    "title": "تقريرك",
+    "score": "الدرجة",
+    "good": "جيد",
+    "moderate": "متوسط",
+    "poor": "ضعيف",
+    "protect": "حماية",
+    "treat": "علاج",
+    "summary": "ملخص",
+    "recommendations": "توصيات",
+    "download": "تحميل التقرير",
+    "share": "مشاركة التقرير"
+  },
+  "camera": {
+    "capture": "التقاط",
+    "retake": "إعادة التقاط",
+    "usePhoto": "استخدام الصورة",
+    "switchCamera": "تبديل الكاميرا",
+    "permissionDenied": "تم رفض إذن الكاميرا",
+    "permissionMessage": "يرجى السماح بالوصول إلى الكاميرا لالتقاط صورة"
+  },
+  "form": {
+    "submit": "إرسال",
+    "cancel": "إلغاء",
+    "next": "التالي",
+    "previous": "السابق",
+    "save": "حفظ",
+    "name": "الاسم",
+    "email": "البريد الإلكتروني",
+    "phone": "الهاتف",
+    "age": "العمر",
+    "gender": "الجنس",
+    "male": "ذكر",
+    "female": "أنثى",
+    "other": "آخر"
+  },
+  "errors": {
+    "somethingWrong": "حدث خطأ ما",
+    "tryAgain": "يرجى المحاولة مرة أخرى",
+    "networkError": "خطأ في الشبكة. يرجى التحقق من اتصالك",
+    "invalidInput": "إدخال غير صالح",
+    "required": "هذا الحقل مطلوب"
+  },
+  "sessionResults": {
+    "title": "نتائج الجلسة",
+    "hairstyle": "تسريحات الشعر",
+    "haircolor": "ألوان الشعر",
+    "beard": "تجارب اللحية",
+    "makeup": "مكياج",
+    "loading": "جارٍ التحميل...",
+    "noResults": "لم يتم العثور على نتائج",
+    "qrTitle": "حمّل نتيجتك",
+    "qrSubtitle": "امسح رمز QR هذا بهاتفك لعرض نتائج الجلسة وتنزيلها فوراً.",
+    "qrFooter": "افتح الكاميرا أو تطبيق QR للمسح والوصول إلى إطلالاتك."
+  }
+}

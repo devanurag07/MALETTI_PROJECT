@@ -1,0 +1,177 @@
+import axios from "axios";
+import axiosClient from "@/core/network/axios-client";
+
+/** Studio backend (ADMIN---DJANGO app `studio`), through the template's authenticated axios client. */
+const api = axiosClient;
+
+type Envelope<T> = { success: boolean; message: string; data: T; errors: unknown };
+
+/** Error with the HTTP status kept, so screens can tell "not enabled" (403) from "offline" (no status). */
+export class StudioApiError extends Error {
+  constructor(message: string, readonly status: number | null) {
+    super(message);
+    this.name = "StudioApiError";
+  }
+}
+
+async function unwrap<T>(p: Promise<{ data: Envelope<T> }>): Promise<T> {
+  try {
+    const res = await p;
+    return res.data.data;
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      const body = err.response?.data;
+      throw new StudioApiError(body?.message ?? body?.detail ?? err.message, err.response?.status ?? null);
+    }
+    throw new StudioApiError(String(err), null);
+  }
+}
+
+// ---------- Types (mirror studio/serializers.py) ----------
+
+export type I18n = Record<string, string>;
+export type Gender = "woman" | "man";
+export type TryKind = "cut" | "colour" | "makeup" | "beard";
+
+export type CatalogItem = {
+  id: number;
+  kind: string;
+  key: string;
+  gender: "woman" | "man" | "all";
+  name: I18n;
+  sub: I18n;
+  hex: string | null;
+  image_url: string | null;
+  attributes: Record<string, unknown>;
+  product?: { id: number; brand: string; price: number; currency: string; image: string | null };
+};
+
+export type StudioConfig = {
+  client: { slug: string; name: string; logo_url: string | null };
+  salon: { id: number; name: string };
+  locales: string[];
+  default_locale: string;
+  theme: Record<string, string>;
+  share_channels: ("qr" | "email" | "stylist")[];
+  modules: { module: string; status: "active" | "coming_soon" | "off"; config: Record<string, unknown> }[];
+  catalog: Record<string, CatalogItem[]>;
+  taxonomy: Record<string, { key: string; name: I18n }[]>;
+};
+
+export type TryOn = {
+  id: number;
+  kind: TryKind;
+  params: Record<string, unknown>;
+  parent_id: number | null;
+  status: "pending" | "done" | "failed";
+  input_url: string | null;
+  output_url: string | null;
+  error: string | null;
+};
+
+export type Look = {
+  cut: CatalogItem | null;
+  hair_shade: CatalogItem | null;
+  technique: CatalogItem | null;
+  makeup_look: CatalogItem | null;
+  lip: CatalogItem | null;
+  eye: CatalogItem | null;
+  beard: CatalogItem | null;
+  params: Record<string, unknown>;
+  final_tryon: TryOn | null;
+  before_url: string | null;
+  after_url: string | null;
+  headline: I18n;
+  /** Skin products the customer added + hair products the AI picked from the salon catalogue. */
+  products: (CatalogItem & { source: string; area: "skin" | "hair"; reason: I18n })[];
+};
+
+export type Session = {
+  id: string;
+  flow: string | null;
+  gender: Gender;
+  locale: string;
+  status: string;
+  current_step: string;
+  source_image_url: string | null;
+  started_at?: string;
+  look: Look | null;
+};
+
+export type Recommendation = CatalogItem & { rank: number; is_best: boolean; reason: I18n };
+
+export type AnalysisTab = {
+  module: "skin" | "face" | "colour" | "scalp";
+  status: "pending" | "done" | "failed" | "skipped";
+  label: { key: string; name: I18n; desc: I18n; attributes: Record<string, unknown> } | null;
+  metrics: Record<string, number | string | null>;
+  zones: Record<string, boolean>;
+  summary: I18n;
+  error: string | null;
+  recommendations: Record<string, Recommendation[]>;
+};
+
+export type Results = { session: Session; tabs: AnalysisTab[] };
+
+export type Share = {
+  id: number;
+  channel: "qr" | "email" | "stylist";
+  status: string;
+  token: string;
+  url: string | null;
+  email: string | null;
+  stylist: { id: number; name: string } | null;
+};
+
+export type LookPayload = Partial<{
+  cut: string | null;
+  hair_shade: string | null;
+  technique: string | null;
+  makeup_look: string | null;
+  lip: string | null;
+  eye: string | null;
+  beard: string | null;
+  params: Record<string, unknown>;
+  final_tryon_id: number | null;
+  products: string[];
+  headline: I18n;
+}>;
+
+// ---------- Endpoints ----------
+
+export const studioApi = {
+  login: (code: string, password: string) =>
+    unwrap<{ access_token: string }>(api.post("auth/login/", { code, password })),
+  config: (gender?: Gender) => unwrap<StudioConfig>(api.get("studio/config/", { params: { gender } })),
+  createSession: (body: { gender?: Gender; locale?: string; flow?: string }) =>
+    unwrap<Session>(api.post("studio/sessions/", body)),
+  updateSession: (id: string, body: Record<string, unknown>) =>
+    unwrap<Session>(api.patch(`studio/sessions/${id}/`, body)),
+  uploadPhoto: (id: string, blob: Blob) => {
+    const fd = new FormData();
+    fd.append("image", blob, "photo.jpg");
+    return unwrap<Session>(api.post(`studio/sessions/${id}/photo/`, fd));
+  },
+  analyze: (id: string) => unwrap<Results>(api.post(`studio/sessions/${id}/analyze/`)),
+  results: (id: string) => unwrap<Results>(api.get(`studio/sessions/${id}/results/`)),
+  tryOn: (id: string, body: { kind: TryKind; params: Record<string, unknown>; parent_id?: number | null; reference?: Blob | null }) => {
+    if (!body.reference) return unwrap<TryOn>(api.post(`studio/sessions/${id}/tryons/`, body));
+    // Customer's own style picture → multipart.
+    const fd = new FormData();
+    fd.append("kind", body.kind);
+    fd.append("params", JSON.stringify(body.params));
+    if (body.parent_id) fd.append("parent_id", String(body.parent_id));
+    fd.append("reference", body.reference, "reference.jpg");
+    return unwrap<TryOn>(api.post(`studio/sessions/${id}/tryons/`, fd));
+  },
+  saveLook: (id: string, body: LookPayload) => unwrap<Session>(api.put(`studio/sessions/${id}/look/`, body)),
+  share: (id: string, body: { channel: Share["channel"]; email?: string; stylist_id?: number }) =>
+    unwrap<Share>(api.post(`studio/sessions/${id}/share/`, body)),
+  complete: (id: string) => unwrap<Session>(api.post(`studio/sessions/${id}/complete/`)),
+  stylistInbox: () => unwrap<(Share & { session: Session })[]>(api.get("studio/stylist/inbox/")),
+  stylistAck: (shareId: number) => unwrap<Share>(api.post(`studio/stylist/inbox/${shareId}/ack/`)),
+  publicLook: (token: string) =>
+    unwrap<Session & { client: { name: string; logo_url: string | null; theme: Record<string, string> } }>(
+      api.get(`studio/public/looks/${token}/`)
+    ),
+};

@@ -1,0 +1,98 @@
+{
+  "malayalam-bride": {
+    "name": "Malayalam Bride",
+    "shortDescription": "Kasavu saree · temple jewellery",
+    "prompt": "The lady in the image wants a Malayalam Bridal look, with a kasavu saree, hairstyle, temple jewellery, makeup including lipstick, eye makeup, blush etc. Keep her facial features intact. Do not change the background.",
+    "rgb": [212, 175, 55]
+  },
+  "christian-bride": {
+    "name": "Christian Bride",
+    "shortDescription": "White silk saree · veil",
+    "prompt": "The lady in the image wants a Malayalam Christian Bridal look, with a white silk saree, hairstyle with a white veil, not many flowers, makeup including lipstick, eye makeup, blush etc. Keep her facial features intact. Do not change the background.",
+    "rgb": [245, 245, 240]
+  },
+  "tamil-bride": {
+    "name": "Tamil Bride",
+    "shortDescription": "Kanjeevaram · decorated braid",
+    "prompt": "The lady in the image wants a Tamil Hindu Bridal look, with a kanjeevaram silk saree, hairstyle with a traditionally decorated braid, temple jewellery, makeup including lipstick, eye makeup, blush etc. Keep her facial features intact. Do not change the background.",
+    "rgb": [139, 0, 0]
+  },
+  "iyengar-bride": {
+    "name": "Iyengar Bride",
+    "shortDescription": "Madisar draping · temple jewellery",
+    "prompt": "The lady in the image wants a Tamil Iyengar Bridal look, with a madisar saree draping, hairstyle, temple jewellery, makeup including lipstick, eye makeup, blush etc. Keep her facial features intact. Do not change the background.",
+    "rgb": [155, 35, 53]
+  },
+  "telugu-bride": {
+    "name": "Telugu Bride",
+    "shortDescription": "Muhurtam · kalyana tilakam",
+    "prompt": "The lady in the image wants a Telugu Muhurtam Bridal look, with a rich silk saree in a red and white combination or some pastel shade, hairstyle, traditional kalyana tilakam marking on forehead, heavy temple jewellery, makeup including lipstick, eye makeup, blush etc. Keep her facial features intact. Do not change the background.",
+    "rgb": [196, 30, 58]
+  },
+  "kannada-bride": {
+    "name": "Kannada Bride",
+    "shortDescription": "Mysore silk · kasina sara",
+    "prompt": "The lady in the image wants a Kannada Bridal look, with a Kanchipuram or Mysore silk saree, hairstyle, temple jewellery with a coin necklace called kasina sara, makeup including lipstick, eye makeup, blush etc. Keep her facial features intact. Do not change the background.",
+    "rgb": [218, 165, 32]
+  },
+  "maharashtrian-bride": {
+    "name": "Maharashtrian Bride",
+    "shortDescription": "Paithani · Mundavalya",
+    "prompt": "The lady in the image wants a Maharashtrian Bridal look, with a Paithani saree in a purple and red combination, Mundavalya on forehead, hairstyle, jewellery, makeup including lipstick, eye makeup, blush etc. Keep her facial features intact. Do not change the background.",
+    "rgb": [107, 45, 92]
+  },
+  "reception-glam": {
+    "name": "Reception Glam",
+    "shortDescription": "Designer lehenga · glam makeup",
+    "prompt": "The lady in the image wants a Reception glam look, with a designer lehenga, hairstyle, jewellery, makeup including lipstick, eye makeup, blush etc. Keep her facial features intact. Do not change the background.",
+    "rgb": [183, 110, 121]
+  },
+  "friend-of-bride": {
+    "name": "Friend of Bride",
+    "shortDescription": "Saree · soft bridal party glam",
+    "prompt": "The lady in the image wants a friend of the bride look, with a saree, hairstyle, jewellery, makeup, including lipstick, eye makeup, blush etc. Keep her facial features intact. Do not change the background.",
+    "rgb": [232, 160, 191]
+  },
+  "punjabi-bride": {
+    "name": "Punjabi Bride",
+    "shortDescription": "Red lehenga · chooda & kalire",
+    "prompt": "The lady in the image wants a Punjabi Sikh Bridal look, with a red bridal lehenga, Chooda (red & ivory bridal bangles), kalire, hairstyle with dupatta over head, heavy jewellery, makeup including lipstick, eye makeup, blush etc. Keep her facial features intact. Do not change the background.",
+    "rgb": [178, 24, 42]
+  },
+  "rajasthani-bride": {
+    "name": "Rajasthani Bride",
+    "shortDescription": "Rajputi poshak · borla",
+    "prompt": "The lady in the image wants a Rajasthani Rajput bridal look, with Rajputi poshak bandhani or odhani, borla on the forehead, hairstyle, Rajput jewellery, large nath, makeup including lipstick, eye makeup, blush etc. Keep her facial features intact. Do not change the background.",
+    "rgb": [196, 90, 28]
+  },
+  "bengali-bride": {
+    "name": "Bengali Bride",
+    "shortDescription": "White-red saree · sholar mukut",
+    "prompt": "The lady in the image wants a Bengali bridal look, with a white saree with red border, sholar mukut, hairstyle, gold jewellery, large red bindi, makeup including lipstick, eye makeup, blush etc. Keep her facial features intact. Do not change the background.",
+    "rgb": [196, 30, 58]
+  },
+  "north-indian-bride": {
+    "name": "North Indian Bride",
+    "shortDescription": "Maroon lehenga · maang tikka",
+    "prompt": "The lady in the image wants a North Indian Bridal look, with a rich red or maroon bridal lehenga with heavy embroidery and zardozi, a maang tikka + matha patti, traditional chooda, hairstyle with dupatta over the head, Kundan or Polki jewellery, large bridal nath, makeup including lipstick, eye makeup, blush etc. Keep her facial features intact. Do not change the background.",
+    "rgb": [128, 0, 32]
+  },
+  "minimal-pastel-bride": {
+    "name": "Minimal Pastel Bride",
+    "shortDescription": "Pastel lehenga · diamond jewellery",
+    "prompt": "The lady in the image wants a modern bridal look, with a pastel shade bridal lehenga, hairstyle with dupatta over the head, diamond jewellery, makeup including lipstick, eye makeup, blush etc. Keep her facial features intact. Do not change the background.",
+    "rgb": [232, 196, 196]
+  },
+  "cocktail-look": {
+    "name": "Cocktail Look",
+    "shortDescription": "Sequined saree · party glam",
+    "prompt": "The lady in the image wants a semi-traditional cocktail party look, with a metallic or jewel tone sequined saree or a contemporary lehenga, open waves or sleek hairstyle, diamond jewellery, makeup including nude or glossy lipstick, smoky or shimmery eye makeup, blush etc. Keep her facial features intact. Do not change the background.",
+    "rgb": [80, 40, 120]
+  },
+  "mehendi-look": {
+    "name": "Mehendi Look",
+    "shortDescription": "Yellow-green lehenga · dewy makeup",
+    "prompt": "The lady in the image wants a mehendi function look, with a bright yellow or green sharara or lehenga, hairstyle, light jewellery, mehendi on hands, fresh and dewy makeup including lipstick, eye makeup, blush etc. Keep her facial features intact. Do not change the background.",
+    "rgb": [201, 162, 39]
+  }
+}
