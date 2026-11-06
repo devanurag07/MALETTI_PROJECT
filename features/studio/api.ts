@@ -113,6 +113,14 @@ export type AnalysisTab = {
 
 export type Results = { session: Session; tabs: AnalysisTab[] };
 
+/** Public QR / e-mail payload: the session + everything the report needs (analyses, finished try-ons). */
+export type PublicReport = Session & {
+  client: { name: string; logo_url: string | null; theme: Record<string, string> };
+  analyses: AnalysisTab[];
+  tryons: TryOn[];
+  created_at: string | null;
+};
+
 export type Share = {
   id: number;
   channel: "qr" | "email" | "stylist";
@@ -171,7 +179,7 @@ export const studioApi = {
   stylistInbox: () => unwrap<(Share & { session: Session })[]>(api.get("studio/stylist/inbox/")),
   stylistAck: (shareId: number) => unwrap<Share>(api.post(`studio/stylist/inbox/${shareId}/ack/`)),
   publicLook: (token: string) =>
-    unwrap<Session & { client: { name: string; logo_url: string | null; theme: Record<string, string> } }>(
+    unwrap<PublicReport>(
       api.get(`studio/public/looks/${token}/`)
     ),
 };

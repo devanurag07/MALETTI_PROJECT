@@ -40,7 +40,7 @@ export default function ProfileScreen() {
           <span style={{ fontSize: 16 }}>{t("profile", "captured")}</span>
           <span style={{ fontSize: 13, color: c("ink-muted") }}>{t("profile", "capturedSub")}</span>
         </div>
-        <PillButton icon={ICON.retake} onClick={() => router.push("/")}>{t("profile", "retake")}</PillButton>
+        <PillButton icon={ICON.retake} onClick={() => router.push("/capture")}>{t("profile", "retake")}</PillButton>
       </div>
 
       <H1 style={{ flex: "0 0 auto", margin: "24px 34px 0 34px" }}>{t("profile", "title")}</H1>
@@ -79,11 +79,11 @@ export default function ProfileScreen() {
               padding: "20px 20px 20px 24px", border: "none", borderRadius: 24, background: c("ink"), color: c("on-dark"),
               textAlign: "left", cursor: "pointer", boxShadow: c("shadow-card"),
             }}>
-              <span style={{ position: "absolute", right: 58, top: -40, display: "block", width: 120, height: 120, border: "1.5px solid rgba(196,160,106,0.4)", transform: "skewX(var(--mm-skew))" }} />
+              <span style={{ position: "absolute", right: 58, top: -40, display: "block", width: 120, height: 120, border: "1.5px solid rgba(193,154,107,0.4)", transform: "skewX(var(--mm-skew))" }} />
               <span style={{ position: "relative", display: "flex", flexDirection: "column", gap: 8, flex: "1 1 auto" }}>
                 <span style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
                   <span style={{ ...SERIF, fontSize: 26, lineHeight: 1.1 }}>{t("flows", `${f.key}.name`)}</span>
-                  <span style={{ fontSize: 12, fontWeight: 500, color: c("ink"), background: c("accent-soft"), borderRadius: 10, padding: "3px 10px" }}>
+                  <span style={{ fontSize: 12, fontWeight: 500, color: c("on-dark"), background: c("accent-soft"), borderRadius: 10, padding: "3px 10px" }}>
                     {t("profile", "recommended")}
                   </span>
                 </span>

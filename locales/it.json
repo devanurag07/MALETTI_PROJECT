@@ -652,6 +652,12 @@
       "compareToggle": "Confronta",
       "close": "Chiudi"
     },
+    "home": {
+      "title": "Consulenza Beauty allo Specchio AI",
+      "sub": "Scopri una bellezza unicamente tua",
+      "cta": "Inizia la tua consulenza beauty",
+      "privacy": "La foto resta sullo specchio e viene eliminata a fine sessione"
+    },
     "capture": {
       "guide": "Centra il viso nell'ovale",
       "title": "Scatta una foto",
@@ -659,7 +665,9 @@
       "cta": "Scatta la foto",
       "privacy": "La foto resta sullo specchio e viene eliminata a fine sessione",
       "noCamera": "Fotocamera non disponibile",
-      "upload": "Carica una foto"
+      "upload": "Carica una foto",
+      "check1": "Sciogli i capelli e guarda la fotocamera",
+      "check2": "Assicurati che il viso sia ben illuminato"
     },
     "profile": {
       "captured": "Foto acquisita",
@@ -689,7 +697,8 @@
       "tabSkin": "Pelle",
       "tabFace": "Viso",
       "tabColour": "Armocromia",
-      "tabScalp": "Cute"
+      "tabScalp": "Cute",
+      "tabStyles": "Stili"
     },
     "skin": {
       "oily": "Zona T lucida",
@@ -699,24 +708,40 @@
       "add": "Aggiungi",
       "added": "Aggiunto",
       "cta": "Avanti: il tuo viso",
-      "noProducts": "Il catalogo del salone non ha ancora prodotti per la pelle."
+      "noProducts": "Il catalogo del salone non ha ancora prodotti per la pelle.",
+      "metric_hydration": "Idratazione",
+      "metric_sebum": "Equilibrio sebo",
+      "metric_pores": "Pori affinati",
+      "metric_redness": "Tono uniforme",
+      "metric_spots": "Purezza",
+      "metricScale": "Più alto è meglio · 100 = ottimo"
     },
     "face": {
       "ratio": "Lunghezza / larghezza",
       "cheek": "Zigomi",
       "jaw": "Mascella",
       "saved": "Salvato",
+      "tabRecommended": "Consigliati",
+      "catHaircut": "Tagli",
+      "tabCatalogue": "Personalizza",
+      "forYou": "Per te",
       "cutsTitle": "Tagli consigliati",
       "beardTitle": "Barba",
       "tap": "Tocca per provare",
       "best": "Più adatto",
-      "cta": "Avanti: armocromia",
+      "cta": "Scopri gli stili per te",
       "values": {
         "soft": "Morbida",
         "defined": "Evidenti",
         "prominent": "Pronunciati",
         "angular": "Squadrata"
-      }
+      },
+      "catColour": "Colore",
+      "colourTitle": "Colore capelli",
+      "pickCut": "Scegli un taglio",
+      "pickBeard": "Scegli uno stile di barba",
+      "pickColour": "Scegli una tonalità",
+      "tried": "Provato"
     },
     "colour": {
       "hairTitle": "Colore capelli",
@@ -762,12 +787,10 @@
       "keep": "Mantieni il mio colore",
       "natural": "Colore naturale",
       "technique": "Tecnica",
-      "intensity": "Intensità",
       "lips": "Labbra",
       "eyes": "Occhi",
       "none": "Nessuno",
       "beardLabel": "Stile barba",
-      "density": "Densità",
       "original": "Originale",
       "originalSub": "Come sei oggi",
       "save": "Salva e continua",
@@ -780,7 +803,15 @@
       "upload": "Carica una foto",
       "yourPhoto": "La tua foto",
       "colour": "Colore",
-      "uploadShort": "Carica"
+      "uploadShort": "Carica",
+      "catalogue": "Catalogo",
+      "catalogueCount": "Tutti i {n} tagli",
+      "catalogueTitle": "Catalogo tagli",
+      "catalogueHint": "Tocca un taglio per provarlo sulla tua foto",
+      "recommendedForYou": "Consigliati per te",
+      "allCuts": "Tutti i tagli",
+      "forYou": "Per te",
+      "close": "Chiudi"
     },
     "look": {
       "title": "Il tuo look di oggi",
@@ -818,6 +849,80 @@
       "waiting": "{n} in attesa",
       "empty": "I look inviati dallo specchio appariranno qui.",
       "start": "Inizia il servizio"
+    },
+    "report": {
+      "cta": "Scarica il tuo report",
+      "screenTitle": "Il tuo report di bellezza",
+      "eyebrow": "Consulenza di bellezza",
+      "title": "Il tuo Report di Bellezza",
+      "before": "Prima",
+      "after": "Dopo",
+      "chosen": "Scelto",
+      "palette": "La tua palette colori",
+      "homeCare": "Cura a casa",
+      "scan": "Inquadra per scaricare il report",
+      "scanSub": "Ogni passo della consulenza, in un unico PDF.",
+      "showQr": "Mostra il QR per scaricare",
+      "close": "Chiudi",
+      "harmony": {
+        "seasonEyebrow": "La tua stagione cromatica",
+        "faceShape": "Forma del viso",
+        "undertone": "Sottotono",
+        "eyeColour": "Colore occhi",
+        "hairColour": "Colore capelli",
+        "undertoneEyebrow": "Il tuo sottotono",
+        "veins": "Colore delle vene",
+        "jewellery": "Gioielli consigliati",
+        "wardrobe": "I colori per il tuo guardaroba",
+        "combosEyebrow": "Da indossare insieme",
+        "combos": "Abbinamenti di colore consigliati",
+        "dominant": "Dominante",
+        "tones": {
+          "green": "Verde",
+          "olive": "Oliva",
+          "blue": "Blu",
+          "purple": "Viola",
+          "gold": "Oro",
+          "bronze": "Bronzo",
+          "silver": "Argento",
+          "platinum": "Platino"
+        },
+        "warm": {
+          "title": "Sottotono caldo",
+          "line1": "Alla luce naturale le vene appaiono verdi o oliva.",
+          "line2": "Gioielli in oro e bronzo e i toni della terra ti valorizzano.",
+          "line3": "La base della tua pelle è calda: gialla, dorata o color crema."
+        },
+        "cool": {
+          "title": "Sottotono freddo",
+          "line1": "Alla luce naturale le vene appaiono blu o viola.",
+          "line2": "Gioielli in argento e platino e i toni gioiello ti valorizzano.",
+          "line3": "La base della tua pelle è rosata o tendente al blu."
+        },
+        "neutral": {
+          "title": "Sottotono neutro",
+          "line1": "Le vene appaiono blu-verdi, difficili da definire.",
+          "line2": "Ti stanno bene sia l'oro sia l'argento.",
+          "line3": "La tua pelle non è né chiaramente calda né fredda: puoi indossare molti colori."
+        },
+        "seasons": {
+          "light_spring": "Primavera chiara",
+          "warm_spring": "Primavera calda",
+          "bright_spring": "Primavera brillante",
+          "light_summer": "Estate chiara",
+          "cool_summer": "Estate fredda",
+          "soft_summer": "Estate soft",
+          "soft_autumn": "Autunno soft",
+          "warm_autumn": "Autunno caldo",
+          "deep_autumn": "Autunno profondo",
+          "deep_winter": "Inverno profondo",
+          "cool_winter": "Inverno freddo",
+          "bright_winter": "Inverno brillante"
+        }
+      }
+    },
+    "styles": {
+      "cta": "Continua con l'armonia colori"
     }
   }
 }

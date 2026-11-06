@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import ResultsScreen from "@/features/studio/screens/ResultsScreen";
 
-const TABS = ["skin", "face", "colour", "scalp"] as const;
+const TABS = ["skin", "face", "styles", "colour", "scalp"] as const;
 
 export default async function Page({ params }: { params: Promise<{ tab: string }> }) {
   const { tab } = await params;

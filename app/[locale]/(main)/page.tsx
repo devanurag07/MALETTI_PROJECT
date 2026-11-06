@@ -1,5 +1,5 @@
-import CaptureScreen from "@/features/studio/screens/CaptureScreen";
+import HomeScreen from "@/features/studio/screens/HomeScreen";
 
 export default function Page() {
-  return <CaptureScreen />;
+  return <HomeScreen />;
 }

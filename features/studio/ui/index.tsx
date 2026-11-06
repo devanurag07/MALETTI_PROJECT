@@ -30,6 +30,8 @@ export const ICON = {
   pencil: "M4 20h4L19 9l-4-4L4 16z M14 6l4 4",
   slash: "M5 19L19 5",
   upload: "M12 16V4 M7 9l5-5 5 5 M5 20h14",
+  grid: "M4 4h7v7H4z M13 4h7v7h-7z M4 13h7v7H4z M13 13h7v7h-7z",
+  close: "M6 6l12 12 M18 6L6 18",
   skin: "M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z",
   face: "M12 3c4 0 7 3.6 7 9s-3 9-7 9-7-3.6-7-9 3-9 7-9z M9.5 10.5h.01 M14.5 10.5h.01 M10 15.5c1.2.8 2.8.8 4 0",
   colour: "M12 3a9 9 0 1 0 0 18c1.5 0 2-1 2-2s-1-2 0-3 3 0 4-1 2-3 2-4a9 9 0 0 0-8-8z M8 10h.01 M12 7.5h.01 M16 10h.01",
@@ -92,7 +94,7 @@ export function Header({ onBack }: { onBack?: (() => void) | false }) {
       {back ? (
         <button type="button" onClick={back} style={{
           justifySelf: "start", display: "flex", alignItems: "center", gap: 6, height: 44, padding: "0 16px 0 10px",
-          borderRadius: 22, border: "1px solid rgba(59,42,31,0.3)", background: "rgba(255,255,255,0.22)",
+          borderRadius: 22, border: `1px solid ${c("line-strong")}`, background: c("surface"),
           color: c("ink"), fontSize: 14, cursor: "pointer",
         }}>
           <Icon d={ICON.back} size={18} width={1.8} />
@@ -105,18 +107,21 @@ export function Header({ onBack }: { onBack?: (() => void) | false }) {
   );
 }
 
-export function LangToggle() {
+/** EN/IT switch. `dark` = on the black home screen. */
+export function LangToggle({ dark }: { dark?: boolean }) {
   const { config, locale, setLocale } = useStudio();
   const locales = config?.locales?.length ? config.locales : ["en", "it"];
   return (
     <div style={{
       justifySelf: "end", display: "flex", gap: 2, padding: 3, borderRadius: 25,
-      background: "rgba(255,255,255,0.22)", border: "1px solid rgba(59,42,31,0.25)",
+      background: dark ? "rgba(255,255,255,0.06)" : c("surface"),
+      border: dark ? "1px solid rgba(255,255,255,0.18)" : `1px solid ${c("line-strong")}`,
     }}>
       {locales.map((l) => (
         <button key={l} type="button" onClick={() => l !== locale && setLocale(l)} style={{
           width: 44, height: 38, border: "none", borderRadius: 19, fontSize: 13, fontWeight: 500, cursor: "pointer",
-          background: l === locale ? c("ink") : "transparent", color: l === locale ? c("on-dark") : c("ink"),
+          background: l === locale ? (dark ? c("home-cta") : c("ink")) : "transparent",
+          color: l === locale ? (dark ? c("home-cta-ink") : c("on-dark")) : (dark ? c("home-ink-muted") : c("ink")),
         }}>
           {l.toUpperCase()}
         </button>
@@ -264,7 +269,7 @@ export function Segmented({ options, value, onChange }: {
           <button key={o.key} type="button" aria-pressed={on} onClick={() => onChange(o.key)} style={{
             flex: "1 1 0", height: 44, border: "none", borderRadius: 22, fontSize: 15, cursor: "pointer",
             background: on ? c("ink") : "transparent", color: on ? c("on-dark") : c("ink"),
-            boxShadow: on ? "0 6px 14px rgba(59,42,31,0.2)" : "none",
+            boxShadow: on ? c("shadow-swatch") : "none",
           }}>
             {o.label}
           </button>
@@ -323,7 +328,7 @@ export function GuidePill({ children, size = 13 }: { children: ReactNode; size?:
   return (
     <span style={{
       display: "flex", alignItems: "center", gap: 8, padding: size >= 13 ? "8px 16px" : "6px 13px", borderRadius: 18,
-      background: "rgba(250,246,241,0.92)", fontSize: size, color: c("ink"), whiteSpace: "nowrap",
+      background: c("glass"), fontSize: size, color: c("ink"), whiteSpace: "nowrap",
     }}>
       <Diamond size={size >= 13 ? 9 : 8} />
       <span>{children}</span>
@@ -341,7 +346,7 @@ export function HeroBackdrop({ halo = [560, 600], squares }: {
       <div style={{
         position: "absolute", left: "50%", top: "50%", width: halo[0], height: halo[1],
         margin: `${-halo[1] / 2}px 0 0 ${-halo[0] / 2}px`, borderRadius: "50%",
-        background: `radial-gradient(closest-side, ${c("halo")}, rgba(255,251,245,0))`, animation: "mmHalo 6s ease-in-out infinite",
+        background: `radial-gradient(closest-side, ${c("halo")}, transparent)`, animation: "mmHalo 6s ease-in-out infinite",
       }} />
       {squares.map((s, i) => (
         <div key={i} style={{ position: "absolute", border: `1.5px solid ${c("accent-line")}`, transform: `skewX(${theme.shape.skew})`, ...s }} />
@@ -398,18 +403,27 @@ export function ColorDot({ hex, image, active, onClick, size = 44, label, gapCol
     <button type="button" aria-label={label} aria-pressed={active} title={label} onClick={onClick} style={{
       width: size, height: size, padding: 0, margin: 0, borderRadius: size / 2, cursor: "pointer", flex: "0 0 auto",
       background: image ? `center / cover no-repeat url("${image}"), ${hex ?? c("photo")}` : hex ?? c("surface-raised"),
-      border: `3px solid ${active ? c("accent") : "rgba(59,42,31,0.12)"}`,
+      border: `3px solid ${active ? c("accent") : c("line-strong")}`,
       boxShadow: `inset 0 0 0 ${active ? 2 : 0}px ${gapColor}`, color: c("ink-muted"),
       display: "flex", alignItems: "center", justifyContent: "center",
     }}>
-      {busy ? <Spinner size={18} color={c("on-dark")} /> : hex || image ? null : <Icon d={ICON.slash} size={18} />}
+      {busy ? <Spinner size={18} color={c("ink")} /> : hex || image ? null : <Icon d={ICON.slash} size={18} />}
     </button>
   );
 }
 
 /** Option with a preview picture (haircut, beard): photo on top, label underneath. */
-export function ImageOption({ image, label, sub, active, onClick, height = 92, focus, busy, done }: {
+/** "None" option picture: a crossed circle instead of a photo. */
+export const NoneIcon = ({ size = 34 }: { size?: number }) => (
+  <span style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", color: c("ink-muted") }}>
+    <Icon d="M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18M5.6 5.6l12.8 12.8" size={size} width={1.4} />
+  </span>
+);
+
+export function ImageOption({ image, label, sub, active, onClick, height = 92, focus, busy, done, none }: {
   image?: string | null; label: string; sub?: string; active?: boolean; onClick: () => void; height?: number;
+  /** Show the "None" icon instead of a picture. */
+  none?: boolean;
   /** processing: spinner over the picture · done: the picture is the customer's processed result */
   busy?: boolean; done?: boolean;
   /** object-position: which part of the picture stays visible when it is cropped (e.g. "50% 8%" = top for haircuts). */
@@ -422,13 +436,13 @@ export function ImageOption({ image, label, sub, active, onClick, height = 92, f
       background: active ? c("surface-raised") : c("surface"), color: c("ink"),
     }}>
       <span style={{ position: "relative", display: "block", height, borderRadius: 11, overflow: "hidden", background: c("photo") }}>
-        <Photo src={image} style={focus && !done ? { objectPosition: focus } : undefined} />
+        {none ? <NoneIcon /> : <Photo src={image} style={focus && !done ? { objectPosition: focus } : undefined} />}
         {busy ? (
-          <span style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(242,235,226,0.6)" }}>
+          <span style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: c("veil") }}>
             <Spinner size={24} />
           </span>
         ) : null}
-        {done ? <Diamond size={9} style={{ position: "absolute", right: 6, top: 6, boxShadow: "0 0 0 1.5px rgba(250,246,241,0.9)" }} /> : null}
+        {done ? <Diamond size={9} style={{ position: "absolute", right: 6, top: 6, boxShadow: `0 0 0 1.5px ${c("background")}` }} /> : null}
       </span>
       <span style={{ padding: "0 3px", fontSize: 13, lineHeight: 1.2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{label}</span>
       {sub ? <span style={{ padding: "0 3px 2px", fontSize: 11, color: c("ink-muted"), whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{sub}</span> : null}
@@ -470,6 +484,109 @@ export function UploadOption({ label, preview, active, onFile, compact, height =
       <span style={{ padding: "0 3px 2px", fontSize: 13, lineHeight: 1.2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{label}</span>
       {input}
     </label>
+  );
+}
+
+/** Tile that opens a full catalogue (same size as an ImageOption): grid icon, label, count. */
+export function CatalogueTile({ label, sub, onClick, height = 92 }: { label: string; sub?: string; onClick: () => void; height?: number }) {
+  return (
+    <button type="button" onClick={onClick} style={{
+      display: "flex", flexDirection: "column", alignItems: "stretch", gap: 5, minWidth: 0, padding: 5, borderRadius: 16,
+      textAlign: "left", cursor: "pointer", border: `2px solid ${c("ink")}`, background: c("ink"), color: c("on-dark"),
+    }}>
+      <span style={{
+        display: "flex", alignItems: "center", justifyContent: "center", height, borderRadius: 11, color: c("accent"),
+        background: `radial-gradient(90% 70% at 50% 0%, ${c("home-glow")}, transparent 75%), ${c("home-background")}`,
+      }}>
+        <Icon d={ICON.grid} size={28} width={1.4} />
+      </span>
+      <span style={{ padding: "0 3px", fontSize: 13, lineHeight: 1.2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{label}</span>
+      {sub ? <span style={{ padding: "0 3px 2px", fontSize: 11, color: c("on-dark-muted"), whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{sub}</span> : null}
+    </button>
+  );
+}
+
+export type CatalogueEntry = {
+  key: string; image: string | null; label: string; sub?: string;
+  /** e.g. "For you" on recommended items */
+  badge?: string; active?: boolean; busy?: boolean; done?: boolean;
+};
+
+/**
+ * Full-screen catalogue on black (the welcome screen's look): optional "recommended" section first, then
+ * everything. Covers the whole stage; picking an item calls `onPick` (the screen closes it).
+ */
+export function CatalogueSheet({ title, hint, sections, onPick, onClose, closeLabel, focus = "50% 8%" }: {
+  title: string; hint?: string; closeLabel: string; focus?: string;
+  sections: { title: string; items: CatalogueEntry[] }[];
+  onPick: (key: string) => void; onClose: () => void;
+}) {
+  return (
+    <div role="dialog" aria-label={title} style={{
+      position: "absolute", inset: 0, zIndex: 20, display: "flex", flexDirection: "column", color: c("home-ink"),
+      background: [
+        `radial-gradient(120% 40% at 30% 0%, ${c("home-glow")}, transparent 70%)`,
+        `radial-gradient(90% 30% at 100% 100%, ${c("home-glow")}, transparent 70%)`,
+        c("home-background"),
+      ].join(", "),
+      animation: "mmIn 0.35s ease-out both",
+    }}>
+      {[{ left: 150, top: 60, width: 260, height: 220 }, { right: -50, bottom: 120, width: 180, height: 150 }].map((s, i) => (
+        <div key={i} aria-hidden style={{ position: "absolute", border: `14px solid ${c("home-line")}`, transform: `skewX(${theme.shape.skew})`, pointerEvents: "none", ...s }} />
+      ))}
+
+      <div style={{ position: "relative", flex: "0 0 auto", display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, padding: "30px 34px 18px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <span style={{ ...SERIF, fontWeight: 700, fontSize: 34, lineHeight: 1.1 }}>{title}</span>
+          {hint ? <span style={{ fontSize: 12, letterSpacing: "0.04em", textTransform: "uppercase", color: c("home-ink-muted") }}>{hint}</span> : null}
+        </div>
+        <button type="button" onClick={onClose} aria-label={closeLabel} style={{
+          flex: "0 0 auto", width: 46, height: 46, borderRadius: 23, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+          border: `1px solid ${c("home-card-line")}`, background: c("home-card"), color: c("home-ink"),
+        }}>
+          <Icon d={ICON.close} size={20} />
+        </button>
+      </div>
+
+      <div style={{ position: "relative", flex: "1 1 auto", minHeight: 0, overflowY: "auto", padding: "0 34px 34px", display: "flex", flexDirection: "column", gap: 22 }}>
+        {sections.filter((s) => s.items.length).map((s) => (
+          <div key={s.title} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <Diamond size={8} />
+              <span style={{ fontSize: 13, letterSpacing: "0.06em", textTransform: "uppercase", color: c("home-ink-muted") }}>{s.title}</span>
+              <span style={{ flex: "1 1 auto", height: 1, background: c("home-card-line") }} />
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 12 }}>
+              {s.items.map((it) => (
+                <button key={it.key} type="button" aria-pressed={it.active} onClick={() => onPick(it.key)} style={{
+                  display: "flex", flexDirection: "column", alignItems: "stretch", gap: 6, minWidth: 0, padding: 6, borderRadius: 16,
+                  textAlign: "left", cursor: "pointer", color: c("home-ink"),
+                  border: `2px solid ${it.active ? c("accent") : c("home-card-line")}`, background: c("home-card"),
+                }}>
+                  <span style={{ position: "relative", display: "block", height: 150, borderRadius: 11, overflow: "hidden", background: c("ink") }}>
+                    <Photo src={it.image} style={!it.done ? { objectPosition: focus } : undefined} />
+                    {it.badge ? (
+                      <span style={{
+                        position: "absolute", left: 6, top: 6, padding: "3px 9px", borderRadius: 10, fontSize: 10, fontWeight: 500,
+                        background: c("accent"), color: c("home-cta-ink"),
+                      }}>{it.badge}</span>
+                    ) : null}
+                    {it.busy ? (
+                      <span style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.5)" }}>
+                        <Spinner size={26} />
+                      </span>
+                    ) : null}
+                    {it.done ? <Diamond size={9} style={{ position: "absolute", right: 7, top: 7, boxShadow: "0 0 0 1.5px rgba(0,0,0,0.6)" }} /> : null}
+                  </span>
+                  <span style={{ padding: "0 3px", fontSize: 14, lineHeight: 1.2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{it.label}</span>
+                  {it.sub ? <span style={{ padding: "0 3px 2px", fontSize: 11, color: c("home-ink-muted"), whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{it.sub}</span> : null}
+                </button>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -538,7 +655,7 @@ function CompareSquare({ before, after, height = 330, busy, busyLabel }: {
       ) : canCompare ? (
         <>
           <ReactCompareSlider style={{ width: "100%", height: "100%" }} itemOne={img(before, t("common", "before"))} itemTwo={img(after, t("common", "after"))} />
-          <span style={{ position: "absolute", left: 10, bottom: 10, padding: "5px 12px", borderRadius: 14, background: "rgba(250,246,241,0.92)", fontSize: 12, color: c("ink"), pointerEvents: "none" }}>
+          <span style={{ position: "absolute", left: 10, bottom: 10, padding: "5px 12px", borderRadius: 14, background: c("glass"), fontSize: 12, color: c("ink"), pointerEvents: "none" }}>
             {t("common", "before")}
           </span>
           <span style={{ position: "absolute", right: 10, bottom: 10, padding: "5px 12px", borderRadius: 14, background: c("ink"), fontSize: 12, color: c("on-dark"), pointerEvents: "none" }}>
@@ -552,7 +669,7 @@ function CompareSquare({ before, after, height = 330, busy, busyLabel }: {
         <button type="button" aria-pressed={comparing} onClick={() => setComparing((v) => !v)} style={{
           position: "absolute", top: 10, right: 10, display: "flex", alignItems: "center", gap: 6, height: 34, padding: "0 12px",
           borderRadius: 17, border: "none", cursor: "pointer", fontSize: 13,
-          background: comparing ? c("ink") : "rgba(250,246,241,0.92)", color: comparing ? c("on-dark") : c("ink"),
+          background: comparing ? c("ink") : c("glass"), color: comparing ? c("on-dark") : c("ink"),
           boxShadow: "0 4px 12px rgba(0,0,0,0.25)",
         }}>
           <Icon d={comparing ? "M6 6l12 12 M18 6L6 18" : ICON.compare} size={16} width={1.8} />
@@ -561,7 +678,7 @@ function CompareSquare({ before, after, height = 330, busy, busyLabel }: {
       ) : null}
       {busy ? (
         <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12, background: "rgba(0,0,0,0.45)" }}>
-          <Spinner size={34} color={c("on-dark")} />
+          <Spinner size={34} color={c("ink")} />
           {busyLabel ? <GuidePill>{busyLabel}</GuidePill> : null}
         </div>
       ) : null}
@@ -584,7 +701,7 @@ function CompareRounded({ before, after, height = 330, ry = 150, busy, busyLabel
       }}>
         <Photo src={before} />
         {busy ? (
-          <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12, background: "rgba(242,235,226,0.72)" }}>
+          <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12, background: c("veil") }}>
             <Spinner size={34} />
             {busyLabel ? <GuidePill>{busyLabel}</GuidePill> : null}
           </div>
@@ -596,19 +713,19 @@ function CompareRounded({ before, after, height = 330, ry = 150, busy, busyLabel
     <div style={{
       flex: "0 0 auto", position: "relative", height, margin: "14px 34px 0 34px",
       borderRadius: `200px 200px 22px 22px / ${ry}px ${ry}px 22px 22px`, overflow: "hidden", background: c("photo"),
-      outline: `1.5px solid ${c("accent")}`, outlineOffset: 6, boxShadow: "0 22px 44px rgba(107,84,68,0.18)",
+      outline: `1.5px solid ${c("accent")}`, outlineOffset: 6, boxShadow: c("shadow-arch"),
     }}>
       <Photo src={before} />
       <div style={{ position: "absolute", inset: 0, clipPath: `inset(0 0 0 ${split}%)` }}>
         <Photo src={right} />
       </div>
-      <span style={{ position: "absolute", left: 18, bottom: 14, padding: "5px 12px", borderRadius: 14, background: "rgba(250,246,241,0.92)", fontSize: 12, color: c("ink") }}>
+      <span style={{ position: "absolute", left: 18, bottom: 14, padding: "5px 12px", borderRadius: 14, background: c("glass"), fontSize: 12, color: c("ink") }}>
         {t("common", "before")}
       </span>
       <span style={{ position: "absolute", right: 18, bottom: 14, padding: "5px 12px", borderRadius: 14, background: c("ink"), fontSize: 12, color: c("on-dark") }}>
         {t("common", "after")}
       </span>
-      <div style={{ position: "absolute", top: 0, bottom: 0, left: `${split}%`, width: 2, marginLeft: -1, background: c("surface-raised"), boxShadow: "0 0 0 1px rgba(164,126,75,0.4)" }} />
+      <div style={{ position: "absolute", top: 0, bottom: 0, left: `${split}%`, width: 2, marginLeft: -1, background: c("surface-raised"), boxShadow: "0 0 0 1px rgba(193,154,107,0.4)" }} />
       <div style={{
         position: "absolute", top: "50%", left: `${split}%`, width: 46, height: 46, margin: "-23px 0 0 -23px", borderRadius: 23,
         background: c("ink"), color: c("on-dark"), display: "flex", alignItems: "center", justifyContent: "center", boxShadow: c("shadow-handle"),
@@ -618,7 +735,7 @@ function CompareRounded({ before, after, height = 330, ry = 150, busy, busyLabel
       <input type="range" min={4} max={96} value={split} onChange={(e) => setSplit(Number(e.target.value))} aria-label={t("common", "compare")}
         style={{ position: "absolute", inset: 0, width: "100%", height: "100%", margin: 0, opacity: 0, cursor: "ew-resize" }} />
       {busy ? (
-        <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12, background: "rgba(242,235,226,0.72)" }}>
+        <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12, background: c("veil") }}>
           <Spinner size={34} />
           {busyLabel ? <GuidePill>{busyLabel}</GuidePill> : null}
         </div>
@@ -644,7 +761,7 @@ export function Spinner({ size = 28, color = c("accent") }: { size?: number; col
   return (
     <span style={{
       display: "inline-block", width: size, height: size, borderRadius: "50%", flex: "0 0 auto",
-      border: `${Math.max(2, size / 10)}px solid rgba(164,126,75,0.2)`, borderTopColor: color, animation: "mmSpin 0.9s linear infinite",
+      border: `${Math.max(2, size / 10)}px solid rgba(193,154,107,0.2)`, borderTopColor: color, animation: "mmSpin 0.9s linear infinite",
     }} />
   );
 }
@@ -662,8 +779,89 @@ export function LoadingStage() {
 export function ErrorLine({ message }: { message: string | null }) {
   if (!message) return null;
   return (
-    <p style={{ margin: "10px 34px 0 34px", padding: "10px 14px", borderRadius: 14, fontSize: 13, color: "#8A2A1E", background: "#F6E2DA", border: "1px solid #E9C3B5" }}>
+    <p style={{ margin: "10px 34px 0 34px", padding: "10px 14px", borderRadius: 14, fontSize: 13, color: c("error-ink"), background: c("error-bg"), border: `1px solid ${c("error-line")}` }}>
       {message}
     </p>
+  );
+}
+
+// ---------------------------------------------------------------- style pickers (Styles tab + try-on)
+
+/**
+ * Paged carousel like FLUX_VERSION_3's custom look: a framed page of cards,
+ * ‹ › arrows + page dots underneath, and swipe left/right.
+ */
+export function Carousel({ items, perPage, columns }: { items: ReactNode[]; perPage: number; columns: number }) {
+  const [page, setPage] = useState(0);
+  const pages = Math.max(1, Math.ceil(items.length / perPage));
+  const go = (d: number) => setPage((p) => (p + d + pages) % pages);
+  const [startX, setStartX] = useState<number | null>(null);
+  const arrow = (d: number, icon: string, label: string) => (
+    <button type="button" aria-label={label} onClick={() => go(d)} disabled={pages < 2} style={{
+      width: 40, height: 40, borderRadius: 20, border: `1px solid ${c("line-strong")}`, background: "transparent",
+      color: c("ink"), display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: 0,
+      opacity: pages < 2 ? 0.3 : 1,
+    }}>
+      <Icon d={icon} size={20} />
+    </button>
+  );
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      <div
+        onPointerDown={(e) => setStartX(e.clientX)}
+        onPointerUp={(e) => { if (startX != null && Math.abs(e.clientX - startX) > 40) go(e.clientX < startX ? 1 : -1); setStartX(null); }}
+        style={{
+          display: "grid", gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`, alignContent: "start", gap: 10,
+          touchAction: "pan-y",
+        }}>
+        {items.slice(page * perPage, page * perPage + perPage)}
+      </div>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        {arrow(-1, ICON.back, "Previous")}
+        <div style={{ display: "flex", gap: 6 }}>
+          {Array.from({ length: pages }, (_, i) => (
+            <button key={i} type="button" aria-label={`${i + 1} / ${pages}`} onClick={() => setPage(i)} style={{
+              width: i === page ? 18 : 7, height: 7, borderRadius: 4, border: "none", padding: 0, cursor: "pointer",
+              background: i === page ? c("accent") : c("line-strong"), transition: "width .2s",
+            }} />
+          ))}
+        </div>
+        {arrow(1, ICON.next, "Next")}
+      </div>
+    </div>
+  );
+}
+
+/** Small hair-colour swatch (FLUX_VERSION_3 custom look): 2:1 picture, gold ring when picked, dot = recommended. */
+export function ShadeSwatch({ image, name, mark, tried, busy, active, onClick, none }: {
+  image: string | null; name: string; mark?: boolean; tried?: string; busy?: boolean; active: boolean; onClick: () => void; none?: boolean;
+}) {
+  return (
+    <button type="button" onClick={onClick} style={{
+      display: "flex", flexDirection: "column", alignItems: "center", gap: 5, minWidth: 0, padding: 0,
+      background: "none", border: "none", color: c("ink"), cursor: "pointer",
+    }}>
+      <span style={{
+        position: "relative", display: "block", width: "100%", aspectRatio: "2 / 1", borderRadius: 10, overflow: "hidden",
+        background: c("photo"), border: `2px solid ${active ? c("accent") : "transparent"}`,
+      }}>
+        {none ? <NoneIcon size={22} /> : <Photo src={image} />}
+        {busy ? (
+          <span style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: c("veil") }}>
+            <Spinner size={18} />
+          </span>
+        ) : null}
+        {tried ? (
+          <span title={tried} style={{ position: "absolute", left: 4, top: 4, width: 14, height: 14, borderRadius: 7, display: "flex", alignItems: "center", justifyContent: "center", color: c("on-dark"), background: c("ink") }}>
+            <Icon d={ICON.check} size={10} width={2.6} />
+          </span>
+        ) : null}
+        {mark ? <Diamond size={8} style={{ position: "absolute", right: 5, top: 5, boxShadow: `0 0 0 1.5px ${c("background")}` }} /> : null}
+      </span>
+      <span style={{
+        width: "100%", fontSize: 11, lineHeight: 1.2, textAlign: "center", color: active ? c("ink") : c("ink-muted"),
+        overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
+      }}>{name}</span>
+    </button>
   );
 }

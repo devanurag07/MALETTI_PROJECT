@@ -15,12 +15,15 @@ feature module: `features/studio/`.
 - `features/studio/context/StudioContext.tsx` – config, `t(ns,key)` (next-intl `studio.<ns>.<key>`), `tx(i18n)` for catalog names, session + look draft
   (sessionStorage), theme → `--bv-*` CSS variables.
 - `features/studio/screens/*` – one screen per mockup step; `app/[locale]/(main)/*` routes are thin wrappers.
+- `/` = dark welcome screen (`HomeScreen`, `home*` colours in the theme) → `/capture` (step 1, camera).
 - `app/[locale]/l/[token]` – public QR / e-mail page (outside MirrorFrame, no login).
 - `/stylist` – stylist tablet inbox (polls every 5 s).
 
 ## Theming / design
 - **The design is the "Smart Mirror Maletti" mockup, pixel for pixel.** Screens are ports of its 540×960 templates,
   built from `features/studio/ui/` (Stage zoomed ×2 → 1080×1920, Header, StepBar, Arch, CompareArch, Tabs, …).
+- **Dark theme** (black screens, like FLUX_VERSION_3) in the Maletti palette: C19A6B gold accent, cream text (`ink`),
+  cream-filled buttons with 3B2A1F espresso text (`on-dark`), 6B462C brown glow. Photo overlays use `glass` / `veil` tokens.
 - **One theme file styles everything:** `features/studio/theme/maletti.ts` (colours, fonts, shadows, skew, logo).
   `theme/index.tsx` turns it into `--mm-*` CSS vars (+ maps the template's `--bv-*` so login/screensaver match).
   New client look = copy that file and point `theme/index.tsx` at it. No raw hex in screens — use `c("ink")` etc.

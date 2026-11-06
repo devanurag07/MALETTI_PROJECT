@@ -9,7 +9,7 @@ import { TEST_PHOTOS } from "@/features/customer-session/flow/testPhotos";
 import { convertFileToJpeg } from "@/core/utils/common";
 import { studioApi } from "../api";
 import { EMPTY_LOOK, useStudio } from "../context/StudioContext";
-import { Arch, c, ErrorLine, GuidePill, H1, HeroBackdrop, Icon, ICON, LoadingStage, Muted, PrimaryButton, Screen } from "../ui";
+import { Arch, c, ErrorLine, GuidePill, H1, HeroBackdrop, Icon, ICON, LoadingStage, PrimaryButton, Screen } from "../ui";
 
 const ARCH = { w: 316, h: 404 };
 
@@ -105,7 +105,7 @@ export default function CaptureScreen() {
   if (!config) return <LoadingStage />;
 
   return (
-    <Screen step={1} onBack={false}>
+    <Screen step={1} onBack={() => router.push("/")}>
       <div style={{ flex: "1 1 auto", minHeight: 0, position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <HeroBackdrop squares={[
           { left: 44, top: 26, width: 132, height: 132 },
@@ -141,7 +141,17 @@ export default function CaptureScreen() {
 
       <div style={{ flex: "0 0 auto", padding: "8px 40px 38px 40px", display: "flex", flexDirection: "column", alignItems: "center", gap: 14, textAlign: "center" }}>
         <H1 size={46} style={{ lineHeight: 1.04 }}>{t("capture", "title")}</H1>
-        <Muted size={16} style={{ maxWidth: 390, lineHeight: 1.5 }}>{t("capture", "sub")}</Muted>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "flex-start" }}>
+          {(["check1", "check2"] as const).map((k, i) => (
+            <div key={k} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 16, color: c("ink-muted") }}>
+              <span style={{
+                flex: "0 0 auto", width: 24, height: 24, borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center",
+                background: c("accent"), color: c("on-dark"), fontSize: 12, fontWeight: 600,
+              }}>{i + 1}</span>
+              <span>{t("capture", k)}</span>
+            </div>
+          ))}
+        </div>
         {error ? <ErrorLine message={error} /> : null}
         <div style={{ display: "flex", gap: 12, width: "100%", marginTop: 6 }}>
           <PrimaryButton icon={ICON.camera} onClick={shoot} loading={saving} disabled={camError} style={{ flex: "1 1 auto", width: "auto" }}>

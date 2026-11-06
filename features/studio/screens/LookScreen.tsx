@@ -13,11 +13,9 @@ const absolute = (url: string | null) => (!url ? "" : url.startsWith("http") ? u
 /** Step 6 — Your look today: before/after, summary, products, QR / e-mail / send to stylist. */
 export default function LookScreen() {
   const router = useRouter();
-  const { t, tx, config, session, setSession, look, gender, resetAll, photo } = useStudio();
+  const { t, tx, config, session, setSession, look, gender, photo } = useStudio();
   const [qrUrl, setQrUrl] = useState<string | null>(null);
-  const [email, setEmail] = useState("");
-  const [emailSent, setEmailSent] = useState(false);
-  const [sent, setSent] = useState(false);
+  const [shareToken, setShareToken] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
 
@@ -35,15 +33,20 @@ export default function LookScreen() {
             config.locales.map((l) => [l, [colour?.[l], skin?.[l]?.toLowerCase()].filter(Boolean).join(", ")])
           );
         }
+        // The look = what the kept try-on images show: fall back to each kept layer's params if a field is empty.
+        const lp = (k: "cut" | "colour" | "makeup" | "beard", f: string) =>
+          (look.layers[k]?.params?.[f] as string | undefined) ?? null;
+        const cut = look.cut ?? lp("cut", "item");
+        const shade = look.hair_shade ?? lp("colour", "shade");
         const s = await studioApi.saveLook(session.id, {
           // An uploaded style ("your photo") has no catalog item: the try-on image is the result.
-          cut: catalogKey(look.cut),
-          hair_shade: catalogKey(look.hair_shade),
-          technique: catalogKey(look.hair_shade) ? look.technique : null,
-          makeup_look: catalogKey(look.makeup_look),
-          lip: look.lip,
-          eye: look.eye,
-          beard: catalogKey(look.beard),
+          cut: catalogKey(cut),
+          hair_shade: catalogKey(shade),
+          technique: catalogKey(shade) ? look.technique ?? lp("colour", "technique") : null,
+          makeup_look: catalogKey(look.makeup_look ?? lp("makeup", "look")),
+          lip: look.lip ?? lp("makeup", "lip"),
+          eye: look.eye ?? lp("makeup", "eye"),
+          beard: catalogKey(look.beard ?? lp("beard", "beard")),
           params: look.params,
           products: look.products,
           final_tryon_id: look.lastTryon?.status === "done" ? look.lastTryon.id : null,
@@ -54,6 +57,7 @@ export default function LookScreen() {
         if (config.share_channels.includes("qr")) {
           const share = await studioApi.share(session.id, { channel: "qr" });
           setQrUrl(absolute(share.url));
+          setShareToken(share.token);
         }
       } catch (e) {
         setError((e as Error).message);
@@ -85,26 +89,6 @@ export default function LookScreen() {
     (s?.products ?? []).filter((p) => p.area === area).map((p) => tx(p.name)).join(", ");
   const skinProducts = productsFor("skin");
   const hairProducts = productsFor("hair");
-  const canStylist = config.share_channels.includes("stylist");
-  const canEmail = config.share_channels.includes("email");
-
-  async function send(channel: "email" | "stylist") {
-    if (!session) return;
-    setError(null);
-    try {
-      await studioApi.share(session.id, channel === "email" ? { channel, email } : { channel });
-      if (channel === "stylist") setSent(true);
-      else setEmailSent(true);
-    } catch (e) {
-      setError((e as Error).message);
-    }
-  }
-
-  async function newSession() {
-    if (session) await studioApi.complete(session.id).catch(() => {});
-    resetAll();
-    router.replace("/");
-  }
 
   return (
     <Screen step={6}>
@@ -170,42 +154,17 @@ export default function LookScreen() {
           </div>
         ) : null}
         <div style={{ flex: "1 1 auto", minWidth: 0, display: "flex", flexDirection: "column", gap: 8 }}>
-          <span style={{ fontSize: 14, lineHeight: 1.35 }}>{emailSent ? `✓ ${t("look", "emailSent")} ${email}` : t("look", "qr")}</span>
-          {canEmail ? (
-            <div style={{ display: "flex", gap: 8 }}>
-              <input
-                type="email" value={email} onChange={(e) => { setEmail(e.target.value); setEmailSent(false); }}
-                aria-label={t("look", "email")} placeholder={t("look", "emailPh")}
-                style={{
-                  flex: "1 1 auto", minWidth: 0, height: 44, borderRadius: 22, border: `1px solid ${c("line-strong")}`, background: c("surface-raised"),
-                  color: c("ink"), fontFamily: "inherit", fontSize: 14, padding: "0 16px", boxSizing: "border-box", outline: "none",
-                }}
-              />
-              <button type="button" aria-label={t("look", "sendEmail")} disabled={!saved || !email.includes("@")} onClick={() => send("email")} style={{
-                flex: "0 0 auto", width: 44, height: 44, borderRadius: 22, border: `1px solid ${c("line-strong")}`, background: "transparent",
-                color: c("ink"), cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0,
-                opacity: !saved || !email.includes("@") ? 0.45 : 1,
-              }}>
-                <Icon d={ICON.send} size={18} />
-              </button>
-            </div>
-          ) : null}
+          <span style={{ fontSize: 14, lineHeight: 1.35 }}>{t("look", "qr")}</span>
         </div>
       </div>
       <ErrorLine message={error} />
 
       <div style={{ flex: "0 0 auto", padding: "12px 34px 30px 34px", display: "flex", flexDirection: "column", gap: 10 }}>
-        {sent ? (
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, fontSize: 14 }}>
-            <Diamond size={10} />
-            <span>{t("look", "sentNote")}</span>
-          </div>
-        ) : null}
-        {canStylist && !sent ? (
-          <PrimaryButton onClick={() => send("stylist")} disabled={!saved}>{t("look", "send")}</PrimaryButton>
-        ) : (
-          <PrimaryButton onClick={newSession}>{t("look", "newSession")}</PrimaryButton>
-        )}
+        {/* Like beauty_platform: the journey ends on the report page (QR → PDF download). */}
+        <PrimaryButton disabled={!saved}
+          onClick={() => router.push(shareToken ? `/report?token=${encodeURIComponent(shareToken)}` : "/report")}>
+          {t("report", "cta")}
+        </PrimaryButton>
       </div>
     </Screen>
   );

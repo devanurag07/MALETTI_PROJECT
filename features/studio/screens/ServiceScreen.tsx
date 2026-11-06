@@ -32,7 +32,7 @@ export default function ServiceScreen() {
           { left: 70, top: 26, width: 96, height: 96 },
           { right: 74, bottom: 20, width: 72, height: 72 },
         ]} />
-        <Arch width={236} height={296} offset={7} style={{ boxShadow: "0 22px 44px rgba(107,84,68,0.2)" }}>
+        <Arch width={236} height={296} offset={7} style={{ boxShadow: c("shadow-arch") }}>
           <Photo src={photo} />
           <div style={{ position: "absolute", left: 0, right: 0, bottom: 12, display: "flex", justifyContent: "center" }}>
             <GuidePill size={12}>{t("service", "live")}</GuidePill>

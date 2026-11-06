@@ -780,14 +780,22 @@
       "compareToggle": "Compare",
       "close": "Close"
     },
+    "home": {
+      "title": "AI Mirror Beauty Consultation",
+      "sub": "Discover beauty that is uniquely yours",
+      "cta": "Begin your Beauty Consultation",
+      "privacy": "The photo stays on this mirror and is deleted after the session"
+    },
     "capture": {
       "guide": "Centre your face in the oval",
-      "title": "Take a photo",
+      "title": "Take a Photo",
       "sub": "Your beauty consultation starts here: one photo, then the mirror does the rest.",
       "cta": "Take the photo",
       "privacy": "The photo stays on this mirror and is deleted after the session",
       "noCamera": "Camera not available",
-      "upload": "Upload a photo"
+      "upload": "Upload a photo",
+      "check1": "Untie your hair and face the camera",
+      "check2": "Make sure your face is well lit"
     },
     "profile": {
       "captured": "Photo captured",
@@ -817,7 +825,8 @@
       "tabSkin": "Skin",
       "tabFace": "Face",
       "tabColour": "Colour harmony",
-      "tabScalp": "Scalp"
+      "tabScalp": "Scalp",
+      "tabStyles": "Styles"
     },
     "skin": {
       "oily": "Oily T-zone",
@@ -827,24 +836,40 @@
       "add": "Add",
       "added": "Added",
       "cta": "Next: your face",
-      "noProducts": "This salon has no skin products in its catalogue yet."
+      "noProducts": "This salon has no skin products in its catalogue yet.",
+      "metric_hydration": "Hydration",
+      "metric_sebum": "Oil balance",
+      "metric_pores": "Refined pores",
+      "metric_redness": "Even tone",
+      "metric_spots": "Clarity",
+      "metricScale": "Higher is better · 100 = best"
     },
     "face": {
       "ratio": "Length / width",
       "cheek": "Cheekbones",
       "jaw": "Jawline",
       "saved": "Saved",
+      "tabRecommended": "Recommended",
+      "catHaircut": "Haircuts",
+      "tabCatalogue": "Custom",
+      "forYou": "For you",
       "cutsTitle": "Suggested cuts",
       "beardTitle": "Beard",
       "tap": "Tap to try",
       "best": "Best match",
-      "cta": "Continue to colour harmony",
+      "cta": "See styles for you",
       "values": {
         "soft": "Soft",
         "defined": "Defined",
         "prominent": "Prominent",
         "angular": "Angular"
-      }
+      },
+      "catColour": "Hair colour",
+      "colourTitle": "Hair colour",
+      "pickCut": "Select a haircut",
+      "pickBeard": "Select a beard style",
+      "pickColour": "Select a colour shade",
+      "tried": "Tried"
     },
     "colour": {
       "hairTitle": "Hair colour",
@@ -890,12 +915,10 @@
       "keep": "Keep my colour",
       "natural": "Natural colour",
       "technique": "Technique",
-      "intensity": "Intensity",
       "lips": "Lips",
       "eyes": "Eyes",
       "none": "None",
       "beardLabel": "Beard style",
-      "density": "Density",
       "original": "Original",
       "originalSub": "As you are today",
       "save": "Save and continue",
@@ -908,7 +931,15 @@
       "upload": "Upload a photo",
       "yourPhoto": "Your photo",
       "colour": "Colour",
-      "uploadShort": "Upload"
+      "uploadShort": "Upload",
+      "catalogue": "Catalogue",
+      "catalogueCount": "All {n} cuts",
+      "catalogueTitle": "Haircut catalogue",
+      "catalogueHint": "Tap a cut to try it on your photo",
+      "recommendedForYou": "Recommended for you",
+      "allCuts": "All haircuts",
+      "forYou": "For you",
+      "close": "Close"
     },
     "look": {
       "title": "Your look today",
@@ -946,6 +977,80 @@
       "waiting": "{n} waiting",
       "empty": "Looks sent from the mirror will appear here.",
       "start": "Start service"
+    },
+    "report": {
+      "cta": "Download your report",
+      "screenTitle": "Your beauty report",
+      "eyebrow": "Beauty consultation",
+      "title": "Your Beauty Report",
+      "before": "Before",
+      "after": "After",
+      "chosen": "Chosen",
+      "palette": "Your colour palette",
+      "homeCare": "Home care",
+      "scan": "Scan to download your report",
+      "scanSub": "Every step of your consultation, in one PDF.",
+      "showQr": "Show QR code to download",
+      "close": "Close",
+      "harmony": {
+        "seasonEyebrow": "Your colour season",
+        "faceShape": "Face shape",
+        "undertone": "Skin undertone",
+        "eyeColour": "Eye colour",
+        "hairColour": "Hair colour",
+        "undertoneEyebrow": "Your undertone",
+        "veins": "Vein colour",
+        "jewellery": "Suggested jewellery",
+        "wardrobe": "Colours that suit your wardrobe",
+        "combosEyebrow": "Wear it together",
+        "combos": "Suggested colour combinations",
+        "dominant": "Dominant",
+        "tones": {
+          "green": "Green",
+          "olive": "Olive",
+          "blue": "Blue",
+          "purple": "Purple",
+          "gold": "Gold",
+          "bronze": "Bronze",
+          "silver": "Silver",
+          "platinum": "Platinum"
+        },
+        "warm": {
+          "title": "Warm undertone",
+          "line1": "Veins look green or olive in natural light.",
+          "line2": "Gold and bronze jewellery and earth tones look best on you.",
+          "line3": "The base colour of your skin looks warm: yellow, golden or creamy."
+        },
+        "cool": {
+          "title": "Cool undertone",
+          "line1": "Veins look blue or purple in natural light.",
+          "line2": "Silver and platinum jewellery and jewel tones look best on you.",
+          "line3": "The base colour of your skin looks pink, rosy or bluish."
+        },
+        "neutral": {
+          "title": "Neutral undertone",
+          "line1": "Veins look blue-green — hard to tell which.",
+          "line2": "Both gold and silver jewellery suit you.",
+          "line3": "Your skin is neither clearly warm nor clearly cool, so you can wear a wide range of colours."
+        },
+        "seasons": {
+          "light_spring": "Light spring",
+          "warm_spring": "Warm spring",
+          "bright_spring": "Bright spring",
+          "light_summer": "Light summer",
+          "cool_summer": "Cool summer",
+          "soft_summer": "Soft summer",
+          "soft_autumn": "Soft autumn",
+          "warm_autumn": "Warm autumn",
+          "deep_autumn": "Deep autumn",
+          "deep_winter": "Deep winter",
+          "cool_winter": "Cool winter",
+          "bright_winter": "Bright winter"
+        }
+      }
+    },
+    "styles": {
+      "cta": "Continue to colour harmony"
     }
   }
 }

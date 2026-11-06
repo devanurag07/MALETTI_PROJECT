@@ -2,7 +2,8 @@
  * ─────────────────────────────────────────────────────────────────────────────
  *  MALETTI THEME — the one file that styles the whole Studio Mirror frontend.
  * ─────────────────────────────────────────────────────────────────────────────
- * Values come from the "Smart Mirror Maletti" mockup. Every screen and component
+ * Values come from the "Smart Mirror Maletti" mockup and the Maletti brand guidelines
+ * (C19A6B gold, 3B2A1F espresso, E9DCCB cream, 6B462C brown). Every screen and component
  * reads these through CSS variables (`var(--mm-<name>)`), so changing a value here
  * restyles the app. A new client = copy this file, change the values, point
  * `features/studio/theme/index.ts` at it.
@@ -13,60 +14,81 @@
 export const malettiTheme = {
   brand: {
     name: "Maletti",
-    /** Logo shown centred in the header (light artwork on the header colour). */
+    /** Logo shown centred in the header (light artwork on the dark header). */
     logo: "/studio/maletti/logo.png",
     logoHeight: 50,
   },
 
   colors: {
+    // Dark theme (like FLUX_VERSION_3): black screens, Maletti palette for everything on them —
+    // C19A6B gold accent, E9DCCB cream text/buttons, 3B2A1F espresso text on cream, 6B462C brown glow.
+
     // Surfaces
-    background: "#F2EBE2", // screen
-    header: "#C8BEB5", // top bar
-    headerLine: "#A98E70", // top bar bottom border
-    surface: "#FAF6F1", // cards, rows
-    surfaceRaised: "#FFFDF9", // selected cards, inputs
-    photo: "#E9DCCB", // empty photo / arch fill
-    halo: "rgba(255,251,245,1)", // glow behind the photo arch
+    background: "#000000", // screen
+    header: "#0B0806", // top bar
+    headerLine: "rgba(193,154,107,0.35)", // top bar bottom border (gold)
+    surface: "#15100C", // cards, rows
+    surfaceRaised: "#211913", // selected cards, inputs
+    photo: "#1C1510", // empty photo / arch fill
+    halo: "rgba(107,70,44,0.55)", // brand colour 4 — warm glow behind the photo arch
+    glass: "rgba(0,0,0,0.6)", // pills / labels on top of photos
+    veil: "rgba(0,0,0,0.62)", // "processing" overlay on photos
 
     // Text
-    ink: "#3B2A1F", // primary text, dark buttons
-    inkMuted: "#6B5444", // secondary text
-    inkFaint: "#8E7A6A", // disabled / locked
-    onDark: "#F7F1E8", // text on ink
-    onDarkMuted: "#E8DCCD",
+    ink: "#F2E9DD", // primary text on black; also the fill of primary buttons (cream)
+    inkMuted: "#BBA791", // secondary text
+    inkFaint: "#7C6C5E", // disabled / locked
+    onDark: "#3B2A1F", // brand colour 2 (espresso) — text on cream ("ink") fills
+    onDarkMuted: "#6B462C", // brand colour 4
 
     // Accent (gold)
-    accent: "#A47E4B", // outlines, active tab, diamonds, selection rings
-    accentSoft: "#C4A06A", // badges, button inner line
-    accentLine: "rgba(164,126,75,0.5)", // decorative parallelograms
+    accent: "#C19A6B", // brand colour 1 — outlines, active tab, diamonds, selection rings
+    accentSoft: "#C19A6B", // badges, button inner line
+    accentLine: "rgba(193,154,107,0.45)", // decorative parallelograms
 
     // Lines
-    line: "#E6D9CB", // card borders
-    lineCard: "#E1D3C3",
-    lineStrong: "#CDB9A4", // outline buttons, inputs
-    lineAccent: "#DCCAB7",
-    divider: "#DCCEBF", // list / tab separators
-    dividerSoft: "#ECE1D5",
+    line: "#2B221B", // card borders
+    lineCard: "#2B221B",
+    lineStrong: "#4A3C30", // outline buttons, inputs
+    lineAccent: "#5C4733",
+    divider: "#2B221B", // list / tab separators
+    dividerSoft: "#1D1712",
 
     // Controls
-    stepDone: "#3B2A1F",
-    stepCurrent: "#A47E4B",
-    stepTodo: "#DACCBC",
-    segment: "#E8DDD0", // segmented control track
-    track: "#E2D5C6", // metric bar track
-    iconBg: "#EFE4D6",
-    iconFg: "#7A5C3A",
-    lockedBg: "#ECE4DA",
-    phaseChip: "#E3D3BF",
-    dashed: "#FFF8EE", // face oval, mesh highlights
+    stepDone: "#E9DCCB",
+    stepCurrent: "#C19A6B",
+    stepTodo: "#3A2F27",
+    segment: "#17110D", // segmented control track
+    track: "#2E2620", // metric bar track
+    iconBg: "#241B15",
+    iconFg: "#C19A6B",
+    lockedBg: "#16110E",
+    phaseChip: "#2E2318",
+    dashed: "#FFF8EE", // face oval, mesh highlights (drawn on the photo)
 
     // Data
-    metricCool: "#5F7D8C", // hydration
-    metricWarm: "#C4A06A", // sebum
-    metricNeutral: "#8C735F",
+    metricCool: "#7FA3B4", // hydration
+    metricWarm: "#C19A6B", // sebum
+    metricNeutral: "#A08A76",
     zoneOily: "#E8C27A",
-    zoneDry: "#5F7D8C",
+    zoneDry: "#7FA3B4",
     compareBackground: "#000000", // letterbox behind before/after photos (square mode)
+
+    // Messages
+    errorInk: "#F0B9A9",
+    errorBg: "rgba(138,42,30,0.28)",
+    errorLine: "rgba(233,140,120,0.4)",
+
+    // Home (welcome) screen
+    homeBackground: "#000000",
+    homeGlow: "rgba(107,70,44,0.55)", // brand colour 4, warm light from the top / bottom corners
+    homeInk: "#FFFFFF",
+    homeInkMuted: "rgba(255,255,255,0.82)",
+    homeLine: "rgba(255,255,255,0.07)", // big faint parallelograms
+    homeCta: "#E9DCCB", // brand colour 3 (guideline option 2: "#C19A6B")
+    homeCtaInk: "#3B2A1F",
+    homeCard: "rgba(255,255,255,0.05)", // catalogue cards on black
+    homeCardLine: "rgba(255,255,255,0.14)",
   },
 
   fonts: {
@@ -76,11 +98,11 @@ export const malettiTheme = {
   },
 
   shadows: {
-    cta: "0 12px 26px rgba(59,42,31,0.22), inset 0 0 0 1px rgba(196,160,106,0.6)",
-    arch: "0 28px 56px rgba(107,84,68,0.22)",
-    card: "0 16px 32px rgba(59,42,31,0.22)",
-    swatch: "0 6px 14px rgba(59,42,31,0.18)",
-    handle: "0 6px 16px rgba(59,42,31,0.3)",
+    cta: "0 12px 26px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(193,154,107,0.6)",
+    arch: "0 28px 56px rgba(0,0,0,0.6)",
+    card: "0 16px 32px rgba(0,0,0,0.55)",
+    swatch: "0 6px 14px rgba(0,0,0,0.5)",
+    handle: "0 6px 16px rgba(0,0,0,0.55)",
   },
 
   shape: {

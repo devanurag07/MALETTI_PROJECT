@@ -52,7 +52,7 @@ export default function AnalysisScreen() {
           { left: 56, top: 30, width: 110, height: 110 },
           { right: 58, bottom: 26, width: 84, height: 84 },
         ]} />
-        <Arch width={266} height={336} offset={7} style={{ boxShadow: "0 24px 48px rgba(107,84,68,0.2)" }}>
+        <Arch width={266} height={336} offset={7} style={{ boxShadow: c("shadow-arch") }}>
           <Photo src={photo} />
           <svg viewBox="0 0 560 700" width={270} height={338} aria-hidden="true" preserveAspectRatio="none" style={{ position: "absolute", left: -2, top: -1 }}>
             <path d={mesh} fill="none" stroke="var(--mm-dashed)" strokeWidth="2.4" strokeOpacity="0.85" strokeLinecap="round" />
@@ -64,7 +64,7 @@ export default function AnalysisScreen() {
           {!done ? (
             <div style={{
               position: "absolute", left: 14, right: 14, top: "6%", height: 2,
-              background: "linear-gradient(90deg, rgba(196,160,106,0), rgba(255,240,214,1), rgba(196,160,106,0))",
+              background: "linear-gradient(90deg, rgba(193,154,107,0), rgba(255,240,214,1), rgba(193,154,107,0))",
               boxShadow: "0 0 16px 3px rgba(255,236,204,0.75)", animation: "mmScan 3.4s ease-in-out infinite alternate",
             }} />
           ) : null}

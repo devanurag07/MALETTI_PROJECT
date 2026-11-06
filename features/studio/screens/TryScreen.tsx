@@ -7,8 +7,8 @@ import { UPLOAD, useCatalog, useStudio, type LookDraft } from "../context/Studio
 import { tryOrder } from "../flows";
 import { styleImage } from "../theme/styleImages";
 import {
-  c, ChoicePills, ColorDot, CompareArch, ErrorLine, ICON, ImageOption, LoadingStage, PrimaryButton, Screen,
-  Segmented, SERIF, Slider, UploadOption,
+  c, ShadeSwatch, ColorDot, CompareArch, ErrorLine, ICON, ImageOption, LoadingStage, PrimaryButton, Screen,
+  Segmented, SERIF, UploadOption,
 } from "../ui";
 
 const KIND_CAT: Record<TryKind, string> = { cut: "catCut", colour: "catColour", makeup: "catMakeup", beard: "catBeard" };
@@ -48,9 +48,7 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
   const rec = (module: string, k: string) => results?.tabs.find((x) => x.module === module)?.recommendations[k];
 
   const recLooks = rec("colour", "makeup_look");
-  const cuts = ranked(rec("face", "haircut"), cutsAll, 2);
   const beards = ranked(rec("face", "beard_style"), beardsAll, 3); // face analysis order (best first)
-  const shades = ranked(rec("colour", "hair_shade"), shadesAll, 5);
   const lipKeys = (recLooks ?? []).map((l) => String(l.attributes.lip));
   const eyeKeys = (recLooks ?? []).map((l) => String(l.attributes.eye));
   const lips = ranked(lipsAll.filter((l) => lipKeys.includes(l.key)), lipsAll, 4);
@@ -58,7 +56,9 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
 
   const [sel, setSel] = useState<Sel>({ item: null, shade: null, technique: null, look: null, lip: null, eye: null, beard: null });
   const [level, setLevel] = useState(100);
-  const [busy, setBusy] = useState(false);
+  /** Which step (cut / colour / …) is generating; other tabs stay usable and show their own state. */
+  const [busyKind, setBusyKind] = useState<TryKind | null>(null);
+  const busy = busyKind === kind;
   const [error, setError] = useState<string | null>(null);
   const autoRan = useRef<string | null>(null);
   // Customer's own style picture for this screen (kept so the intensity slider can regenerate with it).
@@ -131,7 +131,8 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
   /** Which option a selection is (for the option card's processing / processed state). */
   const optionOf = (s: Sel) => (usesUpload(s) ? UPLOAD : kind === "cut" ? s.item : kind === "colour" ? s.shade
     : kind === "makeup" ? s.look ?? `${s.lip}+${s.eye}` : s.beard);
-  const [processing, setProcessing] = useState<string | null>(null);
+  const [processingRaw, setProcessing] = useState<string | null>(null);
+  const processing = busy ? processingRaw : null;
 
   /** Processed result for an option at the current settings, if any (shown on its card). */
   function resultFor(option: string | null): TryOn | null {
@@ -161,7 +162,7 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
       setError(null);
       return;
     }
-    setBusy(true);
+    setBusyKind(kind);
     setProcessing(optionOf(s));
     setError(null);
     try {
@@ -176,7 +177,7 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
     } catch (e) {
       setError((e as Error).message);
     } finally {
-      setBusy(false);
+      setBusyKind((k) => (k === kind ? null : k));
       setProcessing(null);
     }
   }
@@ -222,6 +223,7 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
     const top = look.layers[kind];
     if (!fromUrl || autoRan.current === `${kind}:${fromUrl}` || (top && JSON.stringify(top.params).includes(fromUrl))) return;
     autoRan.current = `${kind}:${fromUrl}`;
+    commit(preset); // record the choice too, not only the image (else the look says "No change")
     void apply(preset);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [preset, session?.id, config]);
@@ -258,6 +260,7 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
     else router.push(next);
   }
 
+
   const label = (s: string) => <span style={{ fontSize: 13, color: c("ink-muted") }}>{s}</span>;
   /** Option order: processing → processed → not tried yet (Original stays first, Upload last). */
   const stage = (key: string) => (processing === key ? 0 : resultFor(key) ? 1 : 2);
@@ -272,6 +275,18 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
           active={value === s.key} busy={processing === s.key} onClick={() => onPick(s.key)} />
       ))}
       {withUpload ? <UploadOption compact label={t("tryon", "upload")} preview={shown(UPLOAD, ref?.url ?? null)} active={usesUpload(sel)} onFile={onUpload} /> : null}
+    </div>
+  );
+
+  /** Styles processing or already processed (the original / "None" card is always shown first). */
+  const tried = (list: CatalogItem[]) => ordered(list.filter((x) => processing === x.key || !!resultFor(x.key)));
+  const optionRow = (title: string, first: React.ReactNode, rest: React.ReactNode[]) => (
+    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+      {label(title)}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 8 }}>
+        {first}
+        {rest}
+      </div>
     </div>
   );
 
@@ -296,32 +311,29 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
       </div>
 
       <div style={{ flex: "1 1 auto", minHeight: 0, overflow: "hidden", display: "flex", flexDirection: "column", gap: 12, padding: "14px 34px 0 34px" }}>
-        {kind === "cut" && (
-          <>
-            {label(t("tryon", "cutLabel"))}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: 8 }}>
-              <ImageOption image={photo} focus="50% 20%" label={t("tryon", "original")} sub={t("tryon", "originalSub")}
-                active={sel.item === null} onClick={() => pick({ item: null })} />
-              {ordered(cuts).map((x) => (
-                <ImageOption key={x.key} image={shown(x.key, styleImage("haircut", x.key, x.image_url))} focus="50% 8%" label={tx(x.name)} sub={tx(x.sub)}
-                  active={sel.item === x.key} busy={processing === x.key} done={!!resultFor(x.key)} onClick={() => pick({ item: x.key })} />
-              ))}
-            </div>
-          </>
-        )}
+        {/* Only the original + styles already processed (or processing) — new styles are picked on the Styles tab. */}
+        {kind === "cut" && optionRow(t("tryon", "cutLabel"),
+          <ImageOption image={photo} focus="50% 20%" label={t("tryon", "original")} sub={t("tryon", "originalSub")}
+            active={sel.item === null} onClick={() => pick({ item: null })} />,
+          tried(cutsAll).map((x) => (
+            <ImageOption key={x.key} image={shown(x.key, styleImage("haircut", x.key, x.image_url))} focus="50% 8%" label={tx(x.name)} sub={tx(x.sub)}
+              active={sel.item === x.key} busy={processing === x.key} done={!!resultFor(x.key)} onClick={() => pick({ item: x.key })} />
+          )))}
 
         {kind === "colour" && (
           <>
+            {/* Hair colours as FLUX_VERSION_3 swatches: 4 per row, 2:1 picture, name centred. */}
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {label(t("tryon", results ? "shades" : "shadesAll"))}
-              {dots(shades, sel.shade, (k) => pick({ shade: k }), true)}
+              {label(t("tryon", "shadesAll"))}
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: 10 }}>
+                <ShadeSwatch none image={null} name={t("tryon", "none")} active={sel.shade === null} onClick={() => pick({ shade: null })} />
+                {tried(shadesAll).map((x) => (
+                  <ShadeSwatch key={x.key} image={styleImage("hair_shade", x.key, x.image_url)} name={tx(x.name)}
+                    busy={processing === x.key} tried={resultFor(x.key) ? t("face", "tried") : undefined}
+                    active={sel.shade === x.key} onClick={() => pick({ shade: x.key })} />
+                ))}
+              </div>
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {label(t("tryon", "technique"))}
-              <ChoicePills options={techniques.map((x) => ({ key: x.key, label: tx(x.name) }))} value={sel.technique}
-                onChange={(k) => (sel.shade ? pick({ technique: k }) : setSel({ ...sel, technique: k }))} />
-            </div>
-            <Slider label={t("tryon", "intensity")} value={level} onChange={setLevel} onCommit={(v) => { commit(sel, v); if (sel.shade) void apply(sel, v); }} />
           </>
         )}
 
@@ -335,34 +347,24 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
               {label(t("tryon", "eyes"))}
               {dots(eyes, sel.eye, (k) => pick({ eye: k }))}
             </div>
-            <Slider label={t("tryon", "intensity")} value={level} onChange={setLevel} onCommit={(v) => { commit(sel, v); if (sel.lip || sel.eye || sel.look) void apply(sel, v); }} />
           </>
         )}
 
-        {kind === "beard" && (
-          <>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {label(t("tryon", "beardLabel"))}
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(5, minmax(0, 1fr))", gap: 8 }}>
-                <ImageOption image={startImage} focus="50% 45%" label={t("tryon", "none")} height={72}
-                  active={sel.beard === null} onClick={() => pick({ beard: null })} />
-                {ordered(beards).map((b) => (
-                  <ImageOption key={b.key} image={shown(b.key, styleImage("beard_style", b.key, b.image_url))} height={72} focus="50% 65%"
-                    busy={processing === b.key} done={!!resultFor(b.key)}
-                    label={tx(b.attributes.short_i18n as Record<string, string>) || tx(b.name)}
-                    active={sel.beard === b.key} onClick={() => pick({ beard: b.key })} />
-                ))}
-              </div>
-            </div>
-            <Slider label={t("tryon", "density")} value={level} onChange={setLevel} onCommit={(v) => { commit(sel, v); if (sel.beard) void apply(sel, v); }} />
-          </>
-        )}
+        {kind === "beard" && optionRow(t("tryon", "beardLabel"),
+          <ImageOption none label={t("tryon", "none")} sub={t("tryon", "originalSub")}
+            active={sel.beard === null} onClick={() => pick({ beard: null })} />,
+          tried(beardsAll).map((b) => (
+            <ImageOption key={b.key} image={shown(b.key, styleImage("beard_style", b.key, b.image_url))} focus="50% 65%"
+              busy={processing === b.key} done={!!resultFor(b.key)} label={tx(b.name)} sub={tx(b.sub)}
+              active={sel.beard === b.key} onClick={() => pick({ beard: b.key })} />
+          )))}
       </div>
       <ErrorLine message={error} />
 
       <div style={{ flex: "0 0 auto", padding: "12px 34px 32px 34px" }}>
         <PrimaryButton icon={ICON.save} onClick={save} disabled={busy}>{t("tryon", "save")}</PrimaryButton>
       </div>
+
     </Screen>
   );
 }
