@@ -3,17 +3,73 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { studioApi, type CatalogItem, type Results, type TryKind, type TryOn } from "../api";
-import { UPLOAD, useCatalog, useStudio, type LookDraft } from "../context/StudioContext";
-import { tryOrder } from "../flows";
+import { UPLOAD, useCatalog, useStudio, type HairMods, type LookDraft } from "../context/StudioContext";
+import { SERVICE_MODULE, SERVICE_TRY, tryOrder, type Service } from "../flows";
+import { JourneyBar, Options } from "./JourneyScreen";
+import ScanOverlay from "../components/ScanOverlay";
 import PhotoQR from "../components/PhotoQR";
 import { styleImage } from "../theme/styleImages";
 import {
-  c, ShadeSwatch, ColorDot, CompareArch, ErrorLine, ICON, ImageOption, LoadingStage, PrimaryButton, Screen,
-  Segmented, SERIF, UploadOption,
+  Arch, c, ShadeSwatch, ColorDot, CompareArch, ErrorLine, GuidePill, H1, HeroBackdrop, ICON, ImageOption, LoadingStage, Muted,
+  Photo, PrimaryButton, Screen, Segmented, SERIF, Tabs, UploadOption,
 } from "../ui";
 
+/** Typical try-on wait (FLUX_VERSION_3 PROGRESS_DURATION_MS.generation); progress holds at 92% until the picture is in. */
+const GEN_MS = 25_000;
+
+/**
+ * FLUX_VERSION_3-style generation screen: the customer's photo with the scan animation, a simulated % and stage messages.
+ * Shown on the Result tab while a try-on is generating.
+ */
+function GeneratingScan({ image }: { image: string | null }) {
+  const { t } = useStudio();
+  const [pct, setPct] = useState(0);
+  useEffect(() => {
+    const start = Date.now();
+    // Ease-out towards 92%: fast at first, slower near the end, never "done" before the result arrives.
+    const id = setInterval(() => setPct(Math.round(92 * (1 - Math.exp(-(Date.now() - start) / (GEN_MS / 2.5))))), 150);
+    return () => clearInterval(id);
+  }, []);
+  const stages = [t("tryon", "genStage1"), t("tryon", "genStage2"), t("tryon", "genStage3"), t("tryon", "genStage4")];
+  const stage = stages[Math.min(stages.length - 1, Math.floor((pct / 92) * stages.length))];
+  return (
+    <div style={{ flex: "1 1 auto", minHeight: 0, display: "flex", flexDirection: "column" }}>
+      <div style={{ flex: "1 1 auto", minHeight: 0, position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <HeroBackdrop halo={[500, 520]} squares={[
+          { left: 56, top: 30, width: 110, height: 110 },
+          { right: 58, bottom: 26, width: 84, height: 84 },
+        ]} />
+        <Arch width={266} height={336} offset={7} style={{ boxShadow: c("shadow-arch") }}>
+          <Photo src={image} />
+          <ScanOverlay pct={pct} />
+          <div style={{ position: "absolute", left: 0, right: 0, bottom: 14, display: "flex", justifyContent: "center" }}>
+            <GuidePill>{`${stage} ${pct}%`}</GuidePill>
+          </div>
+        </Arch>
+      </div>
+      <div style={{ flex: "0 0 auto", padding: "2px 34px 10px 34px", display: "flex", flexDirection: "column", gap: 8 }}>
+        <H1>{t("tryon", "genTitle")}</H1>
+        <Muted size={14}>{t("tryon", "genSub")}</Muted>
+      </div>
+    </div>
+  );
+}
+
 const KIND_CAT: Record<TryKind, string> = { cut: "catCut", colour: "catColour", makeup: "catMakeup", beard: "catBeard" };
-type Sel = { item: string | null; shade: string | null; technique: string | null; look: string | null; lip: string | null; eye: string | null; beard: string | null };
+type Sel = { item: string | null; shade: string | null; technique: string | null; look: string | null; lip: string | null; eye: string | null; blush: string | null; beard: string | null };
+
+/** Download an image before showing it, so the old picture is never left on screen while the new one loads. */
+function preload(url: string | null | undefined): Promise<void> {
+  if (!url) return Promise.resolve();
+  return new Promise((resolve) => {
+    const img = new Image();
+    const done = () => resolve();
+    img.onload = () => (img.decode ? img.decode().then(done, done) : done());
+    img.onerror = done;
+    setTimeout(done, 15000); // never block forever
+    img.src = url;
+  });
+}
 
 /** Recommended first (in recommendation order), then the rest of the catalog; unique keys. */
 function ranked(recommended: CatalogItem[] | undefined, all: CatalogItem[], limit: number) {
@@ -33,11 +89,14 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
   const chain = search.get("chain") === "1";
   // Journey mode: one service only (no kind switcher); Save goes on to the next service.
   const single = search.get("single") === "1";
+  // Where "Other looks" goes: the service's option page (journey) / the styles page (results), else back.
+  const back = search.get("back");
 
   const cutsAll = useCatalog("haircut");
   const shadesAll = useCatalog("hair_shade");
   const techniques = useCatalog("hair_technique");
   const lipsAll = useCatalog("lip_shade");
+  const blushAll = useCatalog("blush_shade");
   const eyesAll = useCatalog("eye_shade");
   const looksAll = useCatalog("makeup_look");
   const beardsAll = useCatalog("beard_style");
@@ -45,8 +104,8 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
   // Recommendations from the consultation (colour harmony + face), when there was one.
   const [results, setResults] = useState<Results | null>(null);
   useEffect(() => {
-    if (session && session.flow === "consultant" && session.status !== "active")
-      studioApi.results(session.id).then(setResults).catch(() => {});
+    // Recommendations feed the Recommended tab and the option order (consultation or this service's own analysis).
+    if (session) studioApi.results(session.id).then(setResults).catch(() => {});
   }, [session?.id]); // eslint-disable-line react-hooks/exhaustive-deps
   const rec = (module: string, k: string) => results?.tabs.find((x) => x.module === module)?.recommendations[k];
 
@@ -57,7 +116,7 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
   const lips = ranked(lipsAll.filter((l) => lipKeys.includes(l.key)), lipsAll, 4);
   const eyes = ranked(eyesAll.filter((e) => eyeKeys.includes(e.key)), eyesAll, 4);
 
-  const [sel, setSel] = useState<Sel>({ item: null, shade: null, technique: null, look: null, lip: null, eye: null, beard: null });
+  const [sel, setSel] = useState<Sel>({ item: null, shade: null, technique: null, look: null, lip: null, eye: null, blush: null, beard: null });
   const [level, setLevel] = useState(100);
   /** Which step (cut / colour / …) is generating; other tabs stay usable and show their own state. */
   const [busyKind, setBusyKind] = useState<TryKind | null>(null);
@@ -79,6 +138,7 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
       look: presetLook?.key ?? look.makeup_look,
       lip: (presetLook?.attributes.lip as string | undefined) ?? look.lip,
       eye: (presetLook?.attributes.eye as string | undefined) ?? look.eye,
+      blush: look.blush ?? null,
       beard: search.get("beard") ?? look.beard,
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -92,13 +152,17 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
   const usesUpload = (s: Sel) =>
     kind === "cut" ? s.item === UPLOAD : kind === "colour" ? s.shade === UPLOAD : kind === "makeup" ? s.look === UPLOAD : s.beard === UPLOAD;
 
-  function paramsFor(s: Sel, lvl: number): Record<string, unknown> | null {
+  function paramsFor(s: Sel, lvl: number, mods: HairMods = look.hairMods ?? {}): Record<string, unknown> | null {
     if (usesUpload(s)) return kind === "beard" ? { density: lvl } : kind === "cut" ? {} : { intensity: lvl };
-    if (kind === "cut") return s.item ? { item: s.item } : null;
+    if (kind === "cut") {
+      // Haircut + customisation (bangs / fade / styling); customisation alone keeps the current cut.
+      const extra = Object.fromEntries(Object.entries(mods).filter(([, v]) => !!v));
+      return s.item || Object.keys(extra).length ? { ...(s.item ? { item: s.item } : {}), ...extra } : null;
+    }
     if (kind === "colour") return s.shade ? { shade: s.shade, technique: s.technique, intensity: lvl } : null;
     if (kind === "makeup") {
-      if (s.look) return { look: s.look, intensity: lvl };
-      return s.lip || s.eye ? { lip: s.lip, eye: s.eye, intensity: lvl } : null;
+      if (s.look) return { look: s.look, ...(s.blush ? { blush: s.blush } : {}), intensity: lvl };
+      return s.lip || s.eye || s.blush ? { lip: s.lip, eye: s.eye, blush: s.blush, intensity: lvl } : null;
     }
     return s.beard ? { beard: s.beard, density: lvl } : null;
   }
@@ -124,7 +188,7 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
       if ((layer.parent_id ?? null) !== (top?.id ?? null)) {
         layers[k] = null; // built on an image the customer no longer keeps (still cached for if they go back)
         Object.assign(cleared, k === "cut" ? { cut: null } : k === "colour" ? { hair_shade: null, technique: null }
-          : k === "makeup" ? { makeup_look: null, lip: null, eye: null } : { beard: null });
+          : k === "makeup" ? { makeup_look: null, lip: null, eye: null, blush: null } : { beard: null });
         continue;
       }
       top = layer;
@@ -133,8 +197,11 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
   }
   /** Which option a selection is (for the option card's processing / processed state). */
   const optionOf = (s: Sel) => (usesUpload(s) ? UPLOAD : kind === "cut" ? s.item : kind === "colour" ? s.shade
-    : kind === "makeup" ? s.look ?? `${s.lip}+${s.eye}` : s.beard);
+    : kind === "makeup" ? `${s.look ?? `${s.lip}+${s.eye}`}${s.blush ? `+${s.blush}` : ""}` : s.beard);
   const [processingRaw, setProcessing] = useState<string | null>(null);
+  /** FLUX_VERSION_3 tabs: pick another option (Recommended / Custom) → Try → back on Result, generating. */
+  const [view, setView] = useState<"recommended" | "custom" | "result">("result");
+  const [optSel, setOptSel] = useState<string | null>(null);
   const processing = busy ? processingRaw : null;
 
   /** Processed result for an option at the current settings, if any (shown on its card). */
@@ -148,11 +215,11 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
   }
 
   /** Replace this kind's layer if it is on top, else stack on the newest layer. "None" just removes it. */
-  async function apply(s: Sel, lvl = level, file: File | null = ref?.file ?? null) {
+  async function apply(s: Sel, lvl = level, file: File | null = ref?.file ?? null, mods?: HairMods) {
     if (!session) return;
     const reference = usesUpload(s) ? file : null;
     if (usesUpload(s) && !reference) return;
-    const p = paramsFor(s, lvl);
+    const p = paramsFor(s, lvl, mods);
     if (!p) {
       setLayer(null); // Original / None: keep the image from the previous steps
       return;
@@ -160,7 +227,8 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
     const key = resultKey(p, reference);
     const cached = look.results[key];
     if (cached?.status === "done") {
-      // Already processed: show it again, no new AI call.
+      // Already processed: show it again, no new AI call (usually already in the browser cache).
+      await preload(cached.output_url);
       setLayer(cached);
       setError(null);
       return;
@@ -171,6 +239,7 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
     try {
       const tr = await studioApi.tryOn(session.id, { kind, params: p, parent_id: baseTryon?.id ?? null, reference });
       if (tr.status === "done") {
+        await preload(tr.output_url); // keep "Generating…" until the new picture is ready to show
         updateLook({ results: { ...look.results, [key]: tr } });
         setLayer(tr);
       } else {
@@ -190,7 +259,7 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
     const patch: Partial<LookDraft> = { params: { ...look.params, [`${kind}_level`]: lvl } };
     if (kind === "cut") patch.cut = s.item;
     if (kind === "colour") Object.assign(patch, { hair_shade: s.shade, technique: s.shade ? s.technique : null });
-    if (kind === "makeup") Object.assign(patch, { makeup_look: s.look, lip: s.lip, eye: s.eye });
+    if (kind === "makeup") Object.assign(patch, { makeup_look: s.look, lip: s.lip, eye: s.eye, blush: s.blush });
     if (kind === "beard") patch.beard = s.beard;
     updateLook(patch);
   }
@@ -202,9 +271,21 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
     void apply(s);
   }
 
+  /** Try the option picked on Recommended / Custom: back to the Result tab, which shows the generation screen. */
+  function tryOption() {
+    if (!optSel) return;
+    setView("result");
+    if (kind === "cut") pick({ item: optSel });
+    else if (kind === "colour") pick({ shade: optSel, technique: look.technique ?? sel.technique });
+    else if (kind === "makeup") pick({ look: optSel });
+    else pick({ beard: optSel });
+  }
+
   function switchTab(k: TryKind) {
     if (k === kind) return;
     setKind(k);
+    setView("result");
+    setOptSel(null);
     const path = window.location.pathname.replace(/\/try\/[a-z]+/, `/try/${k}`);
     window.history.replaceState(null, "", `${path}?next=${encodeURIComponent(next)}${chain ? "&chain=1" : ""}`);
   }
@@ -234,6 +315,7 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
   if (!config || !session) return <LoadingStage />;
 
   const kinds = order;
+  const journeyService = (Object.keys(SERVICE_TRY) as Service[]).find((sv) => SERVICE_TRY[sv] === kind);
   /** What this step starts from: the image kept in the earlier steps (e.g. the chosen haircut), else the photo. */
   const startImage = baseTryon?.output_url ?? photo;
   const name = (list: CatalogItem[], key: string | null) =>
@@ -241,16 +323,21 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
 
   // Header: "Lob with curtain bangs" / "Chocolate brown (uniform), terracotta lips, bronze eyes"
   const L: LookDraft = { ...look, ...(kind === "cut" ? { cut: sel.item } : {}), ...(kind === "colour" ? { hair_shade: sel.shade, technique: sel.technique } : {}),
-    ...(kind === "makeup" ? { lip: sel.lip, eye: sel.eye } : {}), ...(kind === "beard" ? { beard: sel.beard } : {}) };
-  const line1 = L.cut ? name(cutsAll, L.cut) : t("tryon", "yourHair");
-  const parts = [L.hair_shade === UPLOAD ? `${t("tryon", "colour")}: ${t("tryon", "yourPhoto").toLowerCase()}`
-    : L.hair_shade ? `${name(shadesAll, L.hair_shade)} (${name(techniques, L.technique).toLowerCase()})` : t("tryon", "natural")];
-  if (gender === "woman" && (L.lip || L.eye)) {
-    if (L.lip) parts.push(`${name(lipsAll, L.lip).toLowerCase()} ${t("tryon", "lipsWord")}`);
-    if (L.eye) parts.push(`${name(eyesAll, L.eye).toLowerCase()} ${t("tryon", "eyesWord")}`);
-  }
-  if (gender === "man" && L.beard) parts.push(name(beards, L.beard).toLowerCase());
-  const line2 = parts.join(", ").replace(/^./, (x) => x.toUpperCase());
+    ...(kind === "makeup" ? { lip: sel.lip, eye: sel.eye, blush: sel.blush } : {}), ...(kind === "beard" ? { beard: sel.beard } : {}) };
+  // Title = this step's choice (a haircut on Haircut, the shade on Colour, …); subtitle = the step + details.
+  const blushName = L.blush ? `${name(blushAll, L.blush).toLowerCase()} ${t("tryon", "blushWord")}` : "";
+  const makeupName0 = L.makeup_look === UPLOAD ? t("tryon", "yourPhoto")
+    : sel.look ? name(looksAll, sel.look)
+    : [L.lip ? `${name(lipsAll, L.lip)} ${t("tryon", "lipsWord")}` : "", L.eye ? `${name(eyesAll, L.eye).toLowerCase()} ${t("tryon", "eyesWord")}` : ""].filter(Boolean).join(", ");
+  const makeupName = [makeupName0, blushName].filter(Boolean).join(", ");
+  const line1 = kind === "cut" ? (L.cut ? name(cutsAll, L.cut) : t("tryon", "yourHair"))
+    : kind === "colour" ? (L.hair_shade ? name(shadesAll, L.hair_shade) : t("tryon", "natural"))
+    : kind === "makeup" ? (makeupName || t("tryon", "none"))
+    : (L.beard ? name(beards, L.beard) : t("tryon", "none"));
+  const line2 = [t("tryon", KIND_CAT[kind]),
+    kind === "colour" && L.hair_shade && L.hair_shade !== UPLOAD && L.technique ? name(techniques, L.technique) : "",
+    ...(kind === "cut" ? Object.entries(look.hairMods ?? {}).filter(([, v]) => !!v).map(([g, v]) => t("hair", `${g}_${v}`)) : []),
+  ].filter(Boolean).join(" · ");
 
   /**
    * Save keeps the selected image for this step — Original (no change) or a processed result — and moves on:
@@ -283,18 +370,29 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
 
   /** Styles processing or already processed (the original / "None" card is always shown first). */
   const tried = (list: CatalogItem[]) => ordered(list.filter((x) => processing === x.key || !!resultFor(x.key)));
-  const optionRow = (title: string, first: React.ReactNode, rest: React.ReactNode[]) => (
-    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-      {label(title)}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 8 }}>
+  /** Status under a queue card: generating / showing (selected) / tried. */
+  const status = (key: string | null, active: boolean) =>
+    key && processing === key ? t("tryon", "statusGenerating") : active ? t("tryon", "statusShowing")
+      : key === null ? t("tryon", "statusPhoto") : t("tryon", "statusTried");
+  /** The queue under the result: original + every look tried so far, small cards, 5 per row. */
+  const optionRow = (_title: string, first: React.ReactNode, rest: React.ReactNode[]) => (
+    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+      <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
+        <span style={{ ...SERIF, fontSize: 16 }}>{t("tryon", "queueTitle")} <span style={{ fontSize: 12, color: c("ink-muted") }}>· {rest.length}</span></span>
+        <span style={{ fontSize: 11, color: c("ink-muted") }}>{t("tryon", "queueHint")}</span>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(5, minmax(0, 1fr))", gap: 6 }}>
         {first}
         {rest}
       </div>
     </div>
   );
 
+
   return (
-    <Screen step={5}>
+    // Journey (one service): the journey's own progress ("Service 3 of 5 · Hair colour"), not the step bar.
+    <Screen step={single ? undefined : 5}>
+      {single && journeyService && !back?.includes("simple=1") ? <JourneyBar service={journeyService} /> : null}
       <div style={{ flex: "0 0 auto", display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 16, padding: "14px 34px 0 34px" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 3, minWidth: 0 }}>
           <span style={{ ...SERIF, fontSize: 24, lineHeight: 1.12, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{line1}</span>
@@ -303,7 +401,29 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
         
       </div>
 
-      <CompareArch before={startImage} after={look.layers[kind]?.output_url ?? null} busy={busy} busyLabel={t("tryon", "generating")} />
+      {journeyService ? (
+        <Tabs tabs={[
+          { key: "recommended", label: t("face", "tabRecommended") },
+          { key: "custom", label: t("face", "tabCatalogue") },
+          { key: "result", label: t("tryon", "tabResult") },
+        ]} value={view} onChange={(k) => {
+          if (k !== "result") setOptSel(optionOf(sel) && optionOf(sel) !== UPLOAD ? optionOf(sel) : null);
+          setView(k as typeof view);
+        }} />
+      ) : null}
+
+      {view !== "result" && journeyService ? (
+        <>
+          <Options bare tab={view} service={journeyService} sel={optSel} setSel={setOptSel}
+            a={results?.tabs.find((x) => x.module === SERVICE_MODULE[journeyService] && x.status === "done")} />
+          <div style={{ flex: "0 0 auto", padding: "12px 34px 32px 34px" }}>
+            <PrimaryButton icon={ICON.sparkle} disabled={!optSel || !!busyKind} onClick={tryOption}>{t("tryon", "tryThis")}</PrimaryButton>
+          </div>
+        </>
+      ) : busy ? (
+        <GeneratingScan image={startImage} />
+      ) : (<>
+      <CompareArch before={startImage} after={look.layers[kind]?.output_url ?? null} />
 
       {single ? null : <div style={{ margin: "18px 34px 0 34px" }}>
         <Segmented
@@ -313,22 +433,26 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
         />
       </div>}
 
-      <div style={{ flex: "1 1 auto", minHeight: 0, overflow: "hidden", display: "flex", flexDirection: "column", gap: 12, padding: "14px 34px 0 34px" }}>
+      {/* While a picture is generating only the photo is shown: no option grid / catalogue underneath. */}
+      <div style={{ flex: "1 1 auto", minHeight: 0, overflow: "hidden", display: "flex", flexDirection: "column", gap: 12, padding: "14px 34px 0 34px",
+        visibility: busy ? "hidden" : "visible" }}>
         {/* Only the original + styles already processed (or processing) — new styles are picked on the Styles tab. */}
         {kind === "cut" && optionRow(t("tryon", "cutLabel"),
-          <ImageOption image={photo} focus="50% 20%" label={t("tryon", "original")} sub={t("tryon", "originalSub")}
+          <ImageOption compact height={62} image={photo} focus="50% 20%" label={t("tryon", "original")} sub={status(null, sel.item === null)}
             active={sel.item === null} onClick={() => pick({ item: null })} />,
           tried(cutsAll).map((x) => (
-            <ImageOption key={x.key} image={shown(x.key, styleImage("haircut", x.key, x.image_url))} focus="50% 8%" label={tx(x.name)} sub={tx(x.sub)}
+            <ImageOption compact height={62} key={x.key} image={shown(x.key, styleImage("haircut", x.key, x.image_url))} focus="50% 8%" label={tx(x.name)} sub={status(x.key, sel.item === x.key)}
               active={sel.item === x.key} busy={processing === x.key} done={!!resultFor(x.key)} onClick={() => pick({ item: x.key })} />
           )))}
+
+        {/* Bangs / fade / styling are picked on the Custom tab (with the haircut), not on the Result. */}
 
         {kind === "colour" && (
           <>
             {/* Hair colours as FLUX_VERSION_3 swatches: 4 per row, 2:1 picture, name centred. */}
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {label(t("tryon", "shadesAll"))}
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: 10 }}>
+              <span style={{ ...SERIF, fontSize: 16 }}>{t("tryon", "queueTitle")}</span>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(5, minmax(0, 1fr))", gap: 6 }}>
                 <ShadeSwatch none image={null} name={t("tryon", "none")} active={sel.shade === null} onClick={() => pick({ shade: null })} />
                 {tried(shadesAll).map((x) => (
                   <ShadeSwatch key={x.key} image={styleImage("hair_shade", x.key, x.image_url)} name={tx(x.name)}
@@ -350,15 +474,19 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
               {label(t("tryon", "eyes"))}
               {dots(eyes, sel.eye, (k) => pick({ eye: k }))}
             </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {label(t("tryon", "blush"))}
+              {dots(blushAll.slice(0, 5), sel.blush, (k) => pick({ blush: k }))}
+            </div>
           </>
         )}
 
         {kind === "beard" && optionRow(t("tryon", "beardLabel"),
-          <ImageOption none label={t("tryon", "none")} sub={t("tryon", "originalSub")}
+          <ImageOption compact height={62} none label={t("tryon", "none")} sub={status(null, sel.beard === null)}
             active={sel.beard === null} onClick={() => pick({ beard: null })} />,
           tried(beardsAll).map((b) => (
-            <ImageOption key={b.key} image={shown(b.key, styleImage("beard_style", b.key, b.image_url))} focus="50% 65%"
-              busy={processing === b.key} done={!!resultFor(b.key)} label={tx(b.name)} sub={tx(b.sub)}
+            <ImageOption compact height={62} key={b.key} image={shown(b.key, styleImage("beard_style", b.key, b.image_url))} focus="50% 65%"
+              busy={processing === b.key} done={!!resultFor(b.key)} label={tx(b.name)} sub={status(b.key, sel.beard === b.key)}
               active={sel.beard === b.key} onClick={() => pick({ beard: b.key })} />
           )))}
       </div>
@@ -373,6 +501,7 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
           style={{ position: "relative", top: "auto", left: "auto", height: "auto", minHeight: 56, padding: "0 22px", borderRadius: 999, fontSize: 15,
             background: "transparent", border: `1px solid ${c("line-strong")}`, boxShadow: "none" }} />
       </div>
+      </>)}
 
     </Screen>
   );

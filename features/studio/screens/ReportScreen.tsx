@@ -35,10 +35,21 @@ export default function ReportScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.id]);
 
-  if (!session && !token) return <LoadingStage />;
+  // Render + store the PDF in the background as soon as the report exists (no waiting on the phone later).
   const locale = report?.locale ?? "en";
+  useEffect(() => {
+    if (!token || !report || report.pdf_url) return;
+    const started = `mm-pdf:${token}`;
+    try { if (sessionStorage.getItem(started)) return; sessionStorage.setItem(started, "1"); } catch {}
+    fetch(`/api/studio-report/${encodeURIComponent(token)}/pdf?locale=${locale}&store=1`)
+      .then((r) => { if (!r.ok) throw new Error(String(r.status)); })
+      .catch(() => { try { sessionStorage.removeItem(started); } catch {} }); // retried next time the report opens
+  }, [token, report, locale]);
+
+  if (!session && !token) return <LoadingStage />;
+  // QR → phone page: name form + direct download of the stored PDF.
   const pdfUrl = token && typeof window !== "undefined"
-    ? `${window.location.origin}/api/studio-report/${encodeURIComponent(token)}/pdf?locale=${locale}`
+    ? `${window.location.origin}/${locale}/l/${encodeURIComponent(token)}?download=1`
     : null;
 
   return (

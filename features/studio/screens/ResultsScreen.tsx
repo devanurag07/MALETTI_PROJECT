@@ -3,7 +3,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { studioApi, type AnalysisTab, type CatalogItem, type Recommendation, type Results } from "../api";
-import { useCatalog, useStudio } from "../context/StudioContext";
+import { HAIR_MOD_OPTIONS, useCatalog, useStudio, type HairMods } from "../context/StudioContext";
 import { styleImage } from "../theme/styleImages";
 import { markingsOf, SkinMapPhoto, SKIN_METRICS } from "../components/SkinMap";
 import {
@@ -67,11 +67,8 @@ export default function ResultsScreen({ tab }: { tab: Tab }) {
 /** All skin scores are "higher is better" (100 = best): colour by band, not by metric. */
 const metricFill = (n: number) => c(n >= 70 ? "metric-cool" : n >= 40 ? "metric-warm" : "metric-neutral");
 
-export function SkinTab({ a }: { a: AnalysisTab }) {
-  const { t, tx, config, look, updateLook, photo } = useStudio();
-  const products = a.recommendations.product ?? [];
-  const toggle = (key: string) =>
-    updateLook({ products: look.products.includes(key) ? look.products.filter((k) => k !== key) : [...look.products, key] });
+export function SkinTab({ a, products: withProducts = true }: { a: AnalysisTab; products?: boolean }) {
+  const { t, tx, photo } = useStudio();
 
   return (
     <>
@@ -115,7 +112,19 @@ export function SkinTab({ a }: { a: AnalysisTab }) {
         })}
       </div>
 
-      <div style={{ flex: "1 1 auto", minHeight: 0, overflow: "hidden", display: "flex", flexDirection: "column", gap: 10, padding: "20px 34px 0 34px" }}>
+      {withProducts ? <SkinProducts a={a} /> : null}
+    </>
+  );
+}
+
+/** Skin product recommendations (salon line), with Add / Added. */
+export function SkinProducts({ a }: { a: AnalysisTab }) {
+  const { t, tx, look, updateLook } = useStudio();
+  const products = a.recommendations.product ?? [];
+  const toggle = (key: string) =>
+    updateLook({ products: look.products.includes(key) ? look.products.filter((k) => k !== key) : [...look.products, key] });
+  return (
+      <div style={{ flex: "1 1 auto", minHeight: 0, overflowY: "auto", display: "flex", flexDirection: "column", gap: 10, padding: "20px 34px 0 34px" }}>
         <SectionTitle title={t("skin", "productsTitle")} hint={t("skin", "line")} />
         {!products.length ? <Muted size={13}>{t("skin", "noProducts")}</Muted> : null}
         {products.map((p) => {
@@ -139,7 +148,6 @@ export function SkinTab({ a }: { a: AnalysisTab }) {
           );
         })}
       </div>
-    </>
   );
 }
 
@@ -265,11 +273,11 @@ function FaceTab({ a, colour }: { a: AnalysisTab; colour?: AnalysisTab }) {
   const badge = (key: string, best: string | undefined, rec: Set<string>) =>
     key === best ? t("face", "best") : rec.has(key) ? t("face", "forYou") : undefined;
   const cutTile = (x: CatalogItem) => (
-    <StyleCard key={x.key} image={cutImage(x)} tried={tried("cut", x.key)} focus="50% 8%" name={tx(x.name)} badge={badge(x.key, bestCut, recKeys)}
+    <StyleCard key={x.key} compact image={cutImage(x)} tried={tried("cut", x.key)} focus="50% 8%" name={tx(x.name)} badge={badge(x.key, bestCut, recKeys)}
       active={look.cut === x.key} onClick={() => tryCut(x.key)} />
   );
   const beardTile = (x: CatalogItem) => (
-    <StyleCard key={x.key} image={beardImage(x)} tried={tried("beard", x.key)} focus="50% 60%" name={tx(x.name)} badge={badge(x.key, beards[0]?.key, recBeardKeys)}
+    <StyleCard key={x.key} compact image={beardImage(x)} tried={tried("beard", x.key)} focus="50% 60%" name={tx(x.name)} badge={badge(x.key, beards[0]?.key, recBeardKeys)}
       active={look.beard === x.key} onClick={() => tryBeard(x.key)} />
   );
   const shadeTile = (x: CatalogItem) => (
@@ -308,12 +316,12 @@ function FaceTab({ a, colour }: { a: AnalysisTab; colour?: AnalysisTab }) {
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               {catKind === "makeup" && !isMan ? (
-                <div style={{ width: "83.3%", margin: "0 auto" }}><Carousel key="makeup" perPage={4} columns={2} items={forYouFirst(makeupCatalogue, recMakeupKeys).map((x) => (
+                <div style={{ width: "83.3%", margin: "0 auto" }}><Carousel key="makeup" perPage={9} columns={3} items={forYouFirst(makeupCatalogue, recMakeupKeys).map((x) => (
                   <StyleCard key={x.key} image={styleImage("makeup_look", x.key, x.image_url) || thumb} focus="50% 40%" name={tx(x.name)}
                     badge={recMakeupKeys.has(x.key) ? t("face", "forYou") : undefined} active={look.makeup_look === x.key} onClick={() => tryMakeup(x.key)} />
                 ))} /></div>
               ) : catKind === "beard" && isMan ? (
-                <div style={{ width: "83.3%", margin: "0 auto" }}><Carousel key="beard" perPage={4} columns={2} items={forYouFirst(beardCatalogue, recBeardKeys).map(beardTile)} /></div>
+                <div style={{ width: "83.3%", margin: "0 auto" }}><Carousel key="beard" perPage={9} columns={3} items={forYouFirst(beardCatalogue, recBeardKeys).map(beardTile)} /></div>
               ) : catKind === "colour" ? (
                 <>
                   <Carousel key="colour" perPage={12} columns={4} items={forYouFirst(shadeCatalogue, recShadeKeys).map(shadeTile)} />
@@ -329,7 +337,11 @@ function FaceTab({ a, colour }: { a: AnalysisTab; colour?: AnalysisTab }) {
                   </div>
                 </>
               ) : (
-                <div style={{ width: "83.3%", margin: "0 auto" }}><Carousel key="cut" perPage={4} columns={2} items={forYouFirst(catalogue, recKeys).map(cutTile)} /></div>
+                <>
+                  <div style={{ width: "62%", margin: "0 auto" }}><Carousel key="cut" perPage={9} columns={3} items={forYouFirst(catalogue, recKeys).map(cutTile)} /></div>
+                  <span style={{ ...SERIF, fontSize: 16 }}>{t("hair", "customise")}</span>
+                  <HairCustomise compact />
+                </>
               )}
             </div>
           )}
@@ -514,26 +526,76 @@ export function MakeupPalette({ look }: { look: CatalogItem }) {
   );
 }
 
+/**
+ * Hairstyle customisation (FLUX_VERSION_3 custom look): bangs (women) / fade (men) + styling, on top of the haircut.
+ * Saved in look.hairMods; the haircut try-on sends them. `onChange` lets the try-on screen re-apply at once.
+ */
+export function HairCustomise({ onChange, compact }: { onChange?: (mods: HairMods) => void; compact?: boolean }) {
+  const { t, gender, look, updateLook } = useStudio();
+  const mods = look.hairMods ?? {};
+  const groups = (gender === "man" ? ["fade", "styling"] : ["bangs", "styling"]) as ("bangs" | "fade" | "styling")[];
+  const set = (group: keyof HairMods, value: string | null) => {
+    const next = { ...mods, [group]: value };
+    updateLook({ hairMods: next });
+    onChange?.(next);
+  };
+  /** Icons from FLUX_VERSION_3 (white line art) in /public/studio/hair-mods; no icon → text-only chip. */
+  const ICONED = new Set(["none", "fade_taper", "fade_medium", "fade_skin", "bangs_curtain", "bangs_fringe", "bangs_side_swept",
+    "styling_blow_dry", "styling_straight", "styling_curly"]);
+  const chip = (active: boolean, label: string, onClick: () => void, icon?: string) => {
+    const src = icon && ICONED.has(icon) ? `/studio/hair-mods/${icon}.png` : null;
+    const h = compact ? 34 : 40;
+    return (
+      <button key={label} type="button" onClick={onClick} style={{
+        flex: "0 0 auto", display: "flex", alignItems: "center", gap: 6, height: h, padding: src ? "0 12px 0 4px" : "0 14px",
+        borderRadius: h / 2, fontSize: compact ? 12 : 13, cursor: "pointer", whiteSpace: "nowrap",
+        background: active ? c("ink") : c("surface"), color: active ? c("on-dark") : c("ink"),
+        border: `1px solid ${active ? c("ink") : c("line-strong")}`,
+      }}>
+        {src ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={src} alt="" style={{ width: h - 8, height: h - 8, objectFit: "contain", filter: active ? "invert(1)" : undefined }} />
+        ) : null}
+        {label}
+      </button>
+    );
+  };
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: compact ? 8 : 10 }}>
+      {compact ? null : <span style={{ ...SERIF, fontSize: 19 }}>{t("hair", "customise")}</span>}
+      {groups.map((g) => (
+        <div key={g} style={{ display: "flex", flexDirection: compact ? "row" : "column", alignItems: compact ? "center" : "stretch", gap: compact ? 10 : 6 }}>
+          <span style={{ fontSize: 12, color: c("ink-muted"), flex: "0 0 auto", minWidth: compact ? 52 : undefined }}>{t("hair", g)}</span>
+          <div style={{ display: "flex", flexWrap: compact ? "nowrap" : "wrap", overflowX: compact ? "auto" : undefined, scrollbarWidth: "none", minWidth: 0, gap: 6 }}>
+            {chip(!mods[g], t("tryon", "none"), () => set(g, null), "none")}
+            {HAIR_MOD_OPTIONS[g].map((v) => chip(mods[g] === v, t("hair", `${g}_${v}`), () => set(g, v), `${g}_${v}`))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 /** Recommended items first, then the rest (catalogue order). */
 export function forYouFirst<T extends { key: string }>(list: T[], rec: Set<string>): T[] {
   return [...list.filter((x) => rec.has(x.key)), ...list.filter((x) => !rec.has(x.key))];
 }
 
 /** A tappable style tile: picture on top, name below (up to 2 lines, never cut mid-word). All tiles share one size. */
-export function StyleCard({ image, focus, name, badge, tried, active, onClick }: {
+export function StyleCard({ image, focus, name, badge, tried, active, onClick, compact }: {
   image: string | null; focus: string; name: string; badge?: string; tried?: string;
-  active: boolean; onClick: () => void;
+  active: boolean; onClick: () => void; compact?: boolean;
 }) {
   return (
     <button type="button" onClick={onClick} style={{
-      display: "flex", flexDirection: "column", alignItems: "stretch", gap: 5, minWidth: 0, padding: 5, paddingBottom: 7,
-      borderRadius: 16, background: active ? c("surface-raised") : c("surface"),
+      display: "flex", flexDirection: "column", alignItems: "stretch", gap: compact ? 3 : 5, minWidth: 0, padding: compact ? 3 : 5, paddingBottom: compact ? 4 : 7,
+      borderRadius: compact ? 12 : 16, background: active ? c("surface-raised") : c("surface"),
       border: `2px solid ${active ? c("accent") : c("line")}`, color: c("ink"), textAlign: "left", cursor: "pointer",
     }}>
       <span style={{
         // Square frame: the 400×400 style photos show complete, nothing cropped.
         position: "relative", display: "block", width: "100%", aspectRatio: "1 / 1", overflow: "hidden", background: c("photo"),
-        borderRadius: 11,
+        borderRadius: compact ? 9 : 11,
       }}>
         <Photo src={image} style={{ objectPosition: focus }} />
         {tried ? (
@@ -548,8 +610,8 @@ export function StyleCard({ image, focus, name, badge, tried, active, onClick }:
         ) : null}
       </span>
       <span style={{
-        padding: "0 3px", fontSize: 12, lineHeight: 1.25, minHeight: 30, overflow: "hidden",
-        display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
+        padding: "0 3px", fontSize: compact ? 11 : 12, lineHeight: 1.25, minHeight: compact ? 14 : 30, overflow: "hidden",
+        display: "-webkit-box", WebkitLineClamp: compact ? 1 : 2, WebkitBoxOrient: "vertical",
       }}>{name}</span>
     </button>
   );

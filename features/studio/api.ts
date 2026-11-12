@@ -119,6 +119,8 @@ export type PublicReport = Session & {
   analyses: AnalysisTab[];
   tryons: TryOn[];
   created_at: string | null;
+  /** Report PDF stored in the background by the kiosk (null until it is ready). */
+  pdf_url?: string | null;
 };
 
 export type Share = {
@@ -162,13 +164,15 @@ export const studioApi = {
   },
   analyze: (id: string) => unwrap<Results>(api.post(`studio/sessions/${id}/analyze/`)),
   results: (id: string) => unwrap<Results>(api.get(`studio/sessions/${id}/results/`)),
+  /** Maletti results carry no salon-logo watermark: the API stamps it unless `watermark: false` is sent. */
   tryOn: (id: string, body: { kind: TryKind; params: Record<string, unknown>; parent_id?: number | null; reference?: Blob | null }) => {
-    if (!body.reference) return unwrap<TryOn>(api.post(`studio/sessions/${id}/tryons/`, body));
+    if (!body.reference) return unwrap<TryOn>(api.post(`studio/sessions/${id}/tryons/`, { ...body, watermark: false }));
     // Customer's own style picture → multipart.
     const fd = new FormData();
     fd.append("kind", body.kind);
     fd.append("params", JSON.stringify(body.params));
     if (body.parent_id) fd.append("parent_id", String(body.parent_id));
+    fd.append("watermark", "false");
     fd.append("reference", body.reference, "reference.jpg");
     return unwrap<TryOn>(api.post(`studio/sessions/${id}/tryons/`, fd));
   },
@@ -182,4 +186,7 @@ export const studioApi = {
     unwrap<PublicReport>(
       api.get(`studio/public/looks/${token}/`)
     ),
+  /** Phone page: the customer's name before the PDF download. */
+  publicLead: (token: string, name: string) =>
+    unwrap<{ name: string; pdf_url: string | null }>(api.post(`studio/public/looks/${token}/lead/`, { name })),
 };

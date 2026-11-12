@@ -397,8 +397,10 @@ export const NoneIcon = ({ size = 34 }: { size?: number }) => (
   </span>
 );
 
-export function ImageOption({ image, label, sub, active, onClick, height = 92, focus, busy, done, none }: {
+export function ImageOption({ image, label, sub, active, onClick, height = 92, focus, busy, done, none, compact }: {
   image?: string | null; label: string; sub?: string; active?: boolean; onClick: () => void; height?: number;
+  /** Small queue card (try-on screen): tighter padding, smaller type, `sub` is a status line. */
+  compact?: boolean;
   /** Show the "None" icon instead of a picture. */
   none?: boolean;
   /** processing: spinner over the picture · done: the picture is the customer's processed result */
@@ -408,21 +410,21 @@ export function ImageOption({ image, label, sub, active, onClick, height = 92, f
 }) {
   return (
     <button type="button" aria-pressed={active} onClick={onClick} style={{
-      display: "flex", flexDirection: "column", alignItems: "stretch", gap: 5, minWidth: 0, padding: 5, borderRadius: 16,
-      textAlign: "left", cursor: "pointer", border: `2px solid ${active ? c("accent") : c("line")}`,
+      display: "flex", flexDirection: "column", alignItems: "stretch", gap: compact ? 3 : 5, minWidth: 0, padding: compact ? 3 : 5,
+      borderRadius: compact ? 12 : 16, textAlign: compact ? "center" : "left", cursor: "pointer", border: `2px solid ${active ? c("accent") : c("line")}`,
       background: active ? c("surface-raised") : c("surface"), color: c("ink"),
     }}>
-      <span style={{ position: "relative", display: "block", height, borderRadius: 11, overflow: "hidden", background: c("photo") }}>
+      <span style={{ position: "relative", display: "block", height, borderRadius: compact ? 9 : 11, overflow: "hidden", background: c("photo") }}>
         {none ? <NoneIcon /> : <Photo src={image} style={focus && !done ? { objectPosition: focus } : undefined} />}
         {busy ? (
           <span style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: c("veil") }}>
-            <Spinner size={24} />
+            <Spinner size={compact ? 18 : 24} />
           </span>
         ) : null}
-        {done ? <Diamond size={9} style={{ position: "absolute", right: 6, top: 6, boxShadow: `0 0 0 1.5px ${c("background")}` }} /> : null}
+        {done && !compact ? <Diamond size={9} style={{ position: "absolute", right: 6, top: 6, boxShadow: `0 0 0 1.5px ${c("background")}` }} /> : null}
       </span>
-      <span style={{ padding: "0 3px", fontSize: 13, lineHeight: 1.2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{label}</span>
-      {sub ? <span style={{ padding: "0 3px 2px", fontSize: 11, color: c("ink-muted"), whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{sub}</span> : null}
+      <span style={{ padding: "0 3px", fontSize: compact ? 11 : 13, lineHeight: 1.2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{label}</span>
+      {sub ? <span style={{ padding: "0 3px 2px", fontSize: compact ? 10 : 11, color: compact && active ? c("accent") : c("ink-muted"), whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{sub}</span> : null}
     </button>
   );
 }

@@ -38,6 +38,7 @@ export default function PublicLookScreen({ token }: { token: string }) {
 
   return shell(
     <>
+      <DownloadForm token={token} locale={data.locale} initialPdf={data.pdf_url ?? null} />
       <h1 style={{ margin: 0, ...SERIF, fontSize: 34, lineHeight: 1.05 }}>{tr("look.title")}</h1>
       {look?.headline ? <p style={{ margin: 0, fontSize: 15, color: c("ink-muted") }}>{tx(look.headline)}</p> : null}
       {data.source_image_url ? (
@@ -74,5 +75,48 @@ export default function PublicLookScreen({ token }: { token: string }) {
         </div>
       ) : null}
     </>
+  );
+}
+
+
+/**
+ * Name + Download. The kiosk renders the PDF in the background, so it is normally ready: the download starts at once.
+ * If it is still being made, wait for it (poll); as a last resort render it now.
+ */
+function DownloadForm({ token, locale, initialPdf }: { token: string; locale: string; initialPdf: string | null }) {
+  const tr = useTranslations("studio");
+  const [name, setName] = useState("");
+  const [state, setState] = useState<"idle" | "waiting" | "error">("idle");
+
+  async function download(e: React.FormEvent) {
+    e.preventDefault();
+    if (!name.trim()) return;
+    setState("waiting");
+    let pdf = initialPdf;
+    try {
+      pdf = (await studioApi.publicLead(token, name.trim())).pdf_url ?? pdf;
+      for (let i = 0; !pdf && i < 30; i++) { // up to ~60 s while the kiosk finishes it
+        await new Promise((r) => setTimeout(r, 2000));
+        pdf = (await studioApi.publicLook(token)).pdf_url ?? null;
+      }
+    } catch { /* fall through to the on-demand render */ }
+    const href = pdf ?? `/api/studio-report/${encodeURIComponent(token)}/pdf?locale=${locale}`;
+    // Same tab: a new window opened after an await is blocked as a pop-up on phones.
+    window.location.href = href;
+    setState("idle");
+  }
+
+  return (
+    <form onSubmit={download} style={{ display: "flex", flexDirection: "column", gap: 10, padding: 16, borderRadius: 18, background: c("surface"), border: `1px solid ${c("line")}` }}>
+      <span style={{ ...SERIF, fontSize: 22 }}>{tr("report.downloadTitle")}</span>
+      <input value={name} onChange={(e) => setName(e.target.value)} placeholder={tr("report.namePlaceholder")} autoComplete="name" maxLength={120}
+        style={{ height: 48, padding: "0 14px", borderRadius: 14, border: `1px solid ${c("line-strong")}`, background: c("background"), color: c("ink"), fontSize: 16 }} />
+      <button type="submit" disabled={!name.trim() || state === "waiting"} style={{
+        height: 50, borderRadius: 25, border: "none", fontSize: 16, fontWeight: 500, cursor: "pointer",
+        background: c("ink"), color: c("on-dark"), opacity: !name.trim() || state === "waiting" ? 0.5 : 1,
+      }}>
+        {state === "waiting" ? tr("report.preparing") : tr("report.download")}
+      </button>
+    </form>
   );
 }

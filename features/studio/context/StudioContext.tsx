@@ -15,6 +15,8 @@ export type LookDraft = {
   makeup_look: string | null;
   lip: string | null;
   eye: string | null;
+  /** Blush shade (catalog blush_shade); goes on top of a make-up look or the lip / eye picks. */
+  blush: string | null;
   beard: string | null;
   products: string[];
   params: Record<string, number>;
@@ -28,7 +30,17 @@ export type LookDraft = {
   layers: Partial<Record<"cut" | "colour" | "makeup" | "beard", TryOn | null>>;
   /** Consultation journey progress per service (see flows.ts JOURNEY). */
   journey: Record<string, "done" | "skipped">;
+  /** Hairstyle customisation added to the haircut try-on (backend studio/services/tryon.py HAIR_MODIFIERS). */
+  hairMods: HairMods;
 };
+
+export type HairMods = { bangs?: string | null; fade?: string | null; styling?: string | null };
+/** Options per group; bangs for women, fade for men, styling for everyone. */
+export const HAIR_MOD_OPTIONS = {
+  bangs: ["curtain", "fringe", "side_swept"],
+  fade: ["taper", "medium", "skin"],
+  styling: ["blow_dry", "straight", "curly", "waves"],
+} as const;
 
 /** Look-draft value meaning "the customer's own uploaded style picture" (no catalog item). */
 export const UPLOAD = "upload:own";
@@ -42,9 +54,11 @@ export const EMPTY_LOOK: LookDraft = {
   makeup_look: null,
   lip: null,
   eye: null,
+  blush: null,
   beard: null,
   products: [],
   params: {},
+  hairMods: {},
   lastTryon: null,
   history: [],
   results: {},

@@ -714,7 +714,13 @@
       "metric_oiliness": "Lucidità",
       "metric_pigmentation": "Pigmentazione",
       "metric_dark_circles": "Occhiaie",
-      "metric_acne": "Acne"
+      "metric_acne": "Acne",
+      "productsCta": "Vedi i tuoi prodotti",
+      "scanning": "Analisi della pelle",
+      "scanningSub": "Leggiamo tono, texture e i 6 parametri della pelle…",
+      "scanStage1": "Mappatura della pelle…",
+      "scanStage2": "Lettura dei 6 parametri…",
+      "scanStage3": "Scelta dei prodotti…"
     },
     "face": {
       "ratio": "Lunghezza / larghezza",
@@ -760,7 +766,12 @@
       "try": "Prova",
       "saved": "Salvato",
       "custom": "Combinazione personalizzata",
-      "cta": "Avanti: il tuo look"
+      "cta": "Avanti: il tuo look",
+      "scanning": "Leggiamo i tuoi colori",
+      "scanningSub": "Sottotono, occhi e capelli: cerchiamo la tua stagione…",
+      "scanStage1": "Lettura del sottotono…",
+      "scanStage2": "Confronto delle palette…",
+      "scanStage3": "Ricerca della stagione…"
     },
     "service": {
       "live": "Riflesso dal vivo",
@@ -774,7 +785,9 @@
       "makeupSub": "Labbra e occhi",
       "beard": "Barba",
       "beardSub": "Tre giorni, corta, piena",
-      "switch": "Preferisci la consulenza completa? Passa a Beauty Consultant"
+      "switch": "Preferisci la consulenza completa? Passa a Beauty Consultant",
+      "armocromiaSub": "La tua stagione e la tua palette",
+      "skinSub": "I 6 parametri della pelle e i prodotti"
     },
     "tryon": {
       "catCut": "Taglio",
@@ -810,7 +823,24 @@
       "recommendedForYou": "Consigliati per te",
       "allCuts": "Tutti i tagli",
       "forYou": "Per te",
-      "close": "Chiudi"
+      "close": "Chiudi",
+      "otherLooks": "Altri look",
+      "blush": "Blush",
+      "blushWord": "blush",
+      "tabResult": "Risultato",
+      "genTitle": "Creiamo il tuo look",
+      "genSub": "L'AI sta applicando lo stile alla tua foto…",
+      "genStage1": "Caricamento della foto…",
+      "genStage2": "Rilevamento dei lineamenti…",
+      "genStage3": "Generazione del look…",
+      "genStage4": "Ultimi ritocchi…",
+      "tryThis": "Prova questo look",
+      "queueTitle": "I tuoi look",
+      "queueHint": "Tocca per mostrarlo",
+      "statusShowing": "In mostra",
+      "statusTried": "Provato",
+      "statusGenerating": "In creazione…",
+      "statusPhoto": "La tua foto"
     },
     "look": {
       "title": "Il tuo look di oggi",
@@ -923,7 +953,11 @@
       "triedTitle": "I look che hai provato",
       "triedText": "Tutti i tagli e i colori provati allo specchio. Quello scelto è evidenziato.",
       "triedCount": "{n} provati",
-      "yourPhoto": "La tua foto"
+      "yourPhoto": "La tua foto",
+      "downloadTitle": "Scarica il tuo report",
+      "namePlaceholder": "Il tuo nome",
+      "download": "Scarica PDF",
+      "preparing": "Stiamo preparando il report…"
     },
     "styles": {
       "cta": "Continua con l'armonia colori"
@@ -977,6 +1011,34 @@
       "hint": "Se il download non parte, tieni premuta la foto per salvarla.",
       "missing": "Questa foto non è più disponibile.",
       "original": "Foto originale"
+    },
+    "hair": {
+      "customise": "Personalizza",
+      "bangs": "Frangia",
+      "fade": "Sfumatura",
+      "styling": "Piega",
+      "bangs_curtain": "A tendina",
+      "bangs_fringe": "Piena",
+      "bangs_side_swept": "Laterale",
+      "fade_taper": "Taper",
+      "fade_medium": "Media",
+      "fade_skin": "Skin fade",
+      "styling_blow_dry": "Brushing",
+      "styling_straight": "Liscia",
+      "styling_curly": "Ricci",
+      "styling_waves": "Onde"
+    },
+    "simple": {
+      "report": "Vedi il tuo report",
+      "another": "Prova un altro servizio",
+      "noChange": "Nessuna modifica"
+    },
+    "faceScan": {
+      "scanning": "Leggiamo i tuoi lineamenti",
+      "scanningSub": "Forma del viso e proporzioni: scegliamo gli stili per te…",
+      "scanStage1": "Rilevamento del viso…",
+      "scanStage2": "Misura delle proporzioni…",
+      "scanStage3": "Scelta degli stili…"
     }
   }
 }

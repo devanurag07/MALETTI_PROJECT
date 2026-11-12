@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { waitForPendingUpload } from "../pending-upload";
 import { studioApi, type AnalysisTab, type CatalogItem, type Recommendation, type Results } from "../api";
 import { useCatalog, useStudio } from "../context/StudioContext";
 import {
@@ -9,12 +10,13 @@ import {
 } from "../flows";
 import { styleImage } from "../theme/styleImages";
 import {
-  c, Card, Carousel, ColorChip, ErrorLine, H1, HeroBackdrop, Icon, ICON, LoadingStage, Muted, OutlineButton,
+  Arch, c, Card, Carousel, ColorChip, ErrorLine, GuidePill, H1, HeroBackdrop, Icon, ICON, LoadingStage, Muted, OutlineButton, Photo,
   PrimaryButton, Screen, SERIF, ShadeSwatch, Spinner, Tabs,
 } from "../ui";
 import { markingsOf, SkinMapLegend, SkinMapPhoto } from "../components/SkinMap";
 import PhotoQR from "../components/PhotoQR";
-import { colourModels, MakeupPalette, forYouFirst, RecommendedCard, useShadeDetails, SkinTab, StyleCard, TechniqueCard } from "./ResultsScreen";
+import ScanOverlay from "../components/ScanOverlay";
+import { colourModels, HairCustomise, MakeupPalette, forYouFirst, RecommendedCard, useShadeDetails, SkinProducts, SkinTab, StyleCard, TechniqueCard } from "./ResultsScreen";
 
 const SERVICE_ICON: Record<Service, string> = {
   hairstyle: ICON.serviceCut, beard: ICON.serviceBeard, armocromia: ICON.colour,
@@ -22,7 +24,7 @@ const SERVICE_ICON: Record<Service, string> = {
 };
 
 /** Service progress: "Service 2 of 5 · Beard" + one segment per service (done / skipped / current / to do). */
-function JourneyBar({ service }: { service: Service }) {
+export function JourneyBar({ service }: { service: Service }) {
   const { t, gender, look } = useStudio();
   const list = JOURNEY[gender];
   const idx = list.indexOf(service);
@@ -95,38 +97,67 @@ export function ServiceIntro({ service }: { service: Service }) {
 export function ServicePage({ service }: { service: Service }) {
   const router = useRouter();
   const { t, config, session, gender } = useStudio();
+  // Simple Service (one service on its own): no journey bar, back to the service list when done.
+  const simple = useSearchParams().get("simple") === "1";
+  const needsAnalysis = service === "armocromia" || service === "skin";
   const [results, setResults] = useState<Results | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [sel, setSel] = useState<string | null>(null);
+  // Skin / colour harmony: a 5-second "analysing" animation on the photo before the results (once per session).
+  const scanKey = session ? `mm-${service}-scan:${session.id}` : "";
+  const [scanning, setScanning] = useState(() => {
+    if (service !== "skin" && service !== "armocromia") return false;
+    try { return !sessionStorage.getItem(scanKey); } catch { return true; }
+  });
+  useEffect(() => {
+    if (!scanning || !session) return;
+    try { if (sessionStorage.getItem(scanKey)) { setScanning(false); return; } } catch {}
+    const id = setTimeout(() => {
+      try { sessionStorage.setItem(scanKey, "1"); } catch {}
+      setScanning(false);
+    }, 5000);
+    return () => clearTimeout(id);
+  }, [scanning, scanKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (session) studioApi.results(session.id).then(setResults).catch((e: Error) => setError(e.message));
+    if (!session) return;
+    // Armocromia / skin need the analysis: run it when this session has none yet (e.g. Simple Service).
+    (async () => {
+      await waitForPendingUpload();
+      let r = await studioApi.results(session.id);
+      if ((needsAnalysis || simple) && !r.tabs.some((x) => x.module === SERVICE_MODULE[service] && x.status === "done")) r = await studioApi.analyze(session.id);
+      return r;
+    })().then(setResults).catch((e: Error) => setError(e.message));
   }, [session?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!config || !session) return <LoadingStage />;
+  // The scan animation stays until the results are there (at least 5 s).
+  if (scanning || ((needsAnalysis || simple) && !results && !error))
+    return <ServiceScan service={service} />;
   // Skin: Next first shows the skin map (markings on the photo), then goes on.
-  const next = service === "skin" ? "/journey/skin/map" : journeyNext(gender, service);
+  const result = `/service/result?s=${service}`;
+  const next = service === "skin" ? `/journey/skin/map${simple ? "?simple=1" : ""}` : simple ? result : journeyNext(gender, service);
   const tab = (m: string) => results?.tabs.find((x) => x.module === m && x.status === "done");
   const a = tab(SERVICE_MODULE[service]);
   const kind = SERVICE_TRY[service];
   const param = kind === "cut" ? "item" : kind === "colour" ? "shade" : kind === "makeup" ? "look" : "beard";
-  const tryIt = () => sel && kind && router.push(`/try/${kind}?${param}=${encodeURIComponent(sel)}&single=1&next=${encodeURIComponent(next)}`);
-  // Needs the analysis: armocromia and skin; the try-on services also work from the catalogue alone.
-  const needsAnalysis = service === "armocromia" || service === "skin";
+  const tryIt = () => sel && kind && router.push(`/try/${kind}?${param}=${encodeURIComponent(sel)}&single=1&next=${encodeURIComponent(next)}&back=${encodeURIComponent(journeyPage(service) + (simple ? "?simple=1" : ""))}`);
 
   let body: ReactNode;
   if (!results && !error) body = <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}><Spinner size={36} /></div>;
   else if (needsAnalysis && !a) body = <div style={{ flex: 1 }}><ErrorLine message={error ?? t("analysis", "failed")} /></div>;
-  else if (service === "skin") body = <SkinTab a={a!} />;
+  else if (service === "skin") body = <SkinTab a={a!} products={false} />;
   else if (service === "armocromia") body = <Armocromia a={a!} />;
   else body = <Options service={service} a={a} sel={sel} setSel={setSel} />;
 
-  const last = next === "/look";
+  const last = next === "/look" || next.startsWith("/service");
   const nextLabel = service === "skin" ? t("skinMap", "cta") : t("journey", last ? "finish" : "next");
   return (
     <Screen animKey={`svc-${service}`}>
-      <JourneyBar service={service} />
+      {simple ? null : <JourneyBar service={service} />}
       {body}
+      {/* Skin results don't fill the height: push the button to the bottom. */}
+      {service === "skin" ? <div style={{ flex: "1 1 auto" }} /> : null}
       <div style={{ flex: "0 0 auto", display: "grid", gridTemplateColumns: kind ? "1fr 1fr" : "1fr", gap: 12, padding: "14px 34px 34px 34px" }}>
         {kind ? (
           <>
@@ -142,7 +173,11 @@ export function ServicePage({ service }: { service: Service }) {
 }
 
 /** Selectable options for a try-on service (recommended first, then the catalogue). */
-function Options({ service, a, sel, setSel }: { service: Service; a?: AnalysisTab; sel: string | null; setSel: (k: string) => void }) {
+export function Options({ service, a, sel, setSel, tab: tabProp, bare }: {
+  service: Service; a?: AnalysisTab; sel: string | null; setSel: (k: string) => void;
+  /** Controlled tab + no title/tabs of its own (used inside the try-on screen's Recommended | Custom | Result tabs). */
+  tab?: "recommended" | "custom"; bare?: boolean;
+}) {
   const { t, tx, look, photo, updateLook } = useStudio();
   const cuts = useCatalog("haircut");
   const beards = useCatalog("beard_style").filter((b) => b.key !== "none");
@@ -174,7 +209,8 @@ function Options({ service, a, sel, setSel }: { service: Service; a?: AnalysisTa
 
   const shadeDetails = useShadeDetails();
   const { gender } = useStudio();
-  const [tab, setTab] = useState<"recommended" | "custom">(rec.length ? "recommended" : "custom");
+  const [tabState, setTab] = useState<"recommended" | "custom">(rec.length ? "recommended" : "custom");
+  const tab = tabProp ?? tabState;
   let content: ReactNode;
   if (tab === "recommended") {
     content = (
@@ -225,26 +261,41 @@ function Options({ service, a, sel, setSel }: { service: Service; a?: AnalysisTa
     );
   } else {
     content = (
-      <div style={{ width: "83.3%", margin: "0 auto" }}>
-        <Carousel key={service} perPage={4} columns={2} items={ordered.map((x) => (
-          <StyleCard key={x.key} image={styleImage(imageKind, x.key, x.image_url) || thumb} focus={service === "beard" ? "50% 60%" : "50% 8%"}
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      {/* 3×3 page + customise options fit one screen (no scrolling). */}
+      <div style={{ width: service === "hairstyle" ? "62%" : "72%", margin: "0 auto" }}>
+        <Carousel key={service} perPage={9} columns={3} items={ordered.map((x) => (
+          <StyleCard key={x.key} compact image={styleImage(imageKind, x.key, x.image_url) || thumb} focus={service === "beard" ? "50% 60%" : "50% 8%"}
             name={tx(x.name)} badge={badge(x.key)} active={sel === x.key} onClick={() => setSel(x.key)} />
         ))} />
+      </div>
+      {service === "hairstyle" ? (
+        <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+          <span style={{ ...SERIF, fontSize: 16 }}>{t("hair", "customise")}</span>
+          <HairCustomise compact />
+        </div>
+      ) : null}
       </div>
     );
   }
 
+  if (bare) return (
+    <div style={{ flex: "1 1 auto", minHeight: 0, overflowY: "auto", display: "flex", flexDirection: "column", gap: 10, padding: "12px 34px 6px 34px" }}>
+      {tab === "recommended" && !rec.length ? <Muted size={14}>{t("journey", "pickHint")}</Muted> : null}
+      <div style={{ margin: "auto 0", display: "flex", flexDirection: "column", gap: 10 }}>{content}</div>
+    </div>
+  );
   return (
-    <div style={{ flex: "1 1 auto", minHeight: 0, overflowY: "auto", display: "flex", flexDirection: "column", gap: 14, padding: "18px 34px 8px 34px" }}>
-      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-        <span style={{ ...SERIF, fontSize: 28, lineHeight: 1.1 }}>{t("journey", `${service}.name`)}</span>
+    <div style={{ flex: "1 1 auto", minHeight: 0, overflowY: "auto", display: "flex", flexDirection: "column", gap: 10, padding: "12px 34px 6px 34px" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <span style={{ ...SERIF, fontSize: 24, lineHeight: 1.1 }}>{t("journey", `${service}.name`)}</span>
         <Muted size={14}>
           {service === "hairstyle" && a?.label?.name ? `${tx(a.label.name)} · ` : ""}{t("journey", "pickHint")}
         </Muted>
       </div>
       <Tabs tabs={[{ key: "recommended", label: t("face", "tabRecommended") }, { key: "custom", label: t("face", "tabCatalogue") }]}
         value={tab} onChange={(k) => setTab(k as "recommended" | "custom")} />
-      <div style={{ margin: "auto 0", display: "flex", flexDirection: "column", gap: 14 }}>{content}</div>
+      <div style={{ margin: "auto 0", display: "flex", flexDirection: "column", gap: 10 }}>{content}</div>
     </div>
   );
 }
@@ -287,6 +338,7 @@ function Armocromia({ a }: { a: AnalysisTab }) {
 /** After Skin analysis → Next: one page with every finding marked on the photo (also in the report). */
 export function SkinMapPage() {
   const router = useRouter();
+  const simple = useSearchParams().get("simple") === "1";
   const { t, tx, config, session, gender, photo } = useStudio();
   const [results, setResults] = useState<Results | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -296,11 +348,11 @@ export function SkinMapPage() {
   if (!config || !session) return <LoadingStage />;
   const skin = results?.tabs.find((x) => x.module === "skin" && x.status === "done");
   const markings = markingsOf(skin?.zones);
-  const next = journeyNext(gender, "skin");
+  const next = `/journey/skin/products${simple ? "?simple=1" : ""}`;
 
   return (
     <Screen animKey="skin-map">
-      <JourneyBar service="skin" />
+      {simple ? null : <JourneyBar service="skin" />}
       {!results && !error ? (
         <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}><Spinner size={36} /></div>
       ) : !skin ? (
@@ -319,7 +371,80 @@ export function SkinMapPage() {
         </div>
       )}
       <div style={{ flex: "0 0 auto", padding: "14px 34px 34px 34px" }}>
-        <PrimaryButton iconRight={ICON.next} onClick={() => router.push(next)}>{t("journey", next === "/look" ? "finish" : "next")}</PrimaryButton>
+        <PrimaryButton iconRight={ICON.next} onClick={() => router.push(next)}>{t("skin", "productsCta")}</PrimaryButton>
+      </div>
+    </Screen>
+  );
+}
+
+
+/** After the skin map: the recommended skin products, then on to the next service. */
+export function SkinProductsPage() {
+  const router = useRouter();
+  const simple = useSearchParams().get("simple") === "1";
+  const { t, config, session, gender } = useStudio();
+  const [results, setResults] = useState<Results | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  useEffect(() => {
+    if (session) studioApi.results(session.id).then(setResults).catch((e: Error) => setError(e.message));
+  }, [session?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  if (!config || !session) return <LoadingStage />;
+  const skin = results?.tabs.find((x) => x.module === "skin" && x.status === "done");
+  const next = simple ? "/service/result?s=skin" : journeyNext(gender, "skin");
+  return (
+    <Screen animKey="skin-products">
+      {simple ? null : <JourneyBar service="skin" />}
+      {!results && !error ? (
+        <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}><Spinner size={36} /></div>
+      ) : !skin ? (
+        <div style={{ flex: 1 }}><ErrorLine message={error ?? t("analysis", "failed")} /></div>
+      ) : (
+        <SkinProducts a={skin} />
+      )}
+      <div style={{ flex: "0 0 auto", padding: "14px 34px 34px 34px" }}>
+        <PrimaryButton iconRight={ICON.next} onClick={() => router.push(next)}>{t("journey", next === "/look" || next.startsWith("/service") ? "finish" : "next")}</PrimaryButton>
+      </div>
+    </Screen>
+  );
+}
+
+/**
+ * 5-second processing screen for Armocromia / Skin: the same scan UI as the Analysis screen (photo in the arch,
+ * scan line, brackets, "<stage> NN%" pill), counting to 100 % in 5 s.
+ */
+const SCAN_MS = 5000;
+function ServiceScan({ service }: { service: Service }) {
+  const { t, photo } = useStudio();
+  const simple = useSearchParams().get("simple") === "1";
+  const [pct, setPct] = useState(0);
+  useEffect(() => {
+    const start = Date.now();
+    const id = setInterval(() => setPct(Math.min(100, Math.round(((Date.now() - start) / SCAN_MS) * 100))), 100);
+    return () => clearInterval(id);
+  }, []);
+  // Labels: skin → skin.*, hairstyle / beard → face.* (face analysis), colour services → colour.*.
+  const ns = service === "skin" ? "skin" : service === "hairstyle" || service === "beard" ? "faceScan" : "colour";
+  const stages = [t(ns, "scanStage1"), t(ns, "scanStage2"), t(ns, "scanStage3")];
+  const stage = stages[Math.min(stages.length - 1, Math.floor((pct / 100) * stages.length))];
+  return (
+    <Screen animKey={`${service}-scan`}>
+      {simple ? null : <JourneyBar service={service} />}
+      <div style={{ flex: "1 1 auto", minHeight: 0, position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <HeroBackdrop halo={[500, 520]} squares={[
+          { left: 56, top: 30, width: 110, height: 110 },
+          { right: 58, bottom: 26, width: 84, height: 84 },
+        ]} />
+        <Arch width={266} height={336} offset={7} style={{ boxShadow: c("shadow-arch") }}>
+          <Photo src={photo} />
+          <ScanOverlay pct={pct} />
+          <div style={{ position: "absolute", left: 0, right: 0, bottom: 14, display: "flex", justifyContent: "center" }}>
+            <GuidePill>{`${stage} ${pct}%`}</GuidePill>
+          </div>
+        </Arch>
+      </div>
+      <div style={{ flex: "0 0 auto", padding: "2px 34px 34px 34px", display: "flex", flexDirection: "column", gap: 8 }}>
+        <H1>{t(ns, "scanning")}</H1>
+        <Muted size={14}>{t(ns, "scanningSub")}</Muted>
       </div>
     </Screen>
   );

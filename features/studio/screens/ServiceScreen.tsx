@@ -13,6 +13,9 @@ const ICONS: Record<TryKind, string> = {
   beard: ICON.serviceBeard,
 };
 
+/** Each try-on maps to its service page (Recommended + Custom), then the one-service result. */
+const KIND_SERVICE: Record<TryKind, string> = { cut: "hairstyle", colour: "colour", makeup: "makeup", beard: "beard" };
+
 /** Simple Service, step 3 — pick what to try. Options per gender: SERVICE_KINDS in ../flows. */
 export default function ServiceScreen() {
   const router = useRouter();
@@ -44,8 +47,8 @@ export default function ServiceScreen() {
         <H1 size={34} style={{ lineHeight: 1.08 }}>{t("service", "title")}</H1>
         <Muted size={15} style={{ marginBottom: 6 }}>{t("service", "desc")}</Muted>
         {SERVICE_KINDS[gender].map((k) => (
-          <button key={k} type="button" onClick={() => router.push(`/try/${k}?next=/look&chain=1`)} style={{
-            display: "flex", alignItems: "center", gap: 16, width: "100%", height: 84, padding: "0 20px 0 16px", borderRadius: 22,
+          <button key={k} type="button" onClick={() => router.push(`/journey/${KIND_SERVICE[k]}/go?simple=1`)} style={{
+            display: "flex", alignItems: "center", gap: 16, width: "100%", height: 70, padding: "0 20px 0 16px", borderRadius: 20,
             background: c("surface"), border: `1px solid ${c("line-card")}`, color: c("ink"), textAlign: "left", cursor: "pointer",
           }}>
             <span style={{ position: "relative", flex: "0 0 auto", display: "flex", alignItems: "center", justifyContent: "center", width: 54, height: 54 }}>
@@ -55,6 +58,23 @@ export default function ServiceScreen() {
             <span style={{ display: "flex", flexDirection: "column", gap: 4, flex: "1 1 auto", minWidth: 0 }}>
               <span style={{ fontSize: 19 }}>{t("service", k)}</span>
               <span style={{ fontSize: 14, color: c("ink-muted") }}>{t("service", `${k}Sub`)}</span>
+            </span>
+            <Icon d={ICON.next} size={22} />
+          </button>
+        ))}
+        {/* Analyses on their own: colour harmony and skin (the analysis runs when opened). */}
+        {(["armocromia", "skin"] as const).map((sv) => (
+          <button key={sv} type="button" onClick={() => router.push(`/journey/${sv}/go?simple=1`)} style={{
+            display: "flex", alignItems: "center", gap: 16, width: "100%", height: 70, padding: "0 20px 0 16px", borderRadius: 20,
+            background: c("surface"), border: `1px solid ${c("line-card")}`, color: c("ink"), textAlign: "left", cursor: "pointer",
+          }}>
+            <span style={{ position: "relative", flex: "0 0 auto", display: "flex", alignItems: "center", justifyContent: "center", width: 54, height: 54 }}>
+              <span style={{ position: "absolute", left: 6, top: 6, display: "block", width: 42, height: 42, background: c("icon-bg"), transform: "skewX(var(--mm-skew))" }} />
+              <Icon d={sv === "skin" ? ICON.skin : ICON.colour} size={26} width={1.5} style={{ position: "relative" }} />
+            </span>
+            <span style={{ display: "flex", flexDirection: "column", gap: 4, flex: "1 1 auto", minWidth: 0 }}>
+              <span style={{ fontSize: 19 }}>{t("journey", `${sv}.name`)}</span>
+              <span style={{ fontSize: 14, color: c("ink-muted") }}>{t("service", `${sv}Sub`)}</span>
             </span>
             <Icon d={ICON.next} size={22} />
           </button>

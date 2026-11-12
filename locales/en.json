@@ -842,7 +842,13 @@
       "metric_oiliness": "Oiliness",
       "metric_pigmentation": "Pigmentation",
       "metric_dark_circles": "Dark circles",
-      "metric_acne": "Acne"
+      "metric_acne": "Acne",
+      "productsCta": "See your products",
+      "scanning": "Analysing your skin",
+      "scanningSub": "Reading tone, texture and the 6 skin parameters…",
+      "scanStage1": "Mapping your skin…",
+      "scanStage2": "Reading the 6 parameters…",
+      "scanStage3": "Matching products…"
     },
     "face": {
       "ratio": "Length / width",
@@ -888,7 +894,12 @@
       "try": "Try",
       "saved": "Saved",
       "custom": "Custom combination",
-      "cta": "Continue to your look"
+      "cta": "Continue to your look",
+      "scanning": "Reading your colours",
+      "scanningSub": "Skin undertone, eyes and hair: finding your season…",
+      "scanStage1": "Reading your undertone…",
+      "scanStage2": "Comparing palettes…",
+      "scanStage3": "Finding your season…"
     },
     "service": {
       "live": "Live reflection",
@@ -902,7 +913,9 @@
       "makeupSub": "Lips and eyes",
       "beard": "Beard",
       "beardSub": "Stubble, short, full",
-      "switch": "Prefer the full consultation? Switch to Beauty Consultant"
+      "switch": "Prefer the full consultation? Switch to Beauty Consultant",
+      "armocromiaSub": "Your colour season and palette",
+      "skinSub": "Your 6 skin parameters and products"
     },
     "tryon": {
       "catCut": "Cut",
@@ -938,7 +951,24 @@
       "recommendedForYou": "Recommended for you",
       "allCuts": "All haircuts",
       "forYou": "For you",
-      "close": "Close"
+      "close": "Close",
+      "otherLooks": "Other looks",
+      "blush": "Blush",
+      "blushWord": "blush",
+      "tabResult": "Result",
+      "genTitle": "Creating your look",
+      "genSub": "The AI is applying the style to your photo…",
+      "genStage1": "Uploading your photo…",
+      "genStage2": "Detecting your features…",
+      "genStage3": "Generating your look…",
+      "genStage4": "Finalising…",
+      "tryThis": "Try this look",
+      "queueTitle": "Your looks",
+      "queueHint": "Tap one to show it",
+      "statusShowing": "Showing",
+      "statusTried": "Tried",
+      "statusGenerating": "Generating…",
+      "statusPhoto": "Your photo"
     },
     "look": {
       "title": "Your look today",
@@ -1051,7 +1081,11 @@
       "triedTitle": "Looks you tried",
       "triedText": "Every hairstyle and colour you tried in the mirror. The one you chose is highlighted.",
       "triedCount": "{n} tried",
-      "yourPhoto": "Your photo"
+      "yourPhoto": "Your photo",
+      "downloadTitle": "Download your report",
+      "namePlaceholder": "Your name",
+      "download": "Download PDF",
+      "preparing": "Preparing your report…"
     },
     "styles": {
       "cta": "Continue to colour harmony"
@@ -1105,6 +1139,34 @@
       "hint": "If the download doesn't start, press and hold the photo to save it.",
       "missing": "This photo is no longer available.",
       "original": "Original photo"
+    },
+    "hair": {
+      "customise": "Customise",
+      "bangs": "Bangs",
+      "fade": "Fade",
+      "styling": "Styling",
+      "bangs_curtain": "Curtain",
+      "bangs_fringe": "Full fringe",
+      "bangs_side_swept": "Side-swept",
+      "fade_taper": "Taper",
+      "fade_medium": "Medium",
+      "fade_skin": "Skin fade",
+      "styling_blow_dry": "Blow-dry",
+      "styling_straight": "Straight",
+      "styling_curly": "Curly",
+      "styling_waves": "Waves"
+    },
+    "simple": {
+      "report": "See your report",
+      "another": "Try another service",
+      "noChange": "No change"
+    },
+    "faceScan": {
+      "scanning": "Reading your features",
+      "scanningSub": "Face shape and proportions: choosing styles for you…",
+      "scanStage1": "Detecting your face…",
+      "scanStage2": "Measuring proportions…",
+      "scanStage3": "Choosing your styles…"
     }
   }
 }

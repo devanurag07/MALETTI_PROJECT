@@ -1,5 +1,6 @@
 // Studio report → PDF (from beauty_platform app/api/session-report). Renders /<locale>/report-print/<token>.
 import { NextRequest, NextResponse } from "next/server";
+import { BASE_URL } from "@/core/constants/url-constants";
 
 
 export const runtime = 'nodejs';          // IMPORTANT: not 'edge'
@@ -67,6 +68,18 @@ export async function GET(req: NextRequest,
             margin: { top: "0", right: "0", bottom: "0", left: "0" },
         });
 
+
+        // ?store=1 (kiosk, in the background): keep the PDF on the share, so the phone downloads it with no wait.
+        if (url.searchParams.get("store") === "1") {
+            const form = new FormData();
+            form.append("file", new Blob([Buffer.from(pdf)], { type: "application/pdf" }), "beauty-report.pdf");
+            const res = await fetch(`${BASE_URL.replace(/\/$/, "")}/studio/public/looks/${encodeURIComponent(token)}/pdf/`, {
+                method: "POST", body: form,
+            });
+            const body = await res.json().catch(() => null);
+            if (!res.ok) return NextResponse.json({ error: body?.message ?? `Store failed (${res.status})` }, { status: 502 });
+            return NextResponse.json({ pdf_url: body?.data?.pdf_url ?? null });
+        }
 
         return new NextResponse(Buffer.from(pdf), {
             headers: {
