@@ -108,13 +108,14 @@ export function ServicePage({ service }: { service: Service }) {
   // Simple Service (one service on its own): no journey bar, back to the service list when done.
   const simple = useSearchParams().get("simple") === "1";
   const needsAnalysis = service === "armocromia" || service === "skin";
-  const [results, setResults] = useState<Results | null>(null);
+  const [results, setResults] = useState<Results | null>(() => studioApi.cachedResults(session?.id));
   const [error, setError] = useState<string | null>(null);
   const [sel, setSel] = useState<string | null>(null);
   // Skin / colour harmony: a 5-second "analysing" animation on the photo before the results (once per session).
   const scanKey = session ? `mm-${service}-scan:${session.id}` : "";
   const [scanning, setScanning] = useState(() => {
     if (service !== "skin" && service !== "armocromia") return false;
+    if (studioApi.cachedResults(session?.id)?.tabs.some((x) => x.module === SERVICE_MODULE[service] && x.status === "done")) return false;
     try { return !sessionStorage.getItem(scanKey); } catch { return true; }
   });
   useEffect(() => {

@@ -149,6 +149,12 @@ export type LookPayload = Partial<{
 
 // ---------- Endpoints ----------
 
+const RESULTS = new Map<string, Results>();
+function keepResults(id: string, r: Results): Results {
+  RESULTS.set(id, r);
+  return r;
+}
+
 export const studioApi = {
   login: (code: string, password: string) =>
     unwrap<{ access_token: string }>(api.post("auth/login/", { code, password })),
@@ -162,8 +168,10 @@ export const studioApi = {
     fd.append("image", blob, "photo.jpg");
     return unwrap<Session>(api.post(`studio/sessions/${id}/photo/`, fd));
   },
-  analyze: (id: string) => unwrap<Results>(api.post(`studio/sessions/${id}/analyze/`)),
-  results: (id: string) => unwrap<Results>(api.get(`studio/sessions/${id}/results/`)),
+  analyze: (id: string) => unwrap<Results>(api.post(`studio/sessions/${id}/analyze/`)).then((r) => keepResults(id, r)),
+  results: (id: string) => unwrap<Results>(api.get(`studio/sessions/${id}/results/`)).then((r) => keepResults(id, r)),
+  /** Last results fetched for a session (in memory), so going back to a screen shows them at once, no loading. */
+  cachedResults: (id: string | null | undefined): Results | null => (id ? RESULTS.get(id) ?? null : null),
   /** Maletti results carry no salon-logo watermark: the API stamps it unless `watermark: false` is sent. */
   tryOn: (id: string, body: { kind: TryKind; params: Record<string, unknown>; parent_id?: number | null; reference?: Blob | null }) => {
     if (!body.reference) return unwrap<TryOn>(api.post(`studio/sessions/${id}/tryons/`, { ...body, watermark: false }));

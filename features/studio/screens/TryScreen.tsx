@@ -111,7 +111,7 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
   const beardsAll = useCatalog("beard_style");
 
   // Recommendations from the consultation (colour harmony + face), when there was one.
-  const [results, setResults] = useState<Results | null>(null);
+  const [results, setResults] = useState<Results | null>(() => studioApi.cachedResults(session?.id));
   useEffect(() => {
     // Recommendations feed the Recommended tab and the option order (consultation or this service's own analysis).
     if (session) studioApi.results(session.id).then(setResults).catch(() => {});
