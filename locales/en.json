@@ -790,7 +790,7 @@
       "guide": "Centre your face in the oval",
       "title": "Take a Photo",
       "sub": "Your beauty consultation starts here: one photo, then the mirror does the rest.",
-      "cta": "Take the photo",
+      "cta": "Capture",
       "privacy": "The photo stays on this mirror and is deleted after the session",
       "noCamera": "Camera not available",
       "upload": "Upload a photo",
@@ -837,12 +837,13 @@
       "added": "Added",
       "cta": "Next: your face",
       "noProducts": "This salon has no skin products in its catalogue yet.",
-      "metric_hydration": "Hydration",
-      "metric_sebum": "Oil balance",
-      "metric_pores": "Refined pores",
-      "metric_redness": "Even tone",
-      "metric_spots": "Clarity",
-      "metricScale": "Higher is better · 100 = best"
+      "metricScale": "Higher is better · 100 = best",
+      "metric_redness": "Redness",
+      "metric_wrinkles": "Wrinkles",
+      "metric_oiliness": "Oiliness",
+      "metric_pigmentation": "Pigmentation",
+      "metric_dark_circles": "Dark circles",
+      "metric_acne": "Acne"
     },
     "face": {
       "ratio": "Length / width",
@@ -869,7 +870,14 @@
       "pickCut": "Select a haircut",
       "pickBeard": "Select a beard style",
       "pickColour": "Select a colour shade",
-      "tried": "Tried"
+      "tried": "Tried",
+      "catMakeup": "Make-up",
+      "tryThis": "Try this look",
+      "noRecommendations": "No recommendations for this service yet.",
+      "front": "Front",
+      "back": "Back",
+      "shade": "Shade",
+      "maintenance": "Maintenance"
     },
     "colour": {
       "hairTitle": "Hair colour",
@@ -1051,6 +1059,56 @@
     },
     "styles": {
       "cta": "Continue to colour harmony"
+    },
+    "journey": {
+      "progress": "Service {n} of {total}",
+      "proceed": "Proceed",
+      "skip": "Skip",
+      "next": "Next service",
+      "finish": "See your look",
+      "try": "Try",
+      "pickHint": "Select an option, then tap Try",
+      "statusDone": "Completed",
+      "statusSkipped": "Skipped",
+      "hairstyle": {
+        "name": "Hairstyle",
+        "intro": "We read your face shape and proportions to suggest the cuts that suit you best.\nPick a style and try it on your own photo before deciding."
+      },
+      "beard": {
+        "name": "Beard",
+        "intro": "The right beard balances your jawline and face shape.\nChoose a style and see it on you, from a light stubble to a full beard."
+      },
+      "armocromia": {
+        "name": "Armocromia",
+        "intro": "Armocromia finds your colour season from your skin, eyes and hair.\nDiscover the palette and clothing colours that make you shine."
+      },
+      "colour": {
+        "name": "Hair colour",
+        "intro": "Shades in harmony with your colour season come first.\nSelect a colour and technique, then try it on your photo."
+      },
+      "makeup": {
+        "name": "Make-up",
+        "intro": "Make-up looks chosen for your colouring: lips and eyes that work together.\nTry a look and adjust it to your taste."
+      },
+      "skin": {
+        "name": "Skin analysis",
+        "intro": "Our analysis measures hydration, sebum, pores, redness and spots.\nYou'll see your scores and the products we recommend for your skin."
+      }
+    },
+    "skinMap": {
+      "title": "Your skin map",
+      "desc": "Each circle marks where we noticed something; dashed = mild.",
+      "none": "Nothing to mark, your skin looks great.",
+      "areas": "{n} areas marked",
+      "cta": "See your skin map"
+    },
+    "qr": {
+      "button": "QR",
+      "scan": "Scan with your phone to download this photo",
+      "download": "Download photo",
+      "hint": "If the download doesn't start, press and hold the photo to save it.",
+      "missing": "This photo is no longer available.",
+      "original": "Original photo"
     }
   }
 }

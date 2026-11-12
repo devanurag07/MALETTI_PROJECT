@@ -26,6 +26,8 @@ export type LookDraft = {
   results: Record<string, TryOn>;
   /** The image kept at each step (null/absent = original, no change); later steps build on earlier ones. */
   layers: Partial<Record<"cut" | "colour" | "makeup" | "beard", TryOn | null>>;
+  /** Consultation journey progress per service (see flows.ts JOURNEY). */
+  journey: Record<string, "done" | "skipped">;
 };
 
 /** Look-draft value meaning "the customer's own uploaded style picture" (no catalog item). */
@@ -47,6 +49,7 @@ export const EMPTY_LOOK: LookDraft = {
   history: [],
   results: {},
   layers: {},
+  journey: {},
 };
 
 type Ctx = {
@@ -59,7 +62,7 @@ type Ctx = {
   /** Current-locale value of an i18n JSON field */
   tx: (value: I18n | null | undefined) => string;
   session: Session | null;
-  setSession: (s: Session | null) => void;
+  setSession: React.Dispatch<React.SetStateAction<Session | null>>;
   gender: Gender;
   look: LookDraft;
   updateLook: (patch: Partial<LookDraft>) => void;

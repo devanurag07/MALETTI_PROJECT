@@ -54,6 +54,14 @@ export const malettiTheme = {
     divider: "#2B221B", // list / tab separators
     dividerSoft: "#1D1712",
 
+    // "Choose your path" cards (Profile screen)
+    pathConsultant: "#6B462C", // Beauty Consultant card — brand brown
+    pathConsultantInk: "#F2E9DD",
+    pathConsultantInkMuted: "#E0CDB6",
+    pathSimple: "#E9DCCB", // Simple Service card — brand cream
+    pathSimpleInk: "#3B2A1F",
+    pathSimpleInkMuted: "#6B462C",
+
     // Controls
     stepDone: "#E9DCCB",
     stepCurrent: "#C19A6B",
@@ -72,6 +80,13 @@ export const malettiTheme = {
     metricNeutral: "#A08A76",
     zoneOily: "#E8C27A",
     zoneDry: "#7FA3B4",
+    // Skin-map markings, one colour per skin parameter (circles on the photo + legend).
+    markRedness: "#E07A6B",
+    markWrinkles: "#E9DCCB",
+    markOiliness: "#E8C27A",
+    markPigmentation: "#B58463",
+    markDarkCircles: "#8E9CC9",
+    markAcne: "#D58AB0",
     compareBackground: "#000000", // letterbox behind before/after photos (square mode)
 
     // Messages

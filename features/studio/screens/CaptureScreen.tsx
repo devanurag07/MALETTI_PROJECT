@@ -2,6 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { setPendingUpload } from "../pending-upload";
+import { INVERT_ON_CAPTURE_KEY } from "@/core/constants/common-constants";
+import { drawVideoWithRotation, getStoredCameraRotation, type CameraRotation } from "@/core/utils/camera-orientation";
 import Webcam from "react-webcam";
 import { NORMAL_CAMERA_KEY } from "@/core/constants/common-constants";
 import TestPhotoButton from "@/features/customer-session/flow/TestPhotoButton";
@@ -11,9 +14,9 @@ import { studioApi } from "../api";
 import { EMPTY_LOOK, useStudio } from "../context/StudioContext";
 import { Arch, c, ErrorLine, GuidePill, H1, HeroBackdrop, Icon, ICON, LoadingStage, PrimaryButton, Screen } from "../ui";
 
-const ARCH = { w: 316, h: 404 };
+const ARCH = { w: 440, h: 440 }; // square: the photo is saved 1:1 so before/after compare at the same size
 
-/** Centre-crop to the arch's portrait shape (what the customer sees) — never stretch. */
+/** Centre-crop to the square frame (what the customer sees) — never stretch. */
 async function cropToArch(source: CanvasImageSource, w: number, h: number, mirror: boolean): Promise<Blob | null> {
   const aspect = ARCH.w / ARCH.h;
   const [sw, sh] = w / h > aspect ? [h * aspect, h] : [w, w / aspect];
@@ -38,11 +41,17 @@ export default function CaptureScreen() {
   const [deviceId, setDeviceId] = useState<string | undefined>();
   const [camError, setCamError] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [flash, setFlash] = useState(0);
+  // Settings page: "invert on capture" turns the mirror off; rotation fixes a camera mounted sideways.
+  const [mirror, setMirror] = useState(true);
+  const [rotation, setRotation] = useState<CameraRotation>(0);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     try {
       setDeviceId(localStorage.getItem(NORMAL_CAMERA_KEY) || undefined); // chosen in /camera-setup
+      setMirror(localStorage.getItem(INVERT_ON_CAPTURE_KEY) !== "true");
+      setRotation(getStoredCameraRotation("normal"));
     } catch {}
   }, []);
 
@@ -63,10 +72,21 @@ export default function CaptureScreen() {
           fr.onerror = () => rej(fr.error);
           fr.readAsDataURL(jpeg);
         });
-        const uploaded = await studioApi.uploadPhoto(s.id, jpeg);
         setLocalPhoto(dataUrl); // after resetAll(): show this copy everywhere, no CDN wait
         updateLook(EMPTY_LOOK); // try-ons / choices belonged to the previous photo
-        setSession(uploaded); // status "active" again → the Analysis screen analyses the new photo
+        setSession(s);
+        // Upload in the background; Analysis waits for it. Merge only the photo fields so
+        // gender / flow picked on the Profile screen meanwhile are kept.
+        const sessionId = s.id;
+        setPendingUpload(
+          studioApi.uploadPhoto(sessionId, jpeg).then((uploaded) =>
+            setSession((prev) =>
+              prev && prev.id === sessionId
+                ? { ...prev, status: uploaded.status, source_image_url: uploaded.source_image_url }
+                : prev
+            )
+          )
+        );
         router.push("/profile");
       } catch (e) {
         setError((e as Error).message);
@@ -83,7 +103,19 @@ export default function CaptureScreen() {
   async function shoot() {
     const video = cam.current?.video;
     if (!video || !video.videoWidth) return setError(t("capture", "noCamera"));
-    const blob = await cropToArch(video, video.videoWidth, video.videoHeight, true); // mirrored, as on screen
+    setFlash((n) => n + 1); // shutter flash first, work happens after
+    setSaving(true);
+    await new Promise((r) => requestAnimationFrame(() => setTimeout(r, 0)));
+    let blob: Blob | null;
+    if (rotation) {
+      const rotated = document.createElement("canvas");
+      const ctx = rotated.getContext("2d");
+      if (!ctx) return setError(t("capture", "noCamera"));
+      drawVideoWithRotation(ctx, rotated, video, rotation);
+      blob = await cropToArch(rotated, rotated.width, rotated.height, mirror);
+    } else {
+      blob = await cropToArch(video, video.videoWidth, video.videoHeight, mirror); // as on screen
+    }
     if (!blob) return setError(t("capture", "noCamera"));
     await upload(blob);
   }
@@ -111,12 +143,12 @@ export default function CaptureScreen() {
           { left: 44, top: 26, width: 132, height: 132 },
           { right: 44, bottom: 18, width: 96, height: 96 },
         ]} />
-        <Arch width={ARCH.w} height={ARCH.h}>
+        <Arch width={ARCH.w} height={ARCH.h} style={{ borderRadius: 24 }}>
           {!camError ? (
             <Webcam
               ref={cam}
               audio={false}
-              mirrored
+              mirrored={false}
               screenshotFormat="image/jpeg"
               forceScreenshotSourceSize={false}
               videoConstraints={{
@@ -125,14 +157,23 @@ export default function CaptureScreen() {
                 height: { ideal: 1080 },
               }}
               onUserMediaError={() => (deviceId ? setDeviceId(undefined) : setCamError(true))}
-              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+              style={{
+                position: "absolute", left: "50%", top: "50%", objectFit: "cover",
+                // Sideways cameras: swap the box so the rotated video still covers the arch.
+                width: rotation % 180 ? ARCH.h : ARCH.w, height: rotation % 180 ? ARCH.w : ARCH.h,
+                transform: `translate(-50%, -50%) scaleX(${mirror ? -1 : 1}) rotate(${rotation}deg)`,
+              }}
             />
           ) : null}
-          <svg viewBox="0 0 560 700" width={324} height={405} aria-hidden="true" style={{ position: "absolute", left: -4, top: 0 }}>
-            <ellipse cx="280" cy="256" rx="152" ry="178" fill="none" stroke="var(--mm-dashed)" strokeWidth="3.6" strokeDasharray="12 13" strokeOpacity="0.95" />
-            <path d="M268 70 L292 70 L284 84 L260 84 Z" fill="var(--mm-accent)" />
-            <path d="M268 428 L292 428 L284 442 L260 442 Z" fill="var(--mm-accent)" />
+          <svg viewBox="0 0 560 560" width={ARCH.w} height={ARCH.h} aria-hidden="true" style={{ position: "absolute", left: 0, top: 0 }}>
+            <ellipse cx="280" cy="262" rx="150" ry="182" fill="none" stroke="var(--mm-dashed)" strokeWidth="3.6" strokeDasharray="12 13" strokeOpacity="0.95" />
+            <path d="M268 62 L292 62 L284 76 L260 76 Z" fill="var(--mm-accent)" />
+            <path d="M268 450 L292 450 L284 464 L260 464 Z" fill="var(--mm-accent)" />
           </svg>
+          {flash > 0 && (
+            <div key={flash} aria-hidden="true" style={{ position: "absolute", inset: 0, background: "#fff", pointerEvents: "none", animation: "mm-shutter 450ms ease-out forwards" }} />
+          )}
+          <style>{`@keyframes mm-shutter { 0% { opacity: 0.95 } 100% { opacity: 0 } }`}</style>
           <div style={{ position: "absolute", left: 0, right: 0, bottom: 16, display: "flex", justifyContent: "center" }}>
             <GuidePill>{camError ? t("capture", "noCamera") : t("capture", "guide")}</GuidePill>
           </div>

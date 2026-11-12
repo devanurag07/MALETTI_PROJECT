@@ -70,7 +70,7 @@ export function Diamond({ size = 9, color = c("accent"), border, style }: {
 /** 540 × 960 mockup canvas, zoomed to fill the 1080 × 1920 mirror. */
 export function Stage({ children, animKey }: { children: ReactNode; animKey?: string }) {
   return (
-    <div style={{ width: theme.layout.width, height: theme.layout.height, zoom: theme.layout.stageZoom } as CSSProperties}>
+    <div id="mm-stage" style={{ position: "relative", width: theme.layout.width, height: theme.layout.height, zoom: theme.layout.stageZoom } as CSSProperties}>
       <div key={animKey} style={{
         width: "100%", height: "100%", boxSizing: "border-box", position: "relative", overflow: "hidden",
         display: "flex", flexDirection: "column", background: c("background"), color: c("ink"),
@@ -630,25 +630,28 @@ export function Slider({ label, value, onChange, onCommit, min = 0, max = 100 }:
  */
 export function CompareArch(props: {
   before?: string | null; after?: string | null; height?: number; ry?: number; busy?: boolean; busyLabel?: string;
+  /** Extra element on the photo (e.g. the QR download button, top-left). */
+  overlay?: ReactNode;
 }) {
   return theme.shape.compare === "square" ? <CompareSquare {...props} /> : <CompareRounded {...props} />;
 }
 
-function CompareSquare({ before, after, height = 330, busy, busyLabel }: {
-  before?: string | null; after?: string | null; height?: number; busy?: boolean; busyLabel?: string;
+/** Square frame: the captured photo and every try-on result are 1:1, so before and after line up exactly. */
+function CompareSquare({ before, after, height = 380, busy, busyLabel, overlay }: {
+  before?: string | null; after?: string | null; height?: number; busy?: boolean; busyLabel?: string; overlay?: ReactNode;
 }) {
   const { t } = useStudio();
   // Compare toggle (as in FLUX_VERSION_3): off = the result alone, on = before/after slider.
   const [comparing, setComparing] = useState(false);
   const img = (src: string | null | undefined, alt: string) => (
-    <ReactCompareSliderImage src={src ?? ""} alt={alt} onError={retryFromOrigin} style={{ objectFit: "contain", backgroundColor: c("compare-background") }} />
+    <ReactCompareSliderImage src={src ?? ""} alt={alt} onError={retryFromOrigin} style={{ objectFit: "cover", backgroundColor: c("compare-background") }} />
   );
   const single = (src: string) => (
-    <img src={src} alt="" onError={retryFromOrigin} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain" }} />
+    <img src={src} alt="" onError={retryFromOrigin} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
   );
   const canCompare = !!(after && before && !busy);
   return (
-    <div style={{ flex: "0 0 auto", position: "relative", height, margin: "14px 34px 0 34px", background: c("compare-background"), overflow: "hidden" }}>
+    <div style={{ flex: "0 0 auto", position: "relative", width: height, height, margin: "14px auto 0 auto", background: c("compare-background"), overflow: "hidden" }}>
       {/* Start image → (processing: start image + overlay) → result; Compare toggles the before/after slider. */}
       {canCompare && !comparing ? (
         single(after!)
@@ -665,6 +668,7 @@ function CompareSquare({ before, after, height = 330, busy, busyLabel }: {
       ) : before ? (
         single(before)
       ) : null}
+      {busy ? null : overlay}
       {canCompare ? (
         <button type="button" aria-pressed={comparing} onClick={() => setComparing((v) => !v)} style={{
           position: "absolute", top: 10, right: 10, display: "flex", alignItems: "center", gap: 6, height: 34, padding: "0 12px",
@@ -686,8 +690,8 @@ function CompareSquare({ before, after, height = 330, busy, busyLabel }: {
   );
 }
 
-function CompareRounded({ before, after, height = 330, ry = 150, busy, busyLabel }: {
-  before?: string | null; after?: string | null; height?: number; ry?: number; busy?: boolean; busyLabel?: string;
+function CompareRounded({ before, after, height = 330, ry = 150, busy, busyLabel, overlay }: {
+  before?: string | null; after?: string | null; height?: number; ry?: number; busy?: boolean; busyLabel?: string; overlay?: ReactNode;
 }) {
   const { t } = useStudio();
   const [split, setSplit] = useState(50);
@@ -700,6 +704,7 @@ function CompareRounded({ before, after, height = 330, ry = 150, busy, busyLabel
         outline: `1.5px solid ${c("accent")}`, outlineOffset: 6,
       }}>
         <Photo src={before} />
+        {busy ? null : overlay}
         {busy ? (
           <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12, background: c("veil") }}>
             <Spinner size={34} />
@@ -732,6 +737,7 @@ function CompareRounded({ before, after, height = 330, ry = 150, busy, busyLabel
       }}>
         <Icon d={ICON.handle} size={20} width={2} />
       </div>
+      {overlay}
       <input type="range" min={4} max={96} value={split} onChange={(e) => setSplit(Number(e.target.value))} aria-label={t("common", "compare")}
         style={{ position: "absolute", inset: 0, width: "100%", height: "100%", margin: 0, opacity: 0, cursor: "ew-resize" }} />
       {busy ? (

@@ -3,21 +3,22 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { studioApi, type Results } from "../api";
+import { useTranslations } from "next-intl";
+import { stageIndexForProgress, useSimulatedProgress } from "@/core/hooks/useSimulatedProgress";
 import { useStudio } from "../context/StudioContext";
+import { JOURNEY, journeyIntro } from "../flows";
+import { waitForPendingUpload } from "../pending-upload";
 import { Arch, c, ErrorLine, GuidePill, H1, HeroBackdrop, Icon, ICON, LoadingStage, Photo, PrimaryButton, Screen, Spinner } from "../ui";
 
-// Face mesh from the mockup (560 × 700 space).
-const GEO: Record<"woman" | "man", Record<string, [number, number]>> = {
-  woman: { fh: [280, 120.5], bl: [215.1, 170.5], br: [345, 167.7], el: [224, 208], er: [336, 208], cl: [181.7, 245.7], cr: [380, 247.6], n: [281.3, 265], ml: [231.2, 322.7], mr: [330.8, 321], jl: [183.1, 333.3], jr: [377.8, 338.1], c: [281.8, 396.4] },
-  man: { fh: [279.7, 125.6], bl: [211.4, 177.2], br: [347.9, 175.3], el: [224, 208], er: [336, 208], cl: [177, 245.8], cr: [387.8, 244.7], n: [283.2, 270.5], ml: [229.1, 326.9], mr: [332.6, 325.7], jl: [181.8, 342], jr: [382.8, 343.5], c: [280.5, 414.8] },
-};
-const PAIRS = [["fh","bl"],["fh","br"],["bl","br"],["bl","el"],["br","er"],["el","er"],["el","n"],["er","n"],["cl","el"],["cr","er"],["cl","n"],["cr","n"],["cl","jl"],["cr","jr"],["jl","ml"],["jr","mr"],["ml","n"],["mr","n"],["ml","mr"],["ml","c"],["mr","c"],["jl","c"],["jr","c"]];
 const MODULE_ICON: Record<string, string> = { skin: ICON.skin, face: ICON.face, colour: ICON.colour, scalp: ICON.scalp };
 
 /** Step 3 — AI analysis: every active module runs in parallel on the backend. */
 export default function AnalysisScreen() {
   const router = useRouter();
-  const { t, config, session, setSession, gender, photo } = useStudio();
+  const { t, config, session, setSession, photo, gender } = useStudio();
+  const tg = useTranslations();
+  // FLUX_VERSION_3 analysis animation: simulated % (caps at 92 until the API answers) + stage messages.
+  const progress = useSimulatedProgress(20_000);
   const [results, setResults] = useState<Results | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -25,6 +26,7 @@ export default function AnalysisScreen() {
     if (!session) return;
     // Re-run when there is nothing to show yet (new session, or an earlier run that produced no results).
     const run = async (id: string) => {
+      await waitForPendingUpload(); // photo may still be uploading from the Capture screen
       if (session.status !== "active") {
         const r = await studioApi.results(id);
         if (r.tabs.some((x) => x.status === "done")) return r;
@@ -41,9 +43,10 @@ export default function AnalysisScreen() {
   }, [session?.id]);
 
   if (!config || !session) return <LoadingStage />;
-  const P = GEO[gender];
-  const mesh = PAIRS.map(([a, b]) => `M${P[a][0]} ${P[a][1]} L${P[b][0]} ${P[b][1]}`).join(" ");
   const done = !!results;
+  const stages = ["uploading", "detecting", "analyzing", "finalizing"].map((k) => tg(`skinAnalysis.progress.${k}`));
+  const stageIdx = stageIndexForProgress(progress, stages.length);
+  const pct = Math.round(progress);
 
   return (
     <Screen step={3}>
@@ -54,22 +57,35 @@ export default function AnalysisScreen() {
         ]} />
         <Arch width={266} height={336} offset={7} style={{ boxShadow: c("shadow-arch") }}>
           <Photo src={photo} />
-          <svg viewBox="0 0 560 700" width={270} height={338} aria-hidden="true" preserveAspectRatio="none" style={{ position: "absolute", left: -2, top: -1 }}>
-            <path d={mesh} fill="none" stroke="var(--mm-dashed)" strokeWidth="2.4" strokeOpacity="0.85" strokeLinecap="round" />
-            <path d={mesh} fill="none" stroke="var(--mm-accent)" strokeWidth="1.2" strokeOpacity="0.9" strokeLinecap="round" />
-            {Object.values(P).map(([x, y]) => (
-              <circle key={`${x}-${y}`} cx={x} cy={y} r="9" fill="var(--mm-accent)" stroke="var(--mm-dashed)" strokeWidth="3" />
-            ))}
-          </svg>
+          {/* Scan animation from FLUX_VERSION_3 (grid, sweeping line, corner brackets, progress).
+              Removed once the analysis is done, so only the photo stays. */}
           {!done ? (
-            <div style={{
-              position: "absolute", left: 14, right: 14, top: "6%", height: 2,
-              background: "linear-gradient(90deg, rgba(193,154,107,0), rgba(255,240,214,1), rgba(193,154,107,0))",
-              boxShadow: "0 0 16px 3px rgba(255,236,204,0.75)", animation: "mmScan 3.4s ease-in-out infinite alternate",
-            }} />
+            <div aria-hidden="true" style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
+              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.25), transparent 45%, rgba(0,0,0,0.45))" }} />
+              <div style={{
+                position: "absolute", inset: 0, opacity: 0.3, mixBlendMode: "overlay",
+                backgroundImage: "linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px)",
+                backgroundSize: "14px 14px",
+              }} />
+              <div className="analysis-scan-line" style={{
+                position: "absolute", left: 0, right: 0, height: 2,
+                background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.95), transparent)",
+                boxShadow: "0 0 12px 2px rgba(255,255,255,0.55)",
+              }} />
+              {([["top", "left"], ["top", "right"], ["bottom", "left"], ["bottom", "right"]] as const).map(([v, h]) => (
+                <span key={v + h} style={{
+                  position: "absolute", [v]: v === "top" ? 58 : 52, [h]: 18, width: 20, height: 20,
+                  [`border${v === "top" ? "Top" : "Bottom"}`]: "2px solid rgba(255,255,255,0.9)",
+                  [`border${h === "left" ? "Left" : "Right"}`]: "2px solid rgba(255,255,255,0.9)",
+                }} />
+              ))}
+              <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 3, background: "rgba(255,255,255,0.3)" }}>
+                <div style={{ height: "100%", width: `${pct}%`, background: c("accent"), boxShadow: "0 0 6px rgba(255,255,255,0.85)", transition: "width 150ms ease-out" }} />
+              </div>
+            </div>
           ) : null}
           <div style={{ position: "absolute", left: 0, right: 0, bottom: 14, display: "flex", justifyContent: "center" }}>
-            <GuidePill>{t("flows", `${session.flow || "consultant"}.name`)}</GuidePill>
+            <GuidePill>{done ? t("flows", `${session.flow || "consultant"}.name`) : `${stages[stageIdx]} ${pct}%`}</GuidePill>
           </div>
         </Arch>
       </div>
@@ -103,7 +119,7 @@ export default function AnalysisScreen() {
             );
           })}
         </div>
-        <PrimaryButton iconRight={ICON.next} disabled={!done} onClick={() => router.push("/results/skin")} style={{ marginTop: 4 }}>
+        <PrimaryButton iconRight={ICON.next} disabled={!done} onClick={() => router.push(journeyIntro(JOURNEY[gender][0]))} style={{ marginTop: 4 }}>
           {t("analysis", "cta")}
         </PrimaryButton>
       </div>

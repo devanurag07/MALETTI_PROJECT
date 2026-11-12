@@ -6,6 +6,7 @@ import type { AnalysisTab, CatalogItem, I18n, PublicReport, TryOn } from "../api
 import { theme } from "../theme";
 import { styleImage } from "../theme/styleImages";
 import { c, Diamond, SERIF } from "../ui";
+import { markingsOf, SkinMapLegend, SkinMapPhoto, SKIN_METRICS } from "../components/SkinMap";
 import ColourHarmonyPages, { colourHarmonyData } from "./ColourHarmonyPages";
 
 /**
@@ -90,6 +91,15 @@ export default function StudioReport({ report, variant = "screen" }: { report: P
         </Page>
       ) : null}
 
+      {/* ---------------------------------------------------------------- skin map (markings) */}
+      {skin && markingsOf(skin.zones).length ? (
+        <Page ctx={ctx} eyebrow={tr("results.tabSkin")} title={tr("skinMap.title")} text={tr("skinMap.desc")}>
+          <SkinMapPhoto src={report.source_image_url} markings={markingsOf(skin.zones)} size="100%" />
+          <SkinMapLegend metrics={skin.metrics} markings={markingsOf(skin.zones)} fontSize={16}
+            label={(k) => tr(`skin.metric_${k}`)} areasLabel={(n) => tr("skinMap.areas", { n })} />
+        </Page>
+      ) : null}
+
       {/* ---------------------------------------------------------------- face */}
       {face ? (
         <Page ctx={ctx} eyebrow={tr("results.tabFace")} title={tx(face.label?.name)} text={tx(face.summary) || tx(face.label?.desc)}>
@@ -140,7 +150,6 @@ export default function StudioReport({ report, variant = "screen" }: { report: P
 type Ctx = { tr: ReturnType<typeof useTranslations>; tx: (v?: I18n | null) => string; pad: number };
 type Product = CatalogItem & { reason?: I18n; product?: { brand?: string; price?: string | number; currency?: string } | null };
 
-const SKIN_METRICS = ["hydration", "sebum", "pores", "redness", "spots"];
 
 const value = (tr: Ctx["tr"], x: unknown) => {
   if (x == null) return "–";

@@ -1,6 +1,7 @@
 /** Prefer env so local PDF rendering can hit the same Django as the admin app. */
-// export const BASE_URL = "http://localhost:8000/api";
-export const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "https://api.trymystyle.com/api";
+//export const BASE_URL = "http://localhost:8000/api";
+export const BASE_URL = "https://api.trymystyle.com/api";
+//export const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "https://api.trymystyle.com/api";
 // export const BASE_URL = "https://testing-api.trymystyle.com/api";
 // process.env.NEXT_PUBLIC_API_URL ?? "https://api.trymystyle.com/api";
 // export const BASE_URL = "https://api.trymystyle.co.in/api";

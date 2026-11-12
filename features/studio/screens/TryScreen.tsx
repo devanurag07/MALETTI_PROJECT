@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { studioApi, type CatalogItem, type Results, type TryKind, type TryOn } from "../api";
 import { UPLOAD, useCatalog, useStudio, type LookDraft } from "../context/StudioContext";
 import { tryOrder } from "../flows";
+import PhotoQR from "../components/PhotoQR";
 import { styleImage } from "../theme/styleImages";
 import {
   c, ShadeSwatch, ColorDot, CompareArch, ErrorLine, ICON, ImageOption, LoadingStage, PrimaryButton, Screen,
@@ -30,6 +31,8 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
   const next = search.get("next") ?? "/look";
   // Step-by-step mode (Simple Service): Save goes cut → colour → beard/make-up → next. Edit links return directly.
   const chain = search.get("chain") === "1";
+  // Journey mode: one service only (no kind switcher); Save goes on to the next service.
+  const single = search.get("single") === "1";
 
   const cutsAll = useCatalog("haircut");
   const shadesAll = useCatalog("hair_shade");
@@ -302,13 +305,13 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
 
       <CompareArch before={startImage} after={look.layers[kind]?.output_url ?? null} busy={busy} busyLabel={t("tryon", "generating")} />
 
-      <div style={{ margin: "18px 34px 0 34px" }}>
+      {single ? null : <div style={{ margin: "18px 34px 0 34px" }}>
         <Segmented
           options={kinds.map((k) => ({ key: k, label: t("tryon", KIND_CAT[k]) }))}
           value={kind}
           onChange={(k) => switchTab(k as TryKind)}
         />
-      </div>
+      </div>}
 
       <div style={{ flex: "1 1 auto", minHeight: 0, overflow: "hidden", display: "flex", flexDirection: "column", gap: 12, padding: "14px 34px 0 34px" }}>
         {/* Only the original + styles already processed (or processing) — new styles are picked on the Styles tab. */}
@@ -361,8 +364,14 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
       </div>
       <ErrorLine message={error} />
 
-      <div style={{ flex: "0 0 auto", padding: "12px 34px 32px 34px" }}>
-        <PrimaryButton icon={ICON.save} onClick={save} disabled={busy}>{t("tryon", "save")}</PrimaryButton>
+      <div style={{ flex: "0 0 auto", display: "flex", alignItems: "stretch", gap: 12, padding: "12px 34px 32px 34px" }}>
+        <div style={{ flex: "1 1 auto", minWidth: 0 }}>
+          <PrimaryButton icon={ICON.save} onClick={save} disabled={busy}>{t("tryon", "save")}</PrimaryButton>
+        </div>
+        {/* QR: download the picture shown (this step's result, else the image it starts from). */}
+        <PhotoQR src={look.layers[kind]?.output_url ?? startImage} name={look.layers[kind] ? `${t("tryon", KIND_CAT[kind])} - ${line1}` : t("qr", "original")}
+          style={{ position: "relative", top: "auto", left: "auto", height: "auto", minHeight: 56, padding: "0 22px", borderRadius: 999, fontSize: 15,
+            background: "transparent", border: `1px solid ${c("line-strong")}`, boxShadow: "none" }} />
       </div>
 
     </Screen>

@@ -662,7 +662,7 @@
       "guide": "Centra il viso nell'ovale",
       "title": "Scatta una foto",
       "sub": "Da qui parte la tua consulenza beauty: una foto, poi lo specchio fa il resto.",
-      "cta": "Scatta la foto",
+      "cta": "Scatta",
       "privacy": "La foto resta sullo specchio e viene eliminata a fine sessione",
       "noCamera": "Fotocamera non disponibile",
       "upload": "Carica una foto",
@@ -709,12 +709,13 @@
       "added": "Aggiunto",
       "cta": "Avanti: il tuo viso",
       "noProducts": "Il catalogo del salone non ha ancora prodotti per la pelle.",
-      "metric_hydration": "Idratazione",
-      "metric_sebum": "Equilibrio sebo",
-      "metric_pores": "Pori affinati",
-      "metric_redness": "Tono uniforme",
-      "metric_spots": "Purezza",
-      "metricScale": "Più alto è meglio · 100 = ottimo"
+      "metricScale": "Più alto è meglio · 100 = ottimo",
+      "metric_redness": "Rossori",
+      "metric_wrinkles": "Rughe",
+      "metric_oiliness": "Lucidità",
+      "metric_pigmentation": "Pigmentazione",
+      "metric_dark_circles": "Occhiaie",
+      "metric_acne": "Acne"
     },
     "face": {
       "ratio": "Lunghezza / larghezza",
@@ -741,7 +742,14 @@
       "pickCut": "Scegli un taglio",
       "pickBeard": "Scegli uno stile di barba",
       "pickColour": "Scegli una tonalità",
-      "tried": "Provato"
+      "tried": "Provato",
+      "catMakeup": "Trucco",
+      "tryThis": "Prova questo look",
+      "noRecommendations": "Nessun consiglio per questo servizio.",
+      "front": "Davanti",
+      "back": "Dietro",
+      "shade": "Tonalità",
+      "maintenance": "Mantenimento"
     },
     "colour": {
       "hairTitle": "Colore capelli",
@@ -923,6 +931,56 @@
     },
     "styles": {
       "cta": "Continua con l'armonia colori"
+    },
+    "journey": {
+      "progress": "Servizio {n} di {total}",
+      "proceed": "Procedi",
+      "skip": "Salta",
+      "next": "Servizio successivo",
+      "finish": "Vedi il tuo look",
+      "try": "Prova",
+      "pickHint": "Seleziona un'opzione, poi tocca Prova",
+      "statusDone": "Completato",
+      "statusSkipped": "Saltato",
+      "hairstyle": {
+        "name": "Taglio",
+        "intro": "Leggiamo la forma e le proporzioni del tuo viso per suggerirti i tagli più adatti.\nScegli uno stile e provalo sulla tua foto prima di decidere."
+      },
+      "beard": {
+        "name": "Barba",
+        "intro": "La barba giusta bilancia la mascella e la forma del viso.\nScegli uno stile e guardalo su di te, dalla barba corta a quella piena."
+      },
+      "armocromia": {
+        "name": "Armocromia",
+        "intro": "L'armocromia individua la tua stagione cromatica da pelle, occhi e capelli.\nScopri la palette e i colori d'abbigliamento che ti valorizzano."
+      },
+      "colour": {
+        "name": "Colore capelli",
+        "intro": "Prima le tonalità in armonia con la tua stagione cromatica.\nSeleziona un colore e una tecnica, poi provalo sulla tua foto."
+      },
+      "makeup": {
+        "name": "Make-up",
+        "intro": "Look make-up scelti per i tuoi colori: labbra e occhi in armonia.\nProva un look e regolalo a tuo gusto."
+      },
+      "skin": {
+        "name": "Analisi della pelle",
+        "intro": "La nostra analisi misura idratazione, sebo, pori, rossori e macchie.\nVedrai i tuoi punteggi e i prodotti consigliati per la tua pelle."
+      }
+    },
+    "skinMap": {
+      "title": "La tua mappa della pelle",
+      "desc": "Ogni cerchio indica dove abbiamo notato qualcosa; tratteggiato = lieve.",
+      "none": "Niente da segnalare, la tua pelle è in ottima forma.",
+      "areas": "{n} aree segnalate",
+      "cta": "Vedi la mappa della pelle"
+    },
+    "qr": {
+      "button": "QR",
+      "scan": "Inquadra con il telefono per scaricare questa foto",
+      "download": "Scarica la foto",
+      "hint": "Se il download non parte, tieni premuta la foto per salvarla.",
+      "missing": "Questa foto non è più disponibile.",
+      "original": "Foto originale"
     }
   }
 }
