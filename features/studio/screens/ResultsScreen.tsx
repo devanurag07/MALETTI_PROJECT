@@ -1,5 +1,6 @@
 "use client";
 
+import { blushByKey } from "../data/blush";
 import { useEffect, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { studioApi, type AnalysisTab, type CatalogItem, type Recommendation, type Results } from "../api";
@@ -126,7 +127,14 @@ export function SkinProducts({ a }: { a: AnalysisTab }) {
   return (
       <div style={{ flex: "1 1 auto", minHeight: 0, overflowY: "auto", display: "flex", flexDirection: "column", gap: 10, padding: "20px 34px 0 34px" }}>
         <SectionTitle title={t("skin", "productsTitle")} hint={t("skin", "line")} />
-        {!products.length ? <Muted size={13}>{t("skin", "noProducts")}</Muted> : null}
+        {!products.length ? (
+          <div style={{ flex: "1 1 auto", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12, paddingBottom: 40, textAlign: "center" }}>
+            <span style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 64, height: 64, borderRadius: 20, background: c("icon-bg"), color: c("icon-fg") }}>
+              <Icon d={ICON.bottle} size={28} width={1.5} />
+            </span>
+            <Muted size={15} style={{ maxWidth: 300 }}>{t("skin", "noProducts")}</Muted>
+          </div>
+        ) : null}
         {products.map((p) => {
           const on = look.products.includes(p.key);
           return (
@@ -339,7 +347,6 @@ function FaceTab({ a, colour }: { a: AnalysisTab; colour?: AnalysisTab }) {
               ) : (
                 <>
                   <div style={{ width: "62%", margin: "0 auto" }}><Carousel key="cut" perPage={9} columns={3} items={forYouFirst(catalogue, recKeys).map(cutTile)} /></div>
-                  <span style={{ ...SERIF, fontSize: 16 }}>{t("hair", "customise")}</span>
                   <HairCustomise compact />
                 </>
               )}
@@ -404,7 +411,7 @@ export function RecommendedCard({ items, image, focus, onTry, onChange, active, 
                   {t("face", k === 0 ? "front" : "back")}
                 </span>
                 {k === 0 ? (
-                  <span style={{ position: "absolute", left: 8, bottom: 8, fontSize: 11, fontWeight: 500, color: c("on-dark"), background: c("accent-soft"), borderRadius: 8, padding: "3px 9px" }}>
+                  <span style={{ position: "absolute", left: 8, top: 8, zIndex: 1, lineHeight: 1.3, whiteSpace: "nowrap", maxWidth: "calc(100% - 12px)", overflow: "hidden", textOverflow: "ellipsis", fontSize: 11, fontWeight: 500, color: c("on-dark"), background: c("accent-soft"), borderRadius: 8, padding: "3px 9px" }}>
                     {x.is_best || i === 0 ? t("face", "best") : t("face", "forYou")}
                   </span>
                 ) : null}
@@ -414,7 +421,7 @@ export function RecommendedCard({ items, image, focus, onTry, onChange, active, 
         ) : (
         <span style={{ position: "relative", display: "block", width: "62%", margin: "0 auto", aspectRatio: "1 / 1", overflow: "hidden", borderRadius: 16, background: x.hex ?? c("photo") }}>
           {!image(x) && visual ? visual(x) : <Photo src={image(x)} style={{ objectPosition: focus }} />}
-          <span style={{ position: "absolute", left: 8, bottom: 8, fontSize: 11, fontWeight: 500, color: c("on-dark"), background: c("accent-soft"), borderRadius: 8, padding: "3px 9px" }}>
+          <span style={{ position: "absolute", left: 8, top: 8, zIndex: 1, lineHeight: 1.3, whiteSpace: "nowrap", maxWidth: "calc(100% - 12px)", overflow: "hidden", textOverflow: "ellipsis", fontSize: 11, fontWeight: 500, color: c("on-dark"), background: c("accent-soft"), borderRadius: 8, padding: "3px 9px" }}>
             {x.is_best || i === 0 ? t("face", "best") : t("face", "forYou")}
           </span>
         </span>
@@ -478,6 +485,8 @@ export function MakeupPalette({ look }: { look: CatalogItem }) {
   const eye = eyes.find((e) => e.key === look.attributes.eye);
   const lipHex = lip?.hex ?? (look.attributes.lip_hex as string | undefined) ?? c("accent");
   const eyeHex = eye?.hex ?? (look.attributes.eye_hex as string | undefined) ?? c("accent-soft");
+  const blush = blushByKey(look.attributes.blush as string | undefined); // FLUX_VERSION_3 makeup_prompts.json
+  const blushHex = blush?.hex ?? (look.attributes.blush_hex as string | undefined) ?? null;
   const id = `mk-${look.key}`;
   const chip = (hex: string, label: string, name: string) => (
     <span style={{ display: "flex", alignItems: "center", gap: 6, minWidth: 0 }}>
@@ -517,10 +526,18 @@ export function MakeupPalette({ look }: { look: CatalogItem }) {
         <ellipse cx="155" cy="108" rx="38" ry="20" fill={`url(#${id}-pan)`} />
         <ellipse cx="155" cy="56" rx="46" ry="26" fill={`url(#${id}-case)`} />
         <ellipse cx="155" cy="56" rx="40" ry="21" fill="none" stroke={`url(#${id}-gold)`} strokeWidth={1.5} />
+        {/* Blush pot, in front, between lipstick and compact */}
+        {blushHex ? (<>
+          <ellipse cx="108" cy="146" rx="22" ry="4" fill="#000" opacity={0.5} />
+          <ellipse cx="108" cy="136" rx="22" ry="9" fill={`url(#${id}-case)`} />
+          <ellipse cx="108" cy="132" rx="22" ry="9" fill={`url(#${id}-gold)`} />
+          <ellipse cx="108" cy="132" rx="17" ry="6.5" fill={blushHex} />
+        </>) : null}
       </svg>
       <span style={{ flex: "0 0 auto", display: "flex", gap: 14, padding: "6px 12px 34px", maxWidth: "100%", boxSizing: "border-box" }}>
         {chip(lipHex, t("tryon", "lips"), tx(lip?.name))}
         {chip(eyeHex, t("tryon", "eyes"), tx(eye?.name))}
+        {blushHex ? chip(blushHex, t("tryon", "blush"), tx(blush?.name)) : null}
       </span>
     </span>
   );
@@ -564,8 +581,8 @@ export function HairCustomise({ onChange, compact }: { onChange?: (mods: HairMod
     <div style={{ display: "flex", flexDirection: "column", gap: compact ? 8 : 10 }}>
       {compact ? null : <span style={{ ...SERIF, fontSize: 19 }}>{t("hair", "customise")}</span>}
       {groups.map((g) => (
-        <div key={g} style={{ display: "flex", flexDirection: compact ? "row" : "column", alignItems: compact ? "center" : "stretch", gap: compact ? 10 : 6 }}>
-          <span style={{ fontSize: 12, color: c("ink-muted"), flex: "0 0 auto", minWidth: compact ? 52 : undefined }}>{t("hair", g)}</span>
+        <div key={g} style={{ display: "flex", flexDirection: "column", alignItems: "stretch", gap: 6 }}>
+          <span style={{ fontSize: 12, color: c("ink-muted") }}>{t("hair", g)}</span>
           <div style={{ display: "flex", flexWrap: compact ? "nowrap" : "wrap", overflowX: compact ? "auto" : undefined, scrollbarWidth: "none", minWidth: 0, gap: 6 }}>
             {chip(!mods[g], t("tryon", "none"), () => set(g, null), "none")}
             {HAIR_MOD_OPTIONS[g].map((v) => chip(mods[g] === v, t("hair", `${g}_${v}`), () => set(g, v), `${g}_${v}`))}
@@ -604,7 +621,7 @@ export function StyleCard({ image, focus, name, badge, tried, active, onClick, c
           </span>
         ) : null}
         {badge ? (
-          <span style={{ position: "absolute", left: 6, bottom: 6, fontSize: 10, fontWeight: 500, color: c("on-dark"), background: c("accent-soft"), borderRadius: 8, padding: "2px 7px" }}>
+          <span style={{ position: "absolute", left: 6, top: 6, zIndex: 1, lineHeight: 1.3, whiteSpace: "nowrap", maxWidth: "calc(100% - 12px)", overflow: "hidden", textOverflow: "ellipsis", fontSize: 10, fontWeight: 500, color: c("on-dark"), background: c("accent-soft"), borderRadius: 8, padding: "2px 7px" }}>
             {badge}
           </span>
         ) : null}

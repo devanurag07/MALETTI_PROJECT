@@ -9,7 +9,7 @@ import { saveLookDraft } from "../save-look";
 import { markingsOf, SkinMapPhoto, SKIN_METRICS } from "../components/SkinMap";
 import { c, CompareArch, ErrorLine, H1, ICON, LoadingStage, Muted, OutlineButton, PrimaryButton, Screen, SERIF } from "../ui";
 
-const SERVICES: Service[] = ["hairstyle", "beard", "armocromia", "colour", "makeup", "skin"];
+const SERVICES: Service[] = ["hairstyle", "beard", "colour", "armocromia", "makeup", "skin"];
 
 /**
  * Simple Service, last page: the result of the ONE service the customer picked (try-on before/after + the chosen

@@ -266,15 +266,10 @@ export function Options({ service, a, sel, setSel, tab: tabProp, bare }: {
       <div style={{ width: service === "hairstyle" ? "62%" : "72%", margin: "0 auto" }}>
         <Carousel key={service} perPage={9} columns={3} items={ordered.map((x) => (
           <StyleCard key={x.key} compact image={styleImage(imageKind, x.key, x.image_url) || thumb} focus={service === "beard" ? "50% 60%" : "50% 8%"}
-            name={tx(x.name)} badge={badge(x.key)} active={sel === x.key} onClick={() => setSel(x.key)} />
+            name={tx(x.name)} active={sel === x.key} onClick={() => setSel(x.key)} />
         ))} />
       </div>
-      {service === "hairstyle" ? (
-        <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-          <span style={{ ...SERIF, fontSize: 16 }}>{t("hair", "customise")}</span>
-          <HairCustomise compact />
-        </div>
-      ) : null}
+      {service === "hairstyle" ? <HairCustomise compact /> : null}
       </div>
     );
   }

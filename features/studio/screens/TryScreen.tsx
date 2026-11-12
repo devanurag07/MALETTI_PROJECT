@@ -1,5 +1,6 @@
 "use client";
 
+import { BLUSH, blushByKey } from "../data/blush";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { studioApi, type CatalogItem, type Results, type TryKind, type TryOn } from "../api";
@@ -59,16 +60,24 @@ const KIND_CAT: Record<TryKind, string> = { cut: "catCut", colour: "catColour", 
 type Sel = { item: string | null; shade: string | null; technique: string | null; look: string | null; lip: string | null; eye: string | null; blush: string | null; beard: string | null };
 
 /** Download an image before showing it, so the old picture is never left on screen while the new one loads. */
+/** Result URL → in-memory blob URL, so a result shows the instant it's picked (no second download / decode). */
+const READY = new Map<string, string>();
+const ready = (url: string | null | undefined) => (url ? READY.get(url) ?? url : url ?? null);
+
 function preload(url: string | null | undefined): Promise<void> {
-  if (!url) return Promise.resolve();
-  return new Promise((resolve) => {
+  if (!url || READY.has(url)) return Promise.resolve();
+  const decode = (src: string) => new Promise<void>((resolve) => {
     const img = new Image();
     const done = () => resolve();
     img.onload = () => (img.decode ? img.decode().then(done, done) : done());
     img.onerror = done;
-    setTimeout(done, 15000); // never block forever
-    img.src = url;
+    img.src = src;
   });
+  const work = fetch(url, { mode: "cors" })
+    .then((r) => (r.ok ? r.blob() : Promise.reject()))
+    .then((b) => { const local = URL.createObjectURL(b); READY.set(url, local); return decode(local); })
+    .catch(() => decode(url)); // no CORS: fall back to the browser cache
+  return Promise.race([work, new Promise<void>((r) => setTimeout(r, 15000))]); // never block forever
 }
 
 /** Recommended first (in recommendation order), then the rest of the catalog; unique keys. */
@@ -96,7 +105,7 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
   const shadesAll = useCatalog("hair_shade");
   const techniques = useCatalog("hair_technique");
   const lipsAll = useCatalog("lip_shade");
-  const blushAll = useCatalog("blush_shade");
+  const blushAll = BLUSH; // FLUX_VERSION_3 makeup_prompts.json, not the catalogue
   const eyesAll = useCatalog("eye_shade");
   const looksAll = useCatalog("makeup_look");
   const beardsAll = useCatalog("beard_style");
@@ -161,8 +170,10 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
     }
     if (kind === "colour") return s.shade ? { shade: s.shade, technique: s.technique, intensity: lvl } : null;
     if (kind === "makeup") {
-      if (s.look) return { look: s.look, ...(s.blush ? { blush: s.blush } : {}), intensity: lvl };
-      return s.lip || s.eye || s.blush ? { lip: s.lip, eye: s.eye, blush: s.blush, intensity: lvl } : null;
+      // Blush from FLUX_VERSION_3's makeup_prompts.json: its own prompt goes to the backend.
+      const blush = s.blush ? { blush_prompt: String(blushByKey(s.blush)?.attributes.prompt ?? ""), blush_key: s.blush } : {};
+      if (s.look) return { look: s.look, ...blush, intensity: lvl };
+      return s.lip || s.eye || s.blush ? { lip: s.lip, eye: s.eye, ...blush, intensity: lvl } : null;
     }
     return s.beard ? { beard: s.beard, density: lvl } : null;
   }
@@ -271,6 +282,14 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
     void apply(s);
   }
 
+  /** "Original": back to the photo from the earlier steps — no AI call, even if bangs / fade / styling are set. */
+  function original() {
+    const s = { ...sel, item: null };
+    setSel(s);
+    commit(s);
+    setLayer(null);
+  }
+
   /** Try the option picked on Recommended / Custom: back to the Result tab, which shows the generation screen. */
   function tryOption() {
     if (!optSel) return;
@@ -358,7 +377,7 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
   /** A processed option shows the customer's result instead of the placeholder picture. */
   const shown = (key: string, placeholder: string | null) => resultFor(key)?.output_url ?? placeholder;
   const dots = (list: CatalogItem[], value: string | null, onPick: (k: string | null) => void, withUpload = false) => (
-    <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+    <div style={{ display: "flex", gap: 10, alignItems: "center", overflowX: "auto", scrollbarWidth: "none", minWidth: 0, paddingBottom: 2 }}>
       <ColorDot hex={null} label={t("tryon", "none")} active={value === null} onClick={() => onPick(null)} />
       {ordered(list).map((s) => (
         <ColorDot key={s.key} hex={s.hex} image={shown(s.key, styleImage(s.kind, s.key, s.image_url))} label={tx(s.name)}
@@ -423,7 +442,7 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
       ) : busy ? (
         <GeneratingScan image={startImage} />
       ) : (<>
-      <CompareArch before={startImage} after={look.layers[kind]?.output_url ?? null} />
+      <CompareArch before={ready(startImage)} after={ready(look.layers[kind]?.output_url)} />
 
       {single ? null : <div style={{ margin: "18px 34px 0 34px" }}>
         <Segmented
@@ -439,7 +458,7 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
         {/* Only the original + styles already processed (or processing) — new styles are picked on the Styles tab. */}
         {kind === "cut" && optionRow(t("tryon", "cutLabel"),
           <ImageOption compact height={62} image={photo} focus="50% 20%" label={t("tryon", "original")} sub={status(null, sel.item === null)}
-            active={sel.item === null} onClick={() => pick({ item: null })} />,
+            active={sel.item === null} onClick={original} />,
           tried(cutsAll).map((x) => (
             <ImageOption compact height={62} key={x.key} image={shown(x.key, styleImage("haircut", x.key, x.image_url))} focus="50% 8%" label={tx(x.name)} sub={status(x.key, sel.item === x.key)}
               active={sel.item === x.key} busy={processing === x.key} done={!!resultFor(x.key)} onClick={() => pick({ item: x.key })} />
@@ -476,7 +495,7 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
               {label(t("tryon", "blush"))}
-              {dots(blushAll.slice(0, 5), sel.blush, (k) => pick({ blush: k }))}
+              {dots(blushAll, sel.blush, (k) => pick({ blush: k }))}
             </div>
           </>
         )}

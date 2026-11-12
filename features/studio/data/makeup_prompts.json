@@ -1,0 +1,106 @@
+{
+  "lipstick": {
+    "Everyday": [
+      { "name": "Nude Beige", "prompt": "Apply a lipstick of this shade - rgb(198, 162, 138) on the lady's lips", "rgb": [198, 162, 138] },
+      { "name": "Pink Nude", "prompt": "Apply a lipstick of this shade - rgb(194, 143, 144) on the lady's lips", "rgb": [194, 143, 144] },
+      { "name": "Peach Nude", "prompt": "Apply a lipstick of this shade - rgb(214, 150, 130) on the lady's lips", "rgb": [214, 150, 130] },
+      { "name": "Caramel Nude", "prompt": "Apply a lipstick of this shade - rgb(170, 113, 87) on the lady's lips", "rgb": [170, 113, 87] },
+      { "name": "Brown Nude", "prompt": "Apply a lipstick of this shade - rgb(142, 95, 77) on the lady's lips", "rgb": [142, 95, 77] },
+      { "name": "Mauve Nude", "prompt": "Apply a lipstick of this shade - rgb(171, 118, 126) on the lady's lips", "rgb": [171, 118, 126] },
+      { "name": "Dusty Rose", "prompt": "Apply a lipstick of this shade - rgb(176, 105, 116) on the lady's lips", "rgb": [176, 105, 116] },
+      { "name": "Rosewood", "prompt": "Apply a lipstick of this shade - rgb(154, 91, 91) on the lady's lips", "rgb": [154, 91, 91] }
+    ],
+    "Pinks & Reds": [
+      { "name": "Soft Pink", "prompt": "Apply a lipstick of this shade - rgb(229, 158, 181) on the lady's lips", "rgb": [229, 158, 181] },
+      { "name": "Rose", "prompt": "Apply a lipstick of this shade - rgb(191, 97, 122) on the lady's lips", "rgb": [191, 97, 122] },
+      { "name": "Coral", "prompt": "Apply a lipstick of this shade - rgb(240, 116, 102) on the lady's lips", "rgb": [240, 116, 102] },
+      { "name": "Raspberry", "prompt": "Apply a lipstick of this shade - rgb(197, 48, 91) on the lady's lips", "rgb": [197, 48, 91] },
+      { "name": "Fuchsia", "prompt": "Apply a lipstick of this shade - rgb(211, 44, 124) on the lady's lips", "rgb": [211, 44, 124] },
+      { "name": "Classic Red", "prompt": "Apply a lipstick of this shade - rgb(186, 32, 45) on the lady's lips", "rgb": [186, 32, 45] },
+      { "name": "Cherry Red", "prompt": "Apply a lipstick of this shade - rgb(205, 37, 49) on the lady's lips", "rgb": [205, 37, 49] },
+      { "name": "Berry", "prompt": "Apply a lipstick of this shade - rgb(139, 58, 98) on the lady's lips", "rgb": [139, 58, 98] }
+    ],
+    "Deep & Rich": [
+      { "name": "Terracotta", "prompt": "Apply a lipstick of this shade - rgb(184, 82, 58) on the lady's lips", "rgb": [184, 82, 58] },
+      { "name": "Brick Red", "prompt": "Apply a lipstick of this shade - rgb(160, 58, 48) on the lady's lips", "rgb": [160, 58, 48] },
+      { "name": "Deep Burgundy", "prompt": "Apply a lipstick of this shade - rgb(104, 28, 43) on the lady's lips", "rgb": [104, 28, 43] },
+      { "name": "Plum", "prompt": "Apply a lipstick of this shade - rgb(109, 60, 99) on the lady's lips", "rgb": [109, 60, 99] }
+    ],
+    "Statement": [
+      { "name": "Chocolate Brown", "prompt": "Apply a lipstick of this shade - rgb(101, 57, 45) on the lady's lips", "rgb": [101, 57, 45] },
+      { "name": "Dark Purple", "prompt": "Apply a lipstick of this shade - rgb(77, 35, 91) on the lady's lips", "rgb": [77, 35, 91] },
+      { "name": "Wine", "prompt": "Apply a lipstick of this shade - rgb(108, 35, 52) on the lady's lips", "rgb": [108, 35, 52] },
+      { "name": "Black", "prompt": "Apply a lipstick of this shade - rgb(35, 25, 28) on the lady's lips", "rgb": [35, 25, 28] }
+    ]
+  },
+  "blush": {
+    "Everyday": [
+      { "name": "Nude Beige", "prompt": "On this lady locate the cheekbones and apply a sheer, seamless blend of rgb(218, 181, 161) blush. This color must be highly diffused and subtle, restricted strictly to the cheeks to provide a natural flush. Preserve all existing skin texture, lighting, and shadow gradients. The area must remain natural, not heavily painted. Do not alter any other facial features, or the background.", "rgb": [218, 181, 161] },
+      { "name": "Soft Peach", "prompt": "On this lady locate the cheekbones and apply a sheer, seamless blend of rgb(245, 193, 168) blush. This color must be highly diffused and subtle, restricted strictly to the cheeks to provide a natural flush. Preserve all existing skin texture, lighting, and shadow gradients. The area must remain natural, not heavily painted. Do not alter any other facial features, or the background.", "rgb": [245, 193, 168] },
+      { "name": "Nude Pink", "prompt": "On this lady locate the cheekbones and apply a sheer, seamless blend of rgb(224, 165, 178) blush. This color must be highly diffused and subtle, restricted strictly to the cheeks to provide a natural flush. Preserve all existing skin texture, lighting, and shadow gradients. The area must remain natural, not heavily painted. Do not alter any other facial features, or the background.", "rgb": [224, 165, 178] },
+      { "name": "Dusty Rose", "prompt": "On this lady locate the cheekbones and apply a sheer, seamless blend of rgb(194, 123, 137) blush. This color must be highly diffused and subtle, restricted strictly to the cheeks to provide a natural flush. Preserve all existing skin texture, lighting, and shadow gradients. The area must remain natural, not heavily painted. Do not alter any other facial features, or the background.", "rgb": [194, 123, 137] }
+    ],
+    "Pink & Rose": [
+      { "name": "Baby Pink", "prompt": "On this lady locate the cheekbones and apply a sheer, seamless blend of rgb(248, 192, 209) blush. This color must be highly diffused and subtle, restricted strictly to the cheeks to provide a natural flush. Preserve all existing skin texture, lighting, and shadow gradients. The area must remain natural, not heavily painted. Do not alter any other facial features, or the background.", "rgb": [248, 192, 209] },
+      { "name": "Rose Pink", "prompt": "On this lady locate the cheekbones and apply a sheer, seamless blend of rgb(221, 128, 152) blush. This color must be highly diffused and subtle, restricted strictly to the cheeks to provide a natural flush. Preserve all existing skin texture, lighting, and shadow gradients. The area must remain natural, not heavily painted. Do not alter any other facial features, or the background.", "rgb": [221, 128, 152] },
+      { "name": "Soft Rose", "prompt": "On this lady locate the cheekbones and apply a sheer, seamless blend of rgb(210, 143, 161) blush. This color must be highly diffused and subtle, restricted strictly to the cheeks to provide a natural flush. Preserve all existing skin texture, lighting, and shadow gradients. The area must remain natural, not heavily painted. Do not alter any other facial features, or the background.", "rgb": [210, 143, 161] },
+      { "name": "Mauve", "prompt": "On this lady locate the cheekbones and apply a sheer, seamless blend of rgb(177, 128, 155) blush. This color must be highly diffused and subtle, restricted strictly to the cheeks to provide a natural flush. Preserve all existing skin texture, lighting, and shadow gradients. The area must remain natural, not heavily painted. Do not alter any other facial features, or the background.", "rgb": [177, 128, 155] },
+      { "name": "Warm Rose", "prompt": "On this lady locate the cheekbones and apply a sheer, seamless blend of rgb(201, 117, 128) blush. This color must be highly diffused and subtle, restricted strictly to the cheeks to provide a natural flush. Preserve all existing skin texture, lighting, and shadow gradients. The area must remain natural, not heavily painted. Do not alter any other facial features, or the background.", "rgb": [201, 117, 128] },
+      { "name": "Watermelon Pink", "prompt": "On this lady locate the cheekbones and apply a sheer, seamless blend of rgb(235, 105, 128) blush. This color must be highly diffused and subtle, restricted strictly to the cheeks to provide a natural flush. Preserve all existing skin texture, lighting, and shadow gradients. The area must remain natural, not heavily painted. Do not alter any other facial features, or the background.", "rgb": [235, 105, 128] },
+      { "name": "Hot Pink", "prompt": "On this lady locate the cheekbones and apply a sheer, seamless blend of rgb(225, 72, 119) blush. This color must be highly diffused and subtle, restricted strictly to the cheeks to provide a natural flush. Preserve all existing skin texture, lighting, and shadow gradients. The area must remain natural, not heavily painted. Do not alter any other facial features, or the background.", "rgb": [225, 72, 119] },
+      { "name": "Raspberry Pink", "prompt": "On this lady locate the cheekbones and apply a sheer, seamless blend of rgb(196, 64, 101) blush. This color must be highly diffused and subtle, restricted strictly to the cheeks to provide a natural flush. Preserve all existing skin texture, lighting, and shadow gradients. The area must remain natural, not heavily painted. Do not alter any other facial features, or the background.", "rgb": [196, 64, 101] }
+    ],
+    "Peach & Warm": [
+      { "name": "Peach", "prompt": "On this lady locate the cheekbones and apply a sheer, seamless blend of rgb(239, 161, 122) blush. This color must be highly diffused and subtle, restricted strictly to the cheeks to provide a natural flush. Preserve all existing skin texture, lighting, and shadow gradients. The area must remain natural, not heavily painted. Do not alter any other facial features, or the background.", "rgb": [239, 161, 122] },
+      { "name": "Peach Pink", "prompt": "On this lady locate the cheekbones and apply a sheer, seamless blend of rgb(240, 151, 135) blush. This color must be highly diffused and subtle, restricted strictly to the cheeks to provide a natural flush. Preserve all existing skin texture, lighting, and shadow gradients. The area must remain natural, not heavily painted. Do not alter any other facial features, or the background.", "rgb": [240, 151, 135] },
+      { "name": "Apricot", "prompt": "On this lady locate the cheekbones and apply a sheer, seamless blend of rgb(242, 177, 117) blush. This color must be highly diffused and subtle, restricted strictly to the cheeks to provide a natural flush. Preserve all existing skin texture, lighting, and shadow gradients. The area must remain natural, not heavily painted. Do not alter any other facial features, or the background.", "rgb": [242, 177, 117] },
+      { "name": "Salmon", "prompt": "On this lady locate the cheekbones and apply a sheer, seamless blend of rgb(238, 132, 112) blush. This color must be highly diffused and subtle, restricted strictly to the cheeks to provide a natural flush. Preserve all existing skin texture, lighting, and shadow gradients. The area must remain natural, not heavily painted. Do not alter any other facial features, or the background.", "rgb": [238, 132, 112] },
+      { "name": "Coral", "prompt": "On this lady locate the cheekbones and apply a sheer, seamless blend of rgb(241, 129, 107) blush. This color must be highly diffused and subtle, restricted strictly to the cheeks to provide a natural flush. Preserve all existing skin texture, lighting, and shadow gradients. The area must remain natural, not heavily painted. Do not alter any other facial features, or the background.", "rgb": [241, 129, 107] },
+      { "name": "Terracotta", "prompt": "On this lady locate the cheekbones and apply a sheer, seamless blend of rgb(184, 102, 72) blush. This color must be highly diffused and subtle, restricted strictly to the cheeks to provide a natural flush. Preserve all existing skin texture, lighting, and shadow gradients. The area must remain natural, not heavily painted. Do not alter any other facial features, or the background.", "rgb": [184, 102, 72] },
+      { "name": "Burnt Orange", "prompt": "On this lady locate the cheekbones and apply a sheer, seamless blend of rgb(190, 96, 59) blush. This color must be highly diffused and subtle, restricted strictly to the cheeks to provide a natural flush. Preserve all existing skin texture, lighting, and shadow gradients. The area must remain natural, not heavily painted. Do not alter any other facial features, or the background.", "rgb": [190, 96, 59] },
+      { "name": "Cinnamon", "prompt": "On this lady locate the cheekbones and apply a sheer, seamless blend of rgb(169, 101, 70) blush. This color must be highly diffused and subtle, restricted strictly to the cheeks to provide a natural flush. Preserve all existing skin texture, lighting, and shadow gradients. The area must remain natural, not heavily painted. Do not alter any other facial features, or the background.", "rgb": [169, 101, 70] }
+    ],
+    "Bold": [
+      { "name": "Berry", "prompt": "On this lady locate the cheekbones and apply a sheer, seamless blend of rgb(164, 87, 118) blush. This color must be highly diffused and subtle, restricted strictly to the cheeks to provide a natural flush. Preserve all existing skin texture, lighting, and shadow gradients. The area must remain natural, not heavily painted. Do not alter any other facial features, or the background.", "rgb": [164, 87, 118] },
+      { "name": "Plum", "prompt": "On this lady locate the cheekbones and apply a sheer, seamless blend of rgb(137, 78, 119) blush. This color must be highly diffused and subtle, restricted strictly to the cheeks to provide a natural flush. Preserve all existing skin texture, lighting, and shadow gradients. The area must remain natural, not heavily painted. Do not alter any other facial features, or the background.", "rgb": [137, 78, 119] },
+      { "name": "Brick", "prompt": "On this lady locate the cheekbones and apply a sheer, seamless blend of rgb(157, 72, 62) blush. This color must be highly diffused and subtle, restricted strictly to the cheeks to provide a natural flush. Preserve all existing skin texture, lighting, and shadow gradients. The area must remain natural, not heavily painted. Do not alter any other facial features or the background.", "rgb": [157, 72, 62] },
+      { "name": "Deep Berry", "prompt": "On this lady locate the cheekbones and apply a sheer, seamless blend of rgb(121, 55, 82) blush. This color must be highly diffused and subtle, restricted strictly to the cheeks to provide a natural flush. Preserve all existing skin texture, lighting, and shadow gradients. The area must remain natural, not heavily painted. Do not alter any other facial features, or the background.", "rgb": [121, 55, 82] }
+    ]
+  },
+  "eyeshadow": {
+    "Nude Matte": [
+      { "name": "Nude", "prompt": "Apply a very subtle matte eyeshadow of this shade - rgb(194, 170, 145) on the lady's face. Keep the eyeshadow smooth, soft, and non-reflective, with no shimmer or glitter.", "rgb": [194, 170, 145] },
+      { "name": "Beige", "prompt": "Apply a very subtle matte eyeshadow of this shade - rgb(210, 190, 165) on the lady's face. Keep the eyeshadow smooth, soft, and non-reflective, with no shimmer or glitter.", "rgb": [210, 190, 165] },
+      { "name": "Taupe", "prompt": "Apply a very subtle matte eyeshadow of this shade - rgb(147, 130, 120) on the lady's face. Keep the eyeshadow smooth, soft, and non-reflective, with no shimmer or glitter.", "rgb": [147, 130, 120] },
+      { "name": "Caramel", "prompt": "Apply a very subtle matte eyeshadow of this shade - rgb(180, 130, 85) on the lady's face. Keep the eyeshadow smooth, soft, and non-reflective, with no shimmer or glitter.", "rgb": [180, 130, 85] }
+    ],
+    "Brown & Smokey Matte": [
+      { "name": "Warm Brown", "prompt": "Apply a very subtle matte eyeshadow of this shade - rgb(101, 73, 60) on the lady's face. Keep the eyeshadow smooth, soft, and non-reflective, with no shimmer or glitter.", "rgb": [101, 73, 60] },
+      { "name": "Mocha", "prompt": "Apply a very subtle matte eyeshadow of this shade - rgb(125, 88, 68) on the lady's face. Keep the eyeshadow smooth, soft, and non-reflective, with no shimmer or glitter.", "rgb": [125, 88, 68] },
+      { "name": "Cocoa", "prompt": "Apply a very subtle matte eyeshadow of this shade - rgb(95, 63, 52) on the lady's face. Keep the eyeshadow smooth, soft, and non-reflective, with no shimmer or glitter.", "rgb": [95, 63, 52] },
+      { "name": "Black", "prompt": "Apply a very subtle matte eyeshadow of this shade - rgb(48, 48, 52) on the lady's face. Keep the eyeshadow smooth, soft, and non-reflective, with no shimmer or glitter.", "rgb": [48, 48, 52] }
+    ],
+    "Pink & Plum Matte": [
+      { "name": "Blush", "prompt": "Apply a very subtle matte eyeshadow of this shade - rgb(215, 165, 170) on the lady's face. Keep the eyeshadow smooth, soft, and non-reflective, with no shimmer or glitter.", "rgb": [215, 165, 170] },
+      { "name": "Rose", "prompt": "Apply a very subtle matte eyeshadow of this shade - rgb(195, 135, 145) on the lady's face. Keep the eyeshadow smooth, soft, and non-reflective, with no shimmer or glitter.", "rgb": [195, 135, 145] },
+      { "name": "Mauve", "prompt": "Apply a very subtle matte eyeshadow of this shade - rgb(173, 116, 143) on the lady's face. Keep the eyeshadow smooth, soft, and non-reflective, with no shimmer or glitter.", "rgb": [173, 116, 143] },
+      { "name": "Plum", "prompt": "Apply a very subtle matte eyeshadow of this shade - rgb(115, 65, 100) on the lady's face. Keep the eyeshadow smooth, soft, and non-reflective, with no shimmer or glitter.", "rgb": [115, 65, 100] }
+    ],
+    "Gold & Bronze Shimmer": [
+      { "name": "Champagne", "prompt": "Apply a very subtle shimmer eyeshadow of this shade - rgb(235, 216, 176) on the lady's face. Give it a soft luminous and reflective finish with fine shimmer particles, while keeping it natural and avoiding chunky glitter.", "rgb": [235, 216, 176] },
+      { "name": "Gold", "prompt": "Apply a very subtle shimmer eyeshadow of this shade - rgb(218, 176, 53) on the lady's face. Give it a soft luminous and reflective finish with fine shimmer particles, while keeping it natural and avoiding chunky glitter.", "rgb": [218, 176, 53] },
+      { "name": "Bronze", "prompt": "Apply a very subtle shimmer eyeshadow of this shade - rgb(162, 104, 65) on the lady's face. Give it a soft luminous and reflective finish with fine shimmer particles, while keeping it natural and avoiding chunky glitter.", "rgb": [162, 104, 65] },
+      { "name": "Copper", "prompt": "Apply a very subtle shimmer eyeshadow of this shade - rgb(190, 105, 65) on the lady's face. Give it a soft luminous and reflective finish with fine shimmer particles, while keeping it natural and avoiding chunky glitter.", "rgb": [190, 105, 65] }
+    ],
+    "Color Shimmer": [
+      { "name": "Rose Gold", "prompt": "Apply a very subtle shimmer eyeshadow of this shade - rgb(196, 140, 128) on the lady's face. Give it a soft luminous and reflective finish with fine shimmer particles, while keeping it natural and avoiding chunky glitter.", "rgb": [196, 140, 128] },
+      { "name": "Silver", "prompt": "Apply a very subtle shimmer eyeshadow of this shade - rgb(185, 185, 190) on the lady's face. Give it a soft luminous and reflective finish with fine shimmer particles, while keeping it natural and avoiding chunky glitter.", "rgb": [185, 185, 190] },
+      { "name": "Emerald", "prompt": "Apply a very subtle shimmer eyeshadow of this shade - rgb(0, 123, 95) on the lady's face. Give it a soft luminous and reflective finish with fine shimmer particles, while keeping it natural and avoiding chunky glitter.", "rgb": [0, 123, 95] },
+      { "name": "Navy", "prompt": "Apply a very subtle shimmer eyeshadow of this shade - rgb(45, 65, 110) on the lady's face. Give it a soft luminous and reflective finish with fine shimmer particles, while keeping it natural and avoiding chunky glitter.", "rgb": [45, 65, 110] },
+      { "name": "Burgundy", "prompt": "Apply a very subtle shimmer eyeshadow of this shade - rgb(125, 45, 60) on the lady's face. Give it a soft luminous and reflective finish with fine shimmer particles, while keeping it natural and avoiding chunky glitter.", "rgb": [125, 45, 60] },
+      { "name": "Olive", "prompt": "Apply a very subtle shimmer eyeshadow of this shade - rgb(115, 115, 55) on the lady's face. Give it a soft luminous and reflective finish with fine shimmer particles, while keeping it natural and avoiding chunky glitter.", "rgb": [115, 115, 55] },
+      { "name": "Purple", "prompt": "Apply a very subtle shimmer eyeshadow of this shade - rgb(115, 70, 140) on the lady's face. Give it a soft luminous and reflective finish with fine shimmer particles, while keeping it natural and avoiding chunky glitter.", "rgb": [115, 70, 140] },
+      { "name": "Pink Shimmer", "prompt": "Apply a very subtle shimmer eyeshadow of this shade - rgb(220, 145, 170) on the lady's face. Give it a soft luminous and reflective finish with fine shimmer particles, while keeping it natural and avoiding chunky glitter.", "rgb": [220, 145, 170] }
+    ]
+  }
+}

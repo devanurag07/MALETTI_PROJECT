@@ -27,8 +27,8 @@ export const SERVICE_KINDS: Record<Gender, TryKind[]> = {
  */
 export type Service = "hairstyle" | "beard" | "armocromia" | "colour" | "makeup" | "skin";
 export const JOURNEY: Record<Gender, Service[]> = {
-  man: ["hairstyle", "beard", "armocromia", "colour", "skin"],
-  woman: ["hairstyle", "armocromia", "colour", "makeup", "skin"],
+  man: ["hairstyle", "beard", "colour", "armocromia", "skin"],
+  woman: ["hairstyle", "colour", "armocromia", "makeup", "skin"],
 };
 /** Backend analysis module each service reads its recommendations from. */
 export const SERVICE_MODULE: Record<Service, string> = {
