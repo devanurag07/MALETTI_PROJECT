@@ -697,7 +697,6 @@
       "tabSkin": "Pelle",
       "tabFace": "Viso",
       "tabColour": "Armocromia",
-      "tabScalp": "Cute",
       "tabStyles": "Stili"
     },
     "skin": {
@@ -762,14 +761,6 @@
       "saved": "Salvato",
       "custom": "Combinazione personalizzata",
       "cta": "Avanti: il tuo look"
-    },
-    "scalp": {
-      "phase": "Fase 2",
-      "title": "Analisi della cute",
-      "desc": "In questa versione il modulo non è attivo. Quando sarà disponibile, lo specchio leggerà lo stato della cute e proporrà un protocollo di trattamento con i prodotti più indicati.",
-      "index": "Indice",
-      "outcome": "Esito: protocollo di trattamento in salone e prodotti consigliati",
-      "cta": "Torna ai risultati"
     },
     "service": {
       "live": "Riflesso dal vivo",
@@ -927,7 +918,12 @@
           "cool_winter": "Inverno freddo",
           "bright_winter": "Inverno brillante"
         }
-      }
+      },
+      "triedEyebrow": "Le tue prove",
+      "triedTitle": "I look che hai provato",
+      "triedText": "Tutti i tagli e i colori provati allo specchio. Quello scelto è evidenziato.",
+      "triedCount": "{n} provati",
+      "yourPhoto": "La tua foto"
     },
     "styles": {
       "cta": "Continua con l'armonia colori"

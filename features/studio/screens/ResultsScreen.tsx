@@ -11,13 +11,13 @@ import {
   PillButton, PrimaryButton, Screen, SectionTitle, Segmented, SERIF, Spinner, Tabs, Carousel, ShadeSwatch,
 } from "../ui";
 
-type Tab = "skin" | "face" | "styles" | "colour" | "scalp";
-const TAB_LABEL: Record<Tab, string> = { skin: "tabSkin", face: "tabFace", styles: "tabStyles", colour: "tabColour", scalp: "tabScalp" };
-const NEXT: Record<Tab, string> = { skin: "/results/face", face: "/results/styles", styles: "/results/colour", colour: "/look", scalp: "/results/skin" };
+type Tab = "skin" | "face" | "styles" | "colour";
+const TAB_LABEL: Record<Tab, string> = { skin: "tabSkin", face: "tabFace", styles: "tabStyles", colour: "tabColour" };
+const NEXT: Record<Tab, string> = { skin: "/results/face", face: "/results/styles", styles: "/results/colour", colour: "/look" };
 /** "styles" is not a backend module: it shows the face analysis' cut / beard / colour suggestions. */
-const MODULE: Record<Tab, string> = { skin: "skin", face: "face", styles: "face", colour: "colour", scalp: "scalp" };
+const MODULE: Record<Tab, string> = { skin: "skin", face: "face", styles: "face", colour: "colour" };
 
-/** Step 4 — Results: skin → products, face → cuts/beard, colour harmony, scalp (phase 2). */
+/** Step 4 — Results: skin → products, face → cuts/beard, colour harmony. */
 export default function ResultsScreen({ tab }: { tab: Tab }) {
   const router = useRouter();
   const { t, config, session } = useStudio();
@@ -38,8 +38,8 @@ export default function ResultsScreen({ tab }: { tab: Tab }) {
   return (
     <Screen step={4} animKey={tab}>
       <Tabs tabs={tabs} value={tab} onChange={(k) => router.replace(`/results/${k}`)} />
-      {tab === "scalp" || status(tab) === "coming_soon" ? (
-        <ScalpTab />
+      {status(tab) === "coming_soon" ? (
+        <div style={{ flex: 1 }} />
       ) : !results ? (
         <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}><Spinner size={36} /></div>
       ) : !current || current.status !== "done" ? (
@@ -53,7 +53,7 @@ export default function ResultsScreen({ tab }: { tab: Tab }) {
       ) : (
         <ColourTab a={current} />
       )}
-      {tab !== "scalp" && status(tab) !== "coming_soon" ? (
+      {status(tab) !== "coming_soon" ? (
         <div style={{ flex: "0 0 auto", padding: "14px 34px 34px 34px" }}>
           <PrimaryButton iconRight={ICON.next} onClick={() => router.push(NEXT[tab])}>{t(tab, "cta")}</PrimaryButton>
         </div>
@@ -648,48 +648,6 @@ function ColourTab({ a }: { a: AnalysisTab }) {
   );
 }
 
-// -------------------------------------------------------------------------------------------- scalp
-
-function ScalpTab() {
-  const router = useRouter();
-  const { t, tx, config } = useStudio();
-  const metrics = (config?.modules.find((m) => m.module === "scalp")?.config?.metrics as string[] | undefined) ?? [];
-  const names = Object.fromEntries((config?.taxonomy.scalp_metric ?? []).map((m) => [m.key, m.name]));
-  return (
-    <>
-      <div style={{ flex: "1 1 auto", minHeight: 0, position: "relative", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 20, padding: "0 40px", textAlign: "center" }}>
-        <div style={{ position: "absolute", left: "50%", top: "50%", width: 420, height: 420, margin: "-210px 0 0 -210px", borderRadius: "50%", background: `radial-gradient(closest-side, ${c("halo")}, transparent)` }} />
-        <div style={{ position: "relative", width: 92, height: 92, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <span style={{ position: "absolute", left: 10, top: 10, display: "block", width: 72, height: 72, border: `1.5px solid ${c("accent")}`, transform: "skewX(var(--mm-skew))" }} />
-          <Icon d={ICON.lock} size={32} width={1.4} stroke="var(--mm-ink)" style={{ position: "relative" }} />
-        </div>
-        <div style={{ position: "relative", display: "flex", flexDirection: "column", gap: 10, alignItems: "center" }}>
-          <span style={{ fontSize: 12, fontWeight: 500, background: c("phase-chip"), borderRadius: 10, padding: "3px 12px" }}>{t("scalp", "phase")}</span>
-          <H1>{t("scalp", "title")}</H1>
-          <Muted size={15} style={{ maxWidth: 390, lineHeight: 1.55 }}>{t("scalp", "desc")}</Muted>
-        </div>
-      </div>
-      <div style={{ flex: "0 0 auto", display: "flex", flexDirection: "column", margin: "0 34px", padding: "6px 18px", borderRadius: 22, background: c("surface"), border: `1px solid ${c("line")}` }}>
-        {metrics.map((m) => (
-          <div key={m} style={{ display: "flex", alignItems: "center", gap: 14, height: 50, borderBottom: `1px solid ${c("divider-soft")}`, color: c("ink-muted") }}>
-            <Diamond size={8} color={c("line-strong")} />
-            <span style={{ flex: "1 1 auto", fontSize: 15 }}>{tx(names[m]) || m}</span>
-            <span style={{ fontSize: 13, color: c("ink-faint") }}>{t("scalp", "index")}</span>
-          </div>
-        ))}
-        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "14px 0 10px 0", fontSize: 13 }}>
-          <Icon d={ICON.next} size={16} width={1.8} stroke="var(--mm-accent)" />
-          <span>{t("scalp", "outcome")}</span>
-        </div>
-      </div>
-      <div style={{ flex: "0 0 auto", padding: "22px 34px 34px 34px" }}>
-        <OutlineButton icon={ICON.back} onClick={() => router.push("/results/skin")}>{t("scalp", "cta")}</OutlineButton>
-      </div>
-    </>
-  );
-}
-
-/** Colour technique card, as in FLUX_VERSION_3's custom hair colour: a bordered text card, filled when selected. */
 export function TechniqueCard({ label, active, onClick }: { techniqueKey: string; label: string; active: boolean; onClick: () => void }) {
   return (
     <button type="button" onClick={onClick} aria-pressed={active} style={{

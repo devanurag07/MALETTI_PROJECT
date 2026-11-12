@@ -10,7 +10,7 @@ import { JOURNEY, journeyIntro } from "../flows";
 import { waitForPendingUpload } from "../pending-upload";
 import { Arch, c, ErrorLine, GuidePill, H1, HeroBackdrop, Icon, ICON, LoadingStage, Photo, PrimaryButton, Screen, Spinner } from "../ui";
 
-const MODULE_ICON: Record<string, string> = { skin: ICON.skin, face: ICON.face, colour: ICON.colour, scalp: ICON.scalp };
+const MODULE_ICON: Record<string, string> = { skin: ICON.skin, face: ICON.face, colour: ICON.colour };
 
 /** Step 3 — AI analysis: every active module runs in parallel on the backend. */
 export default function AnalysisScreen() {
@@ -93,7 +93,7 @@ export default function AnalysisScreen() {
       <div style={{ flex: "0 0 auto", padding: "2px 34px 34px 34px", display: "flex", flexDirection: "column", gap: 14 }}>
         <H1>{t("analysis", done ? "title" : "running")}</H1>
         <div style={{ display: "flex", flexDirection: "column", borderTop: `1px solid ${c("divider")}` }}>
-          {config.modules.filter((m) => m.status !== "off").map((m) => {
+          {config.modules.filter((m) => m.status !== "off" && m.module !== "scalp").map((m) => {
             const soon = m.status === "coming_soon";
             const st = results?.tabs.find((x) => x.module === m.module)?.status;
             const failed = st === "failed";

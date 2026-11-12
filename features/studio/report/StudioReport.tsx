@@ -14,16 +14,47 @@ import ColourHarmonyPages, { colourHarmonyData } from "./ColourHarmonyPages";
  * analysis (skin, face, colour harmony) with what was chosen, then the products. Used on the mirror (/report),
  * and by the print page that the PDF route renders. Every top-level section is a `[data-report-page]` = one PDF page.
  */
-export default function StudioReport({ report, variant = "screen" }: { report: PublicReport; variant?: "screen" | "print" }) {
+export default function StudioReport({ report: raw, variant = "screen" }: { report: PublicReport; variant?: "screen" | "print" }) {
   const tr = useTranslations("studio");
+  // Only try-ons made from this session's photo (a chain starting at source_image_url): pictures made from a
+  // photo that was replaced later must never show up as "After" or "tried".
+  const report = useMemo(() => {
+    const kept = new Set<number>();
+    for (const x of [...raw.tryons].sort((a, b) => a.id - b.id)) {
+      if (x.parent_id ? kept.has(x.parent_id) : x.input_url === raw.source_image_url) kept.add(x.id);
+    }
+    const tryons = raw.tryons.filter((x) => kept.has(x.id));
+    const final = raw.look?.final_tryon;
+    const look = raw.look && final && !kept.has(final.id) ? { ...raw.look, final_tryon: null, after_url: null } : raw.look;
+    return { ...raw, tryons, look };
+  }, [raw]);
   const tx = (v?: I18n | null) => (v ? v[report.locale] ?? v.en ?? Object.values(v)[0] ?? "" : "");
   const look = report.look;
   const tab = (m: AnalysisTab["module"]) => report.analyses.find((a) => a.module === m && a.status === "done");
   /** Latest finished try-on of one kind (cut / colour / beard / makeup) = the customer's own picture of that step. */
   const shot = (kind: TryOn["kind"]) => [...report.tryons].reverse().find((x) => x.kind === kind && x.output_url)?.output_url ?? null;
-  const before = look?.before_url || report.source_image_url;
+  const before = report.source_image_url || look?.before_url;
   const after = look?.after_url || look?.final_tryon?.output_url || [...report.tryons].reverse()[0]?.output_url || null;
   const pad = variant === "print" ? 64 : 0;
+  /**
+   * Every finished try-on of one kind (one per picture), oldest first; the one the customer went on with is
+   * marked: the look's choice for that step (same option), its latest picture.
+   */
+  const tried = (kind: "cut" | "colour"): TriedItem[] => {
+    const field = kind === "cut" ? "item" : "shade";
+    const chosenKey = kind === "cut" ? look?.cut?.key : look?.hair_shade?.key;
+    const chosenItem = kind === "cut" ? look?.cut : look?.hair_shade;
+    const seen = new Set<string>();
+    const list = report.tryons.filter((x) => x.kind === kind && x.status === "done" && x.output_url && !seen.has(x.output_url) && seen.add(x.output_url));
+    const chosenId = [...list].reverse().find((x) => chosenKey && x.params[field] === chosenKey)?.id;
+    return list.map((x) => {
+      const key = x.params[field] as string | undefined;
+      const name = !key ? tr("tryon.yourPhoto")
+        : key === chosenKey && chosenItem ? tx(chosenItem.name)
+        : key.replace(/_/g, " ").replace(/^./, (ch) => ch.toUpperCase());
+      return { id: x.id, src: x.output_url as string, name, chosen: x.id === chosenId };
+    });
+  };
   const ctx: Ctx = { tr, tx, pad };
 
   const skin = tab("skin");
@@ -57,10 +88,17 @@ export default function StudioReport({ report, variant = "screen" }: { report: P
           <h1 style={{ margin: 0, ...SERIF, fontSize: 42, lineHeight: 1.05 }}>{tr("report.title")}</h1>
           {look?.headline && tx(look.headline) ? <p style={{ margin: 0, fontSize: 16, color: c("ink-muted") }}>{tx(look.headline)}</p> : null}
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: after ? "1fr 1fr" : "1fr", gap: 12 }}>
-          <Figure src={before} label={tr("report.before")} />
-          {after ? <Figure src={after} label={tr("report.after")} gold /> : null}
-        </div>
+        {/* Before / After when there is a try-on; otherwise just the customer's photo (whose report this is). */}
+        {after ? (
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+            <Figure src={before} label={tr("report.before")} />
+            <Figure src={after} label={tr("report.after")} gold />
+          </div>
+        ) : before ? (
+          <div style={{ width: "55%", alignSelf: "center" }}>
+            <Figure src={before} label={tr("report.yourPhoto")} gold />
+          </div>
+        ) : null}
         <Chosen ctx={ctx} items={[
           [tr("look.cut"), look?.cut],
           [tr("look.colour"), look?.hair_shade],
@@ -68,6 +106,14 @@ export default function StudioReport({ report, variant = "screen" }: { report: P
           [tr("look.makeup"), look?.makeup_look],
         ]} />
       </Page>
+
+      {/* ---------------------------------------------------------------- tried looks */}
+      {tried("cut").length || tried("colour").length ? (
+        <Page ctx={ctx} eyebrow={tr("report.triedEyebrow")} title={tr("report.triedTitle")} text={tr("report.triedText")}>
+          <Tried ctx={ctx} title={tr("look.cut")} items={tried("cut")} />
+          <Tried ctx={ctx} title={tr("look.colour")} items={tried("colour")} />
+        </Page>
+      ) : null}
 
       {/* ---------------------------------------------------------------- skin */}
       {skin ? (
@@ -146,6 +192,39 @@ export default function StudioReport({ report, variant = "screen" }: { report: P
 }
 
 // ------------------------------------------------------------------------------------------ helpers
+
+type TriedItem = { id: number; src: string; name: string; chosen: boolean };
+
+/** All pictures tried for one step; the chosen one has the gold frame and a "Chosen" tag. */
+function Tried({ ctx, title, items }: { ctx: Ctx; title: string; items: TriedItem[] }) {
+  if (!items.length) return null;
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
+        <span style={{ ...SERIF, fontSize: 22 }}>{title}</span>
+        <span style={{ fontSize: 13, color: c("ink-muted") }}>{ctx.tr("report.triedCount", { n: items.length })}</span>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 10 }}>
+        {items.map((x) => (
+          <div key={x.id} style={{ display: "flex", flexDirection: "column", gap: 6, minWidth: 0 }}>
+            <div style={{
+              position: "relative", aspectRatio: "4 / 5", borderRadius: 14, overflow: "hidden", background: c("photo"),
+              outline: x.chosen ? `2px solid ${c("accent")}` : `1px solid ${c("line")}`, outlineOffset: x.chosen ? 3 : 0,
+            }}>
+              <img src={x.src} alt={x.name} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+              {x.chosen ? (
+                <span style={{ position: "absolute", left: 6, top: 6, fontSize: 11, fontWeight: 500, color: c("on-dark"), background: c("accent"), borderRadius: 8, padding: "2px 8px" }}>
+                  {ctx.tr("report.chosen")}
+                </span>
+              ) : null}
+            </div>
+            <span style={{ fontSize: 13, textAlign: "center", color: x.chosen ? c("accent") : c("ink"), overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{x.name}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 type Ctx = { tr: ReturnType<typeof useTranslations>; tx: (v?: I18n | null) => string; pad: number };
 type Product = CatalogItem & { reason?: I18n; product?: { brand?: string; price?: string | number; currency?: string } | null };

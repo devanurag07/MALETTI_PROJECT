@@ -101,7 +101,7 @@ export type Session = {
 export type Recommendation = CatalogItem & { rank: number; is_best: boolean; reason: I18n };
 
 export type AnalysisTab = {
-  module: "skin" | "face" | "colour" | "scalp";
+  module: "skin" | "face" | "colour";
   status: "pending" | "done" | "failed" | "skipped";
   label: { key: string; name: I18n; desc: I18n; attributes: Record<string, unknown> } | null;
   metrics: Record<string, number | string | null>;

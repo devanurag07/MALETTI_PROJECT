@@ -8,7 +8,7 @@ import { Settings, ShoppingBag } from "lucide-react";
 import NotificationsBell from "@/features/notifications/components/NotificationsBell";
 import { theme } from "../theme";
 import { useStudio } from "../context/StudioContext";
-import { c, Icon, ICON, LangToggle, LoadingStage, SERIF, Stage } from "../ui";
+import { c, Icon, ICON, LoadingStage, SERIF, Stage } from "../ui";
 
 /** Big faint brand parallelograms behind the title (from the Maletti brand guidelines). */
 const SHAPES: CSSProperties[] = [
@@ -40,7 +40,7 @@ export default function HomeScreen() {
 
       <div style={{ position: "relative", flex: "1 1 auto", display: "flex", flexDirection: "column", alignItems: "center", padding: "26px 40px 34px", textAlign: "center" }}>
         <div style={{ alignSelf: "stretch", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <LangToggle dark />
+          <div />
           {/* Standard kiosk nav (from FLUX_VERSION_3): notifications, products, camera settings.
               Stage is zoomed ×2, so the FLUX 72px icons become 36px here. */}
           <div className="studio-home-nav" style={{ display: "flex", alignItems: "center", gap: 6 }}>

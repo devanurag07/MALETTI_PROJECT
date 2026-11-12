@@ -61,7 +61,8 @@ export default function CaptureScreen() {
       setError(null);
       try {
         let s = session;
-        if (!s || s.status === "completed" || s.status === "shared") {
+        // A new photo always starts a new session: try-ons, choices and the report belong to one photo.
+        if (!s || s.status === "completed" || s.status === "shared" || !!s.source_image_url) {
           resetAll();
           s = await studioApi.createSession({ locale });
         }

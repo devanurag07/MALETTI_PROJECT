@@ -825,7 +825,6 @@
       "tabSkin": "Skin",
       "tabFace": "Face",
       "tabColour": "Colour harmony",
-      "tabScalp": "Scalp",
       "tabStyles": "Styles"
     },
     "skin": {
@@ -890,14 +889,6 @@
       "saved": "Saved",
       "custom": "Custom combination",
       "cta": "Continue to your look"
-    },
-    "scalp": {
-      "phase": "Phase 2",
-      "title": "Scalp analysis",
-      "desc": "This module is not active in this version. Once available, the mirror will read the condition of your scalp and suggest a treatment protocol with the most suitable products.",
-      "index": "Index",
-      "outcome": "Outcome: in-salon treatment protocol and recommended products",
-      "cta": "Back to results"
     },
     "service": {
       "live": "Live reflection",
@@ -1055,7 +1046,12 @@
           "cool_winter": "Cool winter",
           "bright_winter": "Bright winter"
         }
-      }
+      },
+      "triedEyebrow": "Your try-ons",
+      "triedTitle": "Looks you tried",
+      "triedText": "Every hairstyle and colour you tried in the mirror. The one you chose is highlighted.",
+      "triedCount": "{n} tried",
+      "yourPhoto": "Your photo"
     },
     "styles": {
       "cta": "Continue to colour harmony"

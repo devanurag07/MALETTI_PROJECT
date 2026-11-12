@@ -35,7 +35,6 @@ export const ICON = {
   skin: "M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z",
   face: "M12 3c4 0 7 3.6 7 9s-3 9-7 9-7-3.6-7-9 3-9 7-9z M9.5 10.5h.01 M14.5 10.5h.01 M10 15.5c1.2.8 2.8.8 4 0",
   colour: "M12 3a9 9 0 1 0 0 18c1.5 0 2-1 2-2s-1-2 0-3 3 0 4-1 2-3 2-4a9 9 0 0 0-8-8z M8 10h.01 M12 7.5h.01 M16 10h.01",
-  scalp: "M4 20c0-5 3-9 8-9s8 4 8 9 M8 11c0-4 2-7 4-7s4 3 4 7",
   serviceColour: "M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z M9 14a3 3 0 0 0 3 3",
   serviceCut: "M6 3a3 3 0 1 0 0 6 3 3 0 0 0 0-6z M6 15a3 3 0 1 0 0 6 3 3 0 0 0 0-6z M8.1 8.1L20 20 M8.1 15.9L20 4",
   serviceMakeup: "M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z M19 17l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z",
@@ -102,30 +101,8 @@ export function Header({ onBack }: { onBack?: (() => void) | false }) {
         </button>
       ) : <div style={{ width: 44, height: 44 }} />}
       <img src={theme.brand.logo} alt={theme.brand.name} style={{ display: "block", height: theme.brand.logoHeight, width: "auto" }} />
-      <LangToggle />
-    </div>
-  );
-}
-
-/** EN/IT switch. `dark` = on the black home screen. */
-export function LangToggle({ dark }: { dark?: boolean }) {
-  const { config, locale, setLocale } = useStudio();
-  const locales = config?.locales?.length ? config.locales : ["en", "it"];
-  return (
-    <div style={{
-      justifySelf: "end", display: "flex", gap: 2, padding: 3, borderRadius: 25,
-      background: dark ? "rgba(255,255,255,0.06)" : c("surface"),
-      border: dark ? "1px solid rgba(255,255,255,0.18)" : `1px solid ${c("line-strong")}`,
-    }}>
-      {locales.map((l) => (
-        <button key={l} type="button" onClick={() => l !== locale && setLocale(l)} style={{
-          width: 44, height: 38, border: "none", borderRadius: 19, fontSize: 13, fontWeight: 500, cursor: "pointer",
-          background: l === locale ? (dark ? c("home-cta") : c("ink")) : "transparent",
-          color: l === locale ? (dark ? c("home-cta-ink") : c("on-dark")) : (dark ? c("home-ink-muted") : c("ink")),
-        }}>
-          {l.toUpperCase()}
-        </button>
-      ))}
+      {/* Language is changed in Settings (camera setup), not from the header. */}
+      <div />
     </div>
   );
 }
@@ -279,7 +256,7 @@ export function Segmented({ options, value, onChange }: {
   );
 }
 
-/** Results tabs: Skin · Face · Colour harmony · 🔒 Scalp, with the skewed gold underline. */
+/** Results tabs: Skin · Face · Colour harmony, with the skewed gold underline. */
 export function Tabs({ tabs, value, onChange }: {
   tabs: { key: string; label: string; locked?: boolean }[]; value: string; onChange: (key: string) => void;
 }) {
