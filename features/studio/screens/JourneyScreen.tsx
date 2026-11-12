@@ -53,14 +53,16 @@ export function JourneyBar({ service }: { service: Service }) {
 export function ServiceIntro({ service }: { service: Service }) {
   const router = useRouter();
   const { t, config, session, gender, look, updateLook } = useStudio();
+  // Simple Service (one service on its own): same intro, but no journey bar / status; Skip goes back to the list.
+  const simple = useSearchParams().get("simple") === "1";
   if (!config || !session) return <LoadingStage />;
-  const status = look.journey?.[service];
+  const status = simple ? undefined : look.journey?.[service];
   const mark = (st: "done" | "skipped") => updateLook({ journey: { ...look.journey, [service]: st } });
   const lines = t("journey", `${service}.intro`).split("\n");
 
   return (
     <Screen animKey={`intro-${service}`}>
-      <JourneyBar service={service} />
+      {simple ? null : <JourneyBar service={service} />}
       <div style={{ flex: "1 1 auto", minHeight: 0, position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <HeroBackdrop halo={[460, 460]} squares={[
           { left: 70, top: 40, width: 96, height: 96 },
@@ -82,10 +84,16 @@ export function ServiceIntro({ service }: { service: Service }) {
         <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 10 }}>
           {lines.map((l, i) => <Muted key={i} size={16} style={{ lineHeight: 1.55 }}>{l}</Muted>)}
         </div>
-        <PrimaryButton iconRight={ICON.next} onClick={() => { mark("done"); router.push(journeyPage(service)); }}>
+        <PrimaryButton iconRight={ICON.next} onClick={() => {
+          if (simple) return router.push(`${journeyPage(service)}?simple=1`);
+          mark("done"); router.push(journeyPage(service));
+        }}>
           {t("journey", "proceed")}
         </PrimaryButton>
-        <OutlineButton onClick={() => { if (status !== "done") mark("skipped"); router.push(journeyNext(gender, service)); }}>
+        <OutlineButton onClick={() => {
+          if (simple) return router.push("/service");
+          if (status !== "done") mark("skipped"); router.push(journeyNext(gender, service));
+        }}>
           {t("journey", "skip")}
         </OutlineButton>
       </div>

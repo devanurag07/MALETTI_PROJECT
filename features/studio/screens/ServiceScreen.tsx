@@ -30,12 +30,12 @@ export default function ServiceScreen() {
 
   return (
     <Screen step={3}>
-      <div style={{ flex: "1 1 auto", minHeight: 0, position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <HeroBackdrop halo={[460, 440]} squares={[
-          { left: 70, top: 26, width: 96, height: 96 },
-          { right: 74, bottom: 20, width: 72, height: 72 },
+      <div style={{ flex: "1 1 auto", minHeight: 0, overflow: "hidden", position: "relative", display: "flex", alignItems: "center", justifyContent: "center", padding: "10px 0" }}>
+        <HeroBackdrop halo={[360, 340]} squares={[
+          { left: 90, top: 20, width: 72, height: 72 },
+          { right: 90, bottom: 14, width: 56, height: 56 },
         ]} />
-        <Arch width={236} height={296} offset={7} style={{ boxShadow: c("shadow-arch") }}>
+        <Arch width={168} height={210} offset={7} style={{ boxShadow: c("shadow-arch") }}>
           <Photo src={photo} />
           <div style={{ position: "absolute", left: 0, right: 0, bottom: 12, display: "flex", justifyContent: "center" }}>
             <GuidePill size={12}>{t("service", "live")}</GuidePill>
@@ -43,12 +43,12 @@ export default function ServiceScreen() {
         </Arch>
       </div>
 
-      <div style={{ flex: "0 0 auto", padding: "4px 34px 30px 34px", display: "flex", flexDirection: "column", gap: 10 }}>
-        <H1 size={34} style={{ lineHeight: 1.08 }}>{t("service", "title")}</H1>
-        <Muted size={15} style={{ marginBottom: 6 }}>{t("service", "desc")}</Muted>
+      <div style={{ flex: "0 0 auto", padding: "4px 34px 20px 34px", display: "flex", flexDirection: "column", gap: 8 }}>
+        <H1 size={30} style={{ lineHeight: 1.08 }}>{t("service", "title")}</H1>
+        <Muted size={14} style={{ marginBottom: 4 }}>{t("service", "desc")}</Muted>
         {SERVICE_KINDS[gender].map((k) => (
-          <button key={k} type="button" onClick={() => router.push(`/journey/${KIND_SERVICE[k]}/go?simple=1`)} style={{
-            display: "flex", alignItems: "center", gap: 16, width: "100%", height: 70, padding: "0 20px 0 16px", borderRadius: 20,
+          <button key={k} type="button" onClick={() => router.push(`/journey/${KIND_SERVICE[k]}?simple=1`)} style={{
+            display: "flex", alignItems: "center", gap: 16, width: "100%", height: 62, padding: "0 20px 0 16px", borderRadius: 20,
             background: c("surface"), border: `1px solid ${c("line-card")}`, color: c("ink"), textAlign: "left", cursor: "pointer",
           }}>
             <span style={{ position: "relative", flex: "0 0 auto", display: "flex", alignItems: "center", justifyContent: "center", width: 54, height: 54 }}>
@@ -64,8 +64,8 @@ export default function ServiceScreen() {
         ))}
         {/* Analyses on their own: colour harmony and skin (the analysis runs when opened). */}
         {(["armocromia", "skin"] as const).map((sv) => (
-          <button key={sv} type="button" onClick={() => router.push(`/journey/${sv}/go?simple=1`)} style={{
-            display: "flex", alignItems: "center", gap: 16, width: "100%", height: 70, padding: "0 20px 0 16px", borderRadius: 20,
+          <button key={sv} type="button" onClick={() => router.push(`/journey/${sv}?simple=1`)} style={{
+            display: "flex", alignItems: "center", gap: 16, width: "100%", height: 62, padding: "0 20px 0 16px", borderRadius: 20,
             background: c("surface"), border: `1px solid ${c("line-card")}`, color: c("ink"), textAlign: "left", cursor: "pointer",
           }}>
             <span style={{ position: "relative", flex: "0 0 auto", display: "flex", alignItems: "center", justifyContent: "center", width: 54, height: 54 }}>
