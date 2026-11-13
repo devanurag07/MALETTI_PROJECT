@@ -8,10 +8,10 @@ import { stageIndexForProgress, useSimulatedProgress } from "@/core/hooks/useSim
 import { useStudio } from "../context/StudioContext";
 import { JOURNEY, journeyIntro } from "../flows";
 import { waitForPendingUpload } from "../pending-upload";
-import { Arch, c, ErrorLine, GuidePill, H1, HeroBackdrop, ICON, LoadingStage, Photo, PrimaryButton, Screen } from "../ui";
+import { Arch, c, ErrorLine, GuidePill, HeroBackdrop, LoadingStage, Photo, Screen } from "../ui";
 import ScanOverlay from "../components/ScanOverlay";
 
-/** Step 3 — AI analysis: every active module runs in parallel on the backend. */
+/** Step 3 — AI analysis: only the scanning screen; moves on to the first service by itself once the results are in. */
 export default function AnalysisScreen() {
   const router = useRouter();
   const { t, config, session, setSession, photo, gender } = useStudio();
@@ -36,6 +36,7 @@ export default function AnalysisScreen() {
       .then((r) => {
         setResults(r);
         setSession(r.session);
+        router.replace(journeyIntro(JOURNEY[(r.session.gender as keyof typeof JOURNEY) || gender][0]));
       })
       .catch((e: Error) => setError(e.message));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -56,19 +57,13 @@ export default function AnalysisScreen() {
         ]} />
         <Arch width={266} height={336} offset={7} style={{ boxShadow: c("shadow-arch") }}>
           <Photo src={photo} />
-          {!done ? <ScanOverlay pct={pct} /> : null}
+          <ScanOverlay pct={done ? 100 : pct} />
           <div style={{ position: "absolute", left: 0, right: 0, bottom: 14, display: "flex", justifyContent: "center" }}>
-            <GuidePill>{done ? t("flows", `${session.flow || "consultant"}.name`) : `${stages[stageIdx]} ${pct}%`}</GuidePill>
+            <GuidePill>{`${stages[done ? stages.length - 1 : stageIdx]} ${done ? 100 : pct}%`}</GuidePill>
           </div>
         </Arch>
       </div>
 
-      <div style={{ flex: "0 0 auto", padding: "2px 34px 34px 34px", display: "flex", flexDirection: "column", gap: 14 }}>
-        <H1>{t("analysis", done ? "title" : "running")}</H1>
-        <PrimaryButton iconRight={ICON.next} disabled={!done} onClick={() => router.push(journeyIntro(JOURNEY[gender][0]))} style={{ marginTop: 4 }}>
-          {t("analysis", "cta")}
-        </PrimaryButton>
-      </div>
       <ErrorLine message={error} />
     </Screen>
   );

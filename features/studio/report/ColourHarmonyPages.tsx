@@ -37,6 +37,9 @@ const UNDERTONE_SWATCH: Record<Undertone, { veins: [string, string][]; metals: [
   neutral: { veins: [["blue", "#3D6BC4"], ["green", "#6A9A2A"]], metals: [["gold", "#B48A12"], ["silver", "#8E9298"]] },
 };
 
+/** How many pages there are (the combinations page only when there are combinations). */
+export const harmonyPageCount = (d: ColourHarmonyData) => (d.combinations.length ? 3 : 2);
+
 export function colourHarmonyData(opts: {
   colour: AnalysisTab; face?: AnalysisTab; photo: string | null; tx: (v?: I18n | null) => string;
 }): ColourHarmonyData {
@@ -74,7 +77,9 @@ export function colourHarmonyData(opts: {
   };
 }
 
-export default function ColourHarmonyPages({ data, pad }: { data: ColourHarmonyData; pad: number }) {
+/** `only`: show just that page (0 season, 1 undertone + wardrobe, 2 combinations) — the mirror's Armocromia steps. */
+export default function ColourHarmonyPages({ data, pad, only }: { data: ColourHarmonyData; pad: number; only?: number }) {
+  const show = (i: number) => only === undefined || only === i;
   const tr = useTranslations("studio.report.harmony");
   const u = UNDERTONE_SWATCH[data.undertone];
   const page = (children: ReactNode) => (
@@ -94,7 +99,7 @@ export default function ColourHarmonyPages({ data, pad }: { data: ColourHarmonyD
   return (
     <>
       {/* ----------------------------------------------------------- 1. season */}
-      {page(
+      {show(0) && page(
         <>
           <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
             <div style={{ flex: "1 1 auto", minWidth: 0 }}>{heading(tr("seasonEyebrow"), data.seasonName)}</div>
@@ -125,7 +130,7 @@ export default function ColourHarmonyPages({ data, pad }: { data: ColourHarmonyD
       )}
 
       {/* ----------------------------------------------------------- 2. undertone + wardrobe */}
-      {page(
+      {show(1) && page(
         <>
           {heading(tr("undertoneEyebrow"), tr(`${data.undertone}.title`), [1, 2, 3].map((i) => tr(`${data.undertone}.line${i}`)))}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
@@ -157,7 +162,7 @@ export default function ColourHarmonyPages({ data, pad }: { data: ColourHarmonyD
       )}
 
       {/* ----------------------------------------------------------- 3. combinations */}
-      {data.combinations.length ? page(
+      {show(2) && data.combinations.length ? page(
         <>
           {heading(tr("combosEyebrow"), tr("combos"))}
           {data.combinations.map((combo, i) => {

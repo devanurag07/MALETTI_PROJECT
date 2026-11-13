@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import ColourHarmonyPages, { colourHarmonyData, harmonyPageCount } from "../report/ColourHarmonyPages";
+import { BLUSH, EYESHADOW, LIPSTICK } from "../data/makeup";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { waitForPendingUpload } from "../pending-upload";
 import { studioApi, type AnalysisTab, type CatalogItem, type Recommendation, type Results } from "../api";
@@ -10,13 +12,13 @@ import {
 } from "../flows";
 import { styleImage } from "../theme/styleImages";
 import {
-  Arch, c, Card, Carousel, ColorChip, ErrorLine, GuidePill, H1, HeroBackdrop, Icon, ICON, LoadingStage, Muted, OutlineButton, Photo,
+  Arch, c, Card, Carousel, ColorChip, ColorDot, ErrorLine, GuidePill, H1, HeroBackdrop, Icon, ICON, LoadingStage, Muted, OutlineButton, Photo,
   PrimaryButton, Screen, SERIF, ShadeSwatch, Spinner, Tabs,
 } from "../ui";
 import { markingsOf, SkinMapLegend, SkinMapPhoto } from "../components/SkinMap";
 import PhotoQR from "../components/PhotoQR";
 import ScanOverlay from "../components/ScanOverlay";
-import { colourModels, HairCustomise, MakeupPalette, forYouFirst, RecommendedCard, useShadeDetails, SkinProducts, SkinTab, StyleCard, TechniqueCard } from "./ResultsScreen";
+import { colourModels, HairCustomise, MakeupPalette, forYouFirst, RecommendedGrid, useShadeDetails, SkinProducts, SkinTab, StyleCard, TechniqueCard } from "./ResultsScreen";
 
 const SERVICE_ICON: Record<Service, string> = {
   hairstyle: ICON.serviceCut, beard: ICON.serviceBeard, armocromia: ICON.colour,
@@ -104,13 +106,15 @@ export function ServiceIntro({ service }: { service: Service }) {
 /** The service itself: pick an option, Try it on (AI), or continue to the next service. */
 export function ServicePage({ service }: { service: Service }) {
   const router = useRouter();
-  const { t, config, session, gender } = useStudio();
+  const { t, tx, config, session, gender } = useStudio();
   // Simple Service (one service on its own): no journey bar, back to the service list when done.
   const simple = useSearchParams().get("simple") === "1";
   const needsAnalysis = service === "armocromia" || service === "skin";
   const [results, setResults] = useState<Results | null>(() => studioApi.cachedResults(session?.id));
   const [error, setError] = useState<string | null>(null);
   const [sel, setSel] = useState<string | null>(null);
+  /** Armocromia: which of its pages is shown (Next goes through them, then on to the next service). */
+  const [armoPage, setArmoPage] = useState(0);
   // Skin / colour harmony: a 5-second "analysing" animation on the photo before the results (once per session).
   const scanKey = session ? `mm-${service}-scan:${session.id}` : "";
   const [scanning, setScanning] = useState(() => {
@@ -156,11 +160,13 @@ export function ServicePage({ service }: { service: Service }) {
   if (!results && !error) body = <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}><Spinner size={36} /></div>;
   else if (needsAnalysis && !a) body = <div style={{ flex: 1 }}><ErrorLine message={error ?? t("analysis", "failed")} /></div>;
   else if (service === "skin") body = <SkinTab a={a!} products={false} />;
-  else if (service === "armocromia") body = <Armocromia a={a!} />;
+  else if (service === "armocromia") body = <Armocromia a={a!} face={tab("face")} page={armoPage} />;
   else body = <Options service={service} a={a} sel={sel} setSel={setSel} />;
 
   const last = next === "/look" || next.startsWith("/service");
-  const nextLabel = service === "skin" ? t("skinMap", "cta") : t("journey", last ? "finish" : "next");
+  // Armocromia: "Next page" until its last page, then the usual label.
+  const armoPages = service === "armocromia" && a ? harmonyPageCount(colourHarmonyData({ colour: a, face: tab("face"), photo: null, tx })) : 1;
+  const nextLabel = service === "skin" ? t("skinMap", "cta") : armoPage < armoPages - 1 ? t("journey", "nextPage") : t("journey", last ? "finish" : "next");
   return (
     <Screen animKey={`svc-${service}`}>
       {simple ? null : <JourneyBar service={service} />}
@@ -174,7 +180,10 @@ export function ServicePage({ service }: { service: Service }) {
             <PrimaryButton icon={ICON.sparkle} disabled={!sel} onClick={tryIt}>{t("journey", "try")}</PrimaryButton>
           </>
         ) : (
-          <PrimaryButton iconRight={ICON.next} onClick={() => router.push(next)}>{nextLabel}</PrimaryButton>
+          <PrimaryButton iconRight={ICON.next} onClick={() => {
+            if (armoPage < armoPages - 1) { setArmoPage((p) => p + 1); return; }
+            router.push(next);
+          }}>{nextLabel}</PrimaryButton>
         )}
       </div>
     </Screen>
@@ -201,7 +210,7 @@ export function Options({ service, a, sel, setSel, tab: tabProp, bare }: {
     hairstyle: { items: cuts, rec: recOf("haircut"), current: look.cut },
     beard: { items: beards, rec: recOf("beard_style"), current: look.beard },
     colour: { items: shades, rec: recOf("hair_shade"), current: look.hair_shade },
-    makeup: { items: looks, rec: recOf("makeup_look"), current: look.makeup_look },
+    makeup: { items: looks, rec: recOf("makeup_look"), current: look.makeup_look ?? (look.lip || look.eye || look.blush ? "custom" : null) },
   };
   const { items, rec, current } = list[service];
   const recKeys = new Set(rec.map((x) => x.key));
@@ -219,17 +228,18 @@ export function Options({ service, a, sel, setSel, tab: tabProp, bare }: {
   const shadeDetails = useShadeDetails();
   const { gender } = useStudio();
   const [tabState, setTab] = useState<"recommended" | "custom">(rec.length ? "recommended" : "custom");
+  /** Custom make-up: which FLUX category is shown (0 lipstick, 1 blush, 2 eyeshadow). */
+  const [makeupCat, setMakeupCat] = useState(0);
   const tab = tabProp ?? tabState;
   let content: ReactNode;
   if (tab === "recommended") {
+    // Haircuts / beards / hair colours / make-up looks: all recommendations on one page.
     content = (
-      <RecommendedCard key={service} items={rec} active={sel} onChange={setSel}
+      <RecommendedGrid key={service} items={rec} active={sel} onChange={setSel}
         models={service === "colour" ? (x) => colourModels(gender, x.key) : undefined}
-        details={service === "colour" ? shadeDetails : undefined}
-        visual={service === "makeup" ? (x) => <MakeupPalette look={x} /> : undefined}
-        focus={service === "beard" ? "50% 60%" : service === "makeup" ? "50% 40%" : "50% 8%"}
-        image={(x) => service === "makeup" ? styleImage("makeup_look", x.key, x.image_url) || null
-          : styleImage(imageKind, x.key, x.image_url) || thumb} />
+        visual={service === "makeup" ? (x) => <MakeupPalette look={x} compact /> : undefined}
+        focus={service === "beard" ? "50% 60%" : "50% 8%"}
+        image={(x) => service === "makeup" ? styleImage("makeup_look", x.key, x.image_url) || null : styleImage(imageKind, x.key, x.image_url) || thumb} />
     );
   } else if (service === "colour") {
     content = (
@@ -249,23 +259,77 @@ export function Options({ service, a, sel, setSel, tab: tabProp, bare }: {
       </>
     );
   } else if (service === "makeup") {
+    // Custom make-up = the FLUX_VERSION_3 catalogue (makeup_prompts.json): Lipstick | Blush | Eyeshadow, shades in their
+    // groups (Everyday, Pinks & Reds, …) with the Matte / Shimmer tag, 4 swatches per row. Tap again to unselect.
+    const CATS = [
+      { field: "lip" as const, label: t("tryon", "lips"), list: LIPSTICK },
+      { field: "blush" as const, label: t("tryon", "blush"), list: BLUSH },
+      { field: "eye" as const, label: t("tryon", "eyes"), list: EYESHADOW },
+    ];
+    const cat = CATS[makeupCat];
+    const pickShade = (field: "lip" | "eye" | "blush", key: string) => {
+      const next = { lip: look.lip, eye: look.eye, blush: look.blush, [field]: look[field] === key ? null : key };
+      updateLook({ ...next, makeup_look: null });
+      setSel(next.lip || next.eye || next.blush ? "custom" : "");
+    };
+    const groups = cat.list.reduce<{ name: string; shades: CatalogItem[] }[]>((acc, x) => {
+      const g = String(x.attributes.group ?? "");
+      const last = acc[acc.length - 1];
+      if (last?.name === g) last.shades.push(x); else acc.push({ name: g, shades: [x] });
+      return acc;
+    }, []);
+    const tag = (g: string) => (/shimmer/i.test(g) ? "Shimmer" : /matte/i.test(g) ? "Matte" : null);
+    const picked = CATS.map((x) => [x.label, x.list.find((b) => b.key === look[x.field])] as const).filter(([, b]) => b);
     content = (
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 10 }}>
-        {ordered.map((m) => (
-          <button key={m.key} type="button" onClick={() => setSel(m.key)} style={{
-            display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 8, minWidth: 0, padding: 14, borderRadius: 16,
-            background: c("surface-raised"), border: `2px solid ${sel === m.key ? c("accent") : c("line")}`,
-            color: c("ink"), textAlign: "left", cursor: "pointer",
-          }}>
-            <span style={{ display: "flex", alignItems: "center", gap: 6, width: "100%" }}>
-              <span style={{ display: "block", width: 22, height: 22, borderRadius: 11, background: String(m.attributes.lip_hex ?? "") }} />
-              <span style={{ display: "block", width: 22, height: 22, borderRadius: 11, background: String(m.attributes.eye_hex ?? "") }} />
-              {badge(m.key) ? <span style={{ marginLeft: "auto", fontSize: 10, fontWeight: 500, color: c("on-dark"), background: c("accent-soft"), borderRadius: 8, padding: "2px 7px" }}>{badge(m.key)}</span> : null}
-            </span>
-            <span style={{ fontSize: 15, lineHeight: 1.2 }}>{tx(m.name)}</span>
-            <span style={{ fontSize: 12, lineHeight: 1.3, color: c("ink-muted") }}>{tx(m.sub)}</span>
-          </button>
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
+          {CATS.map((x, i) => {
+            const on = makeupCat === i;
+            const chosen = x.list.find((b) => b.key === look[x.field]);
+            return (
+              <button key={x.field} type="button" onClick={() => setMakeupCat(i)} style={{
+                display: "flex", alignItems: "center", justifyContent: "center", gap: 8, height: 42, borderRadius: 21, cursor: "pointer", fontSize: 14,
+                background: on ? c("ink") : c("surface"), color: on ? c("on-dark") : c("ink"), border: `1px solid ${on ? c("ink") : c("line-strong")}`,
+              }}>
+                {chosen ? <span style={{ display: "block", width: 14, height: 14, borderRadius: 7, background: chosen.hex ?? undefined, border: `1px solid ${c("line-strong")}` }} /> : null}
+                {x.label}
+              </button>
+            );
+          })}
+        </div>
+        {groups.map((g) => (
+          <div key={g.name} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <span style={{ ...SERIF, fontSize: 17, whiteSpace: "nowrap" }}>{g.name}</span>
+              <span style={{ flex: "1 1 auto", height: 1, background: c("line") }} />
+              {tag(g.name) ? <span style={{ fontSize: 12, color: c("ink-muted") }}>{tag(g.name)}</span> : null}
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: 10 }}>
+              {g.shades.map((b) => {
+                const on = look[cat.field] === b.key;
+                return (
+                  <button key={b.key} type="button" onClick={() => pickShade(cat.field, b.key)} style={{
+                    display: "flex", flexDirection: "column", alignItems: "center", gap: 6, padding: 0, background: "none", border: "none", cursor: "pointer", color: c("ink"),
+                  }}>
+                    <span style={{
+                      position: "relative", display: "flex", alignItems: "center", justifyContent: "center", width: "100%", aspectRatio: "8 / 3",
+                      borderRadius: 12, background: b.hex ?? undefined, border: `2px solid ${on ? c("accent") : "transparent"}`,
+                      boxShadow: on ? `0 0 0 2px ${c("background")} inset` : undefined,
+                    }}>
+                      {on ? <Icon d={ICON.check} size={18} width={3} stroke="#fff" style={{ filter: "drop-shadow(0 1px 2px rgba(0,0,0,.8))" }} /> : null}
+                    </span>
+                    <span style={{ fontSize: 12, lineHeight: 1.2, textAlign: "center", fontWeight: on ? 600 : 400 }}>{tx(b.name)}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         ))}
+        {picked.length ? (
+          <span style={{ fontSize: 13, color: c("ink-muted"), textAlign: "center" }}>
+            {picked.map(([l, b]) => `${l}: ${tx(b!.name)}`).join("  ·  ")}
+          </span>
+        ) : null}
       </div>
     );
   } else {
@@ -305,35 +369,13 @@ export function Options({ service, a, sel, setSel, tab: tabProp, bare }: {
 }
 
 /** Armocromia: the colour season, its palette and clothing colour suggestions. */
-function Armocromia({ a }: { a: AnalysisTab }) {
-  const { t, tx } = useStudio();
-  const palette = ((a.label?.attributes?.palette as string[] | undefined) ?? []).slice(0, 5);
-  const clothes = a.recommendations.clothing_colour ?? [];
+/** Armocromia results: the report's pages, one at a time (season → undertone + wardrobe → combinations); Next steps through. */
+function Armocromia({ a, face, page }: { a: AnalysisTab; face?: AnalysisTab; page: number }) {
+  const { tx, photo } = useStudio();
+  const data = useMemo(() => colourHarmonyData({ colour: a, face, photo, tx }), [a, face, photo]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
-    <div style={{ flex: "1 1 auto", minHeight: 0, overflowY: "auto", display: "flex", flexDirection: "column", gap: 18, padding: "22px 34px 8px 34px" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: 8, flex: "1 1 auto", minWidth: 0 }}>
-          <H1 size={38}>{tx(a.label?.name)}</H1>
-          <Muted size={15}>{tx(a.label?.desc) || tx(a.summary)}</Muted>
-        </div>
-        <div style={{ flex: "0 0 auto", position: "relative", width: 136, height: 88 }}>
-          {palette.map((hex, i) => (
-            <span key={`${hex}-${i}`} style={{
-              position: "absolute", left: 8 + i * 16, top: i * 8, display: "block", width: 52, height: 52, boxSizing: "border-box",
-              background: hex, border: `2px solid ${c("background")}`, transform: "skewX(var(--mm-skew))", boxShadow: c("shadow-swatch"),
-            }} />
-          ))}
-        </div>
-      </div>
-      <Card>
-        <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          <span style={{ fontSize: 18 }}>{t("colour", "dressTitle")}</span>
-          <span style={{ fontSize: 13, color: c("ink-muted") }}>{t("colour", "dressSub")}</span>
-        </div>
-        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", rowGap: 12 }}>
-          {clothes.map((d) => <ColorChip key={d.key} hex={d.hex} label={tx(d.name)} />)}
-        </div>
-      </Card>
+    <div key={page} style={{ flex: "1 1 auto", minHeight: 0, overflowY: "auto", display: "flex", flexDirection: "column", gap: 16, padding: "22px 34px 8px 34px" }}>
+      <ColourHarmonyPages data={data} pad={0} only={page} />
     </div>
   );
 }

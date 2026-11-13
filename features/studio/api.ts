@@ -173,6 +173,8 @@ export const studioApi = {
   /** Last results fetched for a session (in memory), so going back to a screen shows them at once, no loading. */
   cachedResults: (id: string | null | undefined): Results | null => (id ? RESULTS.get(id) ?? null : null),
   /** Maletti results carry no salon-logo watermark: the API stamps it unless `watermark: false` is sent. */
+  /** Every try-on of the session (newest first) — the history on the try-on screen comes from here. */
+  tryons: (id: string) => unwrap<TryOn[]>(api.get(`studio/sessions/${id}/tryons/`)),
   tryOn: (id: string, body: { kind: TryKind; params: Record<string, unknown>; parent_id?: number | null; reference?: Blob | null }) => {
     if (!body.reference) return unwrap<TryOn>(api.post(`studio/sessions/${id}/tryons/`, { ...body, watermark: false }));
     // Customer's own style picture → multipart.

@@ -1,6 +1,6 @@
 "use client";
 
-import { blushByKey } from "../data/blush";
+import { lookShades } from "../data/makeup";
 import { useEffect, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { studioApi, type AnalysisTab, type CatalogItem, type Recommendation, type Results } from "../api";
@@ -359,6 +359,46 @@ function FaceTab({ a, colour }: { a: AnalysisTab; colour?: AnalysisTab }) {
   );
 }
 
+/** All recommendations at once (3 across): picture, Best match / For you, name, why it suits. Tap = select. */
+export function RecommendedGrid({ items, image, focus, onChange, active, models, visual }: {
+  items: Recommendation[]; image: (x: CatalogItem) => string | null; focus: string; active: string | null;
+  models?: (x: CatalogItem) => readonly [string, string];
+  /** Custom picture (e.g. the make-up palette) when there is no photo. */
+  visual?: (x: Recommendation) => ReactNode;
+  onChange: (k: string) => void;
+}) {
+  const { t, tx } = useStudio();
+  useEffect(() => { if (items.length && !items.some((x) => x.key === active)) onChange(items[0].key); }, [items.length]); // eslint-disable-line react-hooks/exhaustive-deps
+  if (!items.length) return <Muted size={14}>{t("face", "noRecommendations")}</Muted>;
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: `repeat(${Math.min(items.length, 3)}, minmax(0, 1fr))`, gap: 12 }}>
+      {items.map((x, i) => {
+        const on = active === x.key;
+        const src = models ? models(x)[0] : image(x);
+        return (
+          <button key={x.key} type="button" onClick={() => onChange(x.key)} style={{
+            display: "flex", flexDirection: "column", gap: 8, minWidth: 0, padding: 8, paddingBottom: 12, borderRadius: 18, textAlign: "center",
+            background: on ? c("surface-raised") : c("surface"), border: `2px solid ${on ? c("accent") : c("line")}`, color: c("ink"), cursor: "pointer",
+          }}>
+            <span style={{ position: "relative", display: "block", width: "100%", aspectRatio: models ? "3 / 4" : "1 / 1", overflow: "hidden", borderRadius: 12, background: x.hex ?? c("photo") }}>
+              {!src && visual ? visual(x) : <Photo src={src} style={{ objectPosition: models ? "50% 30%" : focus }} />}
+              <span style={{ position: "absolute", left: 6, top: 6, zIndex: 1, lineHeight: 1.3, whiteSpace: "nowrap", maxWidth: "calc(100% - 12px)", overflow: "hidden", textOverflow: "ellipsis", fontSize: 10, fontWeight: 500, color: c("on-dark"), background: c("accent-soft"), borderRadius: 8, padding: "2px 7px" }}>
+                {x.is_best || i === 0 ? t("face", "best") : t("face", "forYou")}
+              </span>
+            </span>
+            <span style={{ ...SERIF, fontSize: 17, lineHeight: 1.15 }}>{tx(x.name)}</span>
+            {tx(x.reason) || tx(x.sub) ? (
+              <span style={{ fontSize: 11, lineHeight: 1.4, color: c("ink-muted"), overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 4, WebkitBoxOrient: "vertical" }}>
+                {tx(x.reason) || tx(x.sub)}
+              </span>
+            ) : null}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 /** FLUX_VERSION_3-style recommendation: one big card at a time, arrows + dots, name, why it suits, try button. */
 /** FLUX_VERSION_3 model photos (front + back) for a recommended hair colour. */
 export const colourModels = (gender: string | null, key: string) => {
@@ -477,15 +517,16 @@ export function useShadeDetails() {
 }
 
 /** Make-up look without a photo: a gold lipstick in the lip shade and an open eyeshadow compact in the eye shade. */
-export function MakeupPalette({ look }: { look: CatalogItem }) {
+/** `compact`: picture only (small tiles), no Lips / Eyes / Blush chips. */
+export function MakeupPalette({ look, compact }: { look: CatalogItem; compact?: boolean }) {
   const { t, tx } = useStudio();
-  const lips = useCatalog("lip_shade");
-  const eyes = useCatalog("eye_shade");
-  const lip = lips.find((l) => l.key === look.attributes.lip);
-  const eye = eyes.find((e) => e.key === look.attributes.eye);
+  // The look's shades from the FLUX_VERSION_3 catalogue (makeup_prompts.json).
+  const flux = lookShades(look);
+  const lip = flux?.lip;
+  const eye = flux?.eye;
   const lipHex = lip?.hex ?? (look.attributes.lip_hex as string | undefined) ?? c("accent");
   const eyeHex = eye?.hex ?? (look.attributes.eye_hex as string | undefined) ?? c("accent-soft");
-  const blush = blushByKey(look.attributes.blush as string | undefined); // FLUX_VERSION_3 makeup_prompts.json
+  const blush = flux?.blush;
   const blushHex = blush?.hex ?? (look.attributes.blush_hex as string | undefined) ?? null;
   const id = `mk-${look.key}`;
   const chip = (hex: string, label: string, name: string) => (
@@ -498,7 +539,7 @@ export function MakeupPalette({ look }: { look: CatalogItem }) {
   return (
     <span style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center",
       background: `radial-gradient(circle at 50% 40%, ${c("surface-raised")}, ${c("surface")} 75%)` }}>
-      <svg viewBox="0 0 220 160" style={{ flex: "1 1 auto", minHeight: 0, width: "100%", display: "block", padding: "14px 8px 0", boxSizing: "border-box" }} aria-hidden>
+      <svg viewBox="0 0 220 160" style={{ flex: "1 1 auto", minHeight: 0, width: "100%", display: "block", padding: compact ? "26px 4px 4px" : "14px 8px 0", boxSizing: "border-box" }} aria-hidden>
         <defs>
           <linearGradient id={`${id}-gold`} x1="0" x2="1">
             <stop offset="0" stopColor="#8C6A44" /><stop offset=".45" stopColor="#E2C08F" /><stop offset="1" stopColor="#8C6A44" />
@@ -534,11 +575,13 @@ export function MakeupPalette({ look }: { look: CatalogItem }) {
           <ellipse cx="108" cy="132" rx="17" ry="6.5" fill={blushHex} />
         </>) : null}
       </svg>
+      {compact ? null : (<>
       <span style={{ flex: "0 0 auto", display: "flex", gap: 14, padding: "6px 12px 34px", maxWidth: "100%", boxSizing: "border-box" }}>
         {chip(lipHex, t("tryon", "lips"), tx(lip?.name))}
         {chip(eyeHex, t("tryon", "eyes"), tx(eye?.name))}
         {blushHex ? chip(blushHex, t("tryon", "blush"), tx(blush?.name)) : null}
       </span>
+      </>)}
     </span>
   );
 }

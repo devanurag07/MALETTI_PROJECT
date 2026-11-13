@@ -1,6 +1,6 @@
 "use client";
 
-import { BLUSH, blushByKey } from "../data/blush";
+import { BLUSH, blushByKey, EYESHADOW, eyeByKey, LIPSTICK, LOOK_FLUX, lipByKey, lookBlush } from "../data/makeup";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { studioApi, type CatalogItem, type Results, type TryKind, type TryOn } from "../api";
@@ -104,14 +104,18 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
   const cutsAll = useCatalog("haircut");
   const shadesAll = useCatalog("hair_shade");
   const techniques = useCatalog("hair_technique");
-  const lipsAll = useCatalog("lip_shade");
+  const lipsAll = LIPSTICK; // FLUX_VERSION_3 makeup_prompts.json, not the catalogue
   const blushAll = BLUSH; // FLUX_VERSION_3 makeup_prompts.json, not the catalogue
-  const eyesAll = useCatalog("eye_shade");
+  const eyesAll = EYESHADOW;
   const looksAll = useCatalog("makeup_look");
   const beardsAll = useCatalog("beard_style");
 
   // Recommendations from the consultation (colour harmony + face), when there was one.
   const [results, setResults] = useState<Results | null>(() => studioApi.cachedResults(session?.id));
+  /** Try-ons of this session from the backend (session id kept in local storage): the source of the history row. */
+  const [serverTryons, setServerTryons] = useState<TryOn[]>([]);
+  const refreshTryons = () => { if (session) studioApi.tryons(session.id).then(setServerTryons).catch(() => {}); };
+  useEffect(refreshTryons, [session?.id]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     // Recommendations feed the Recommended tab and the option order (consultation or this service's own analysis).
     if (session) studioApi.results(session.id).then(setResults).catch(() => {});
@@ -145,8 +149,9 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
       shade: search.get("shade") ?? look.hair_shade,
       technique: look.technique ?? techniques[0]?.key ?? null,
       look: presetLook?.key ?? look.makeup_look,
-      lip: (presetLook?.attributes.lip as string | undefined) ?? look.lip,
-      eye: (presetLook?.attributes.eye as string | undefined) ?? look.eye,
+      // A look brings its own lips / eyes; custom shades are FLUX_VERSION_3 keys (makeup_prompts.json).
+      lip: presetLook ? null : look.lip,
+      eye: presetLook ? null : look.eye,
       blush: look.blush ?? null,
       beard: search.get("beard") ?? look.beard,
     };
@@ -170,10 +175,18 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
     }
     if (kind === "colour") return s.shade ? { shade: s.shade, technique: s.technique, intensity: lvl } : null;
     if (kind === "makeup") {
-      // Blush from FLUX_VERSION_3's makeup_prompts.json: its own prompt goes to the backend.
-      const blush = s.blush ? { blush_prompt: String(blushByKey(s.blush)?.attributes.prompt ?? ""), blush_key: s.blush } : {};
-      if (s.look) return { look: s.look, ...blush, intensity: lvl };
-      return s.lip || s.eye || s.blush ? { lip: s.lip, eye: s.eye, ...blush, intensity: lvl } : null;
+      // FLUX_VERSION_3 shades (makeup_prompts.json): their own prompts go to the backend. No blush picked: a look brings its own.
+      const bKey = s.blush ?? (s.look ? lookBlush(looksAll.find((x) => x.key === s.look) ?? { key: s.look })?.key ?? null : null);
+      const blush = bKey ? { blush_key: bKey, blush_prompt: String(blushByKey(bKey)?.attributes.prompt ?? "") } : {};
+      // A recommended look = its FLUX shades (LOOK_FLUX), sent as FLUX prompts like a custom mix; `look_key` names it.
+      const fluxLook = s.look ? LOOK_FLUX[s.look] : undefined;
+      if (s.look && !fluxLook) return { look: s.look, ...blush, intensity: lvl };
+      const lipKey = fluxLook?.lip ?? s.lip;
+      const eyeKey = fluxLook?.eye ?? s.eye;
+      const lip = lipKey ? { lip_key: lipKey, lip_prompt: String(lipByKey(lipKey)?.attributes.prompt ?? "") } : {};
+      const eye = eyeKey ? { eye_key: eyeKey, eye_prompt: String(eyeByKey(eyeKey)?.attributes.prompt ?? "") } : {};
+      const named = s.look ? { look_key: s.look } : {};
+      return lipKey || eyeKey || bKey ? { ...named, ...lip, ...eye, ...blush, intensity: lvl } : null;
     }
     return s.beard ? { beard: s.beard, density: lvl } : null;
   }
@@ -190,7 +203,8 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
 
   /** Keep `tr` (or the original: null) for this step; later steps made on a different image no longer apply. */
   function setLayer(tr: TryOn | null) {
-    const layers = { ...look.layers, [kind]: tr };
+    updateLook((prev) => {
+    const layers = { ...prev.layers, [kind]: tr };
     const cleared: Partial<LookDraft> = {};
     let top: TryOn | null = null;
     for (const k of order) {
@@ -204,7 +218,8 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
       }
       top = layer;
     }
-    updateLook({ ...cleared, layers, lastTryon: top, history: order.map((k) => layers[k]).filter(Boolean) as TryOn[] });
+    return { ...cleared, layers, lastTryon: top, history: order.map((k) => layers[k]).filter(Boolean) as TryOn[] };
+    }); // from the latest look: a result saved while this one generated is kept
   }
   /** Which option a selection is (for the option card's processing / processed state). */
   const optionOf = (s: Sel) => (usesUpload(s) ? UPLOAD : kind === "cut" ? s.item : kind === "colour" ? s.shade
@@ -251,7 +266,10 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
       const tr = await studioApi.tryOn(session.id, { kind, params: p, parent_id: baseTryon?.id ?? null, reference });
       if (tr.status === "done") {
         await preload(tr.output_url); // keep "Generating…" until the new picture is ready to show
-        updateLook({ results: { ...look.results, [key]: tr } });
+        // Merge into the latest results (not the ones from when Try was tapped): earlier tries stay in the history.
+        updateLook((prev) => ({ results: { ...prev.results, [key]: tr } }));
+        setServerTryons((list) => [tr, ...list.filter((x) => x.id !== tr.id)]);
+        refreshTryons();
         setLayer(tr);
       } else {
         // A failed attempt never becomes the image the next step builds on: keep what was there.
@@ -296,7 +314,7 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
     setView("result");
     if (kind === "cut") pick({ item: optSel });
     else if (kind === "colour") pick({ shade: optSel, technique: look.technique ?? sel.technique });
-    else if (kind === "makeup") pick({ look: optSel });
+    else if (kind === "makeup") pick(optSel === "custom" ? { look: null, lip: look.lip, eye: look.eye, blush: look.blush } : { look: optSel });
     else pick({ beard: optSel });
   }
 
@@ -387,6 +405,53 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
     </div>
   );
 
+  /**
+   * Every result tried at this step on the current image (any shade / technique / intensity / lips+eyes mix), from the
+   * backend for this session — newest last, so trying something new never hides earlier results.
+   */
+  const history = serverTryons
+    .filter((tr) => tr.kind === kind && tr.status === "done" && !!tr.output_url && (tr.parent_id ?? null) === (baseTryon?.id ?? null))
+    .reverse() // oldest first, newest last
+    .filter((tr, i, all) => all.findIndex((x) => x.output_url === tr.output_url) === i)
+    .map((tr) => ({ key: String(tr.id), tr, params: (tr.params ?? {}) as Record<string, unknown> }));
+  const historyName = (p: Record<string, unknown>) => {
+    if (kind === "cut") return p.item ? name(cutsAll, p.item as string) : t("tryon", "yourHair");
+    if (kind === "beard") return name(beardsAll, (p.beard as string) ?? null);
+    if (kind === "colour") return name(shadesAll, (p.shade as string) ?? null);
+    if (p.look || p.look_key) return name(looksAll, (p.look ?? p.look_key) as string);
+    const n = [lipByKey(p.lip_key as string)?.name, eyeByKey(p.eye_key as string)?.name, blushByKey(p.blush_key as string)?.name]
+      .filter(Boolean).map((x) => tx(x));
+    return n.join(" · ") || t("tryon", "yourPhoto");
+  };
+  /** Show an earlier result again (no AI call) and restore its selection. */
+  function showHistory(h: (typeof history)[number]) {
+    const p = h.params;
+    const s: Sel = kind === "cut" ? { ...sel, item: (p.item as string) ?? null }
+      : kind === "beard" ? { ...sel, beard: (p.beard as string) ?? null }
+      : kind === "colour"
+      ? { ...sel, shade: (p.shade as string) ?? null, technique: (p.technique as string) ?? sel.technique }
+      : (p.look || p.look_key) ? { ...sel, look: (p.look ?? p.look_key) as string, lip: null, eye: null, blush: (p.blush_key as string) ?? null }
+      : { ...sel, look: null, lip: (p.lip_key as string) ?? null, eye: (p.eye_key as string) ?? null, blush: (p.blush_key as string) ?? null };
+    setSel(s);
+    commit(s);
+    setLayer(h.tr);
+    setError(null);
+  }
+  const historyRow = (noneActive: boolean, onNone: () => void) => optionRow(t("tryon", "queueTitle"),
+    <ImageOption compact height={62} image={photo} focus="50% 20%" label={t("tryon", "original")} sub={status(null, noneActive)}
+      active={noneActive} onClick={onNone} />,
+    [
+      ...history.map((h) => {
+        const active = look.layers[kind]?.id === h.tr.id;
+        return (
+          <ImageOption compact height={62} key={h.key} image={ready(h.tr.output_url)} focus="50% 30%" label={historyName(h.params)}
+            sub={active ? t("tryon", "statusShowing") : t("tryon", "statusTried")} active={active} done onClick={() => showHistory(h)} />
+        );
+      }),
+      ...(processing ? [<ImageOption compact height={62} key="processing" image={photo} focus="50% 30%" label={t("tryon", "statusGenerating")}
+        sub={t("tryon", "statusGenerating")} active={false} busy onClick={() => {}} />] : []),
+    ]);
+
   /** Styles processing or already processed (the original / "None" card is always shown first). */
   const tried = (list: CatalogItem[]) => ordered(list.filter((x) => processing === x.key || !!resultFor(x.key)));
   /** Status under a queue card: generating / showing (selected) / tried. */
@@ -456,58 +521,16 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
       <div style={{ flex: "1 1 auto", minHeight: 0, overflow: "hidden", display: "flex", flexDirection: "column", gap: 12, padding: "14px 34px 0 34px",
         visibility: busy ? "hidden" : "visible" }}>
         {/* Only the original + styles already processed (or processing) — new styles are picked on the Styles tab. */}
-        {kind === "cut" && optionRow(t("tryon", "cutLabel"),
-          <ImageOption compact height={62} image={photo} focus="50% 20%" label={t("tryon", "original")} sub={status(null, sel.item === null)}
-            active={sel.item === null} onClick={original} />,
-          tried(cutsAll).map((x) => (
-            <ImageOption compact height={62} key={x.key} image={shown(x.key, styleImage("haircut", x.key, x.image_url))} focus="50% 8%" label={tx(x.name)} sub={status(x.key, sel.item === x.key)}
-              active={sel.item === x.key} busy={processing === x.key} done={!!resultFor(x.key)} onClick={() => pick({ item: x.key })} />
-          )))}
+        {kind === "cut" && historyRow(!look.layers.cut, original)}
 
         {/* Bangs / fade / styling are picked on the Custom tab (with the haircut), not on the Result. */}
 
-        {kind === "colour" && (
-          <>
-            {/* Hair colours as FLUX_VERSION_3 swatches: 4 per row, 2:1 picture, name centred. */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              <span style={{ ...SERIF, fontSize: 16 }}>{t("tryon", "queueTitle")}</span>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(5, minmax(0, 1fr))", gap: 6 }}>
-                <ShadeSwatch none image={null} name={t("tryon", "none")} active={sel.shade === null} onClick={() => pick({ shade: null })} />
-                {tried(shadesAll).map((x) => (
-                  <ShadeSwatch key={x.key} image={styleImage("hair_shade", x.key, x.image_url)} name={tx(x.name)}
-                    busy={processing === x.key} tried={resultFor(x.key) ? t("face", "tried") : undefined}
-                    active={sel.shade === x.key} onClick={() => pick({ shade: x.key })} />
-                ))}
-              </div>
-            </div>
-          </>
-        )}
+        {kind === "colour" && historyRow(!look.layers.colour, () => pick({ shade: null }))}
 
-        {kind === "makeup" && (
-          <>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {label(t("tryon", "lips"))}
-              {dots(lips, sel.lip, (k) => pick({ lip: k }), true)}
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {label(t("tryon", "eyes"))}
-              {dots(eyes, sel.eye, (k) => pick({ eye: k }))}
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {label(t("tryon", "blush"))}
-              {dots(blushAll, sel.blush, (k) => pick({ blush: k }))}
-            </div>
-          </>
-        )}
+        {/* Same as hairstyle / colour: Original + every make-up tried so far (new ones are picked on Recommended / Custom). */}
+        {kind === "makeup" && historyRow(!look.layers.makeup, () => pick({ look: null, lip: null, eye: null, blush: null }))}
 
-        {kind === "beard" && optionRow(t("tryon", "beardLabel"),
-          <ImageOption compact height={62} none label={t("tryon", "none")} sub={status(null, sel.beard === null)}
-            active={sel.beard === null} onClick={() => pick({ beard: null })} />,
-          tried(beardsAll).map((b) => (
-            <ImageOption compact height={62} key={b.key} image={shown(b.key, styleImage("beard_style", b.key, b.image_url))} focus="50% 65%"
-              busy={processing === b.key} done={!!resultFor(b.key)} label={tx(b.name)} sub={status(b.key, sel.beard === b.key)}
-              active={sel.beard === b.key} onClick={() => pick({ beard: b.key })} />
-          )))}
+        {kind === "beard" && historyRow(!look.layers.beard, () => pick({ beard: null }))}
       </div>
       <ErrorLine message={error} />
 

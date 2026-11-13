@@ -79,7 +79,8 @@ type Ctx = {
   setSession: React.Dispatch<React.SetStateAction<Session | null>>;
   gender: Gender;
   look: LookDraft;
-  updateLook: (patch: Partial<LookDraft>) => void;
+  /** A patch, or a function of the latest look (use it after an await, so nothing saved meanwhile is lost). */
+  updateLook: (patch: Partial<LookDraft> | ((prev: LookDraft) => Partial<LookDraft>)) => void;
   resetAll: () => void;
   /** The customer's photo: the copy captured on this mirror (instant), else the uploaded URL. */
   photo: string | null;
@@ -184,7 +185,7 @@ export function StudioProvider({ children }: { children: ReactNode }) {
       setSession: setSessionState,
       gender: session?.gender ?? "woman",
       look,
-      updateLook: (patch) => setLook((prev) => ({ ...prev, ...patch })),
+      updateLook: (patch) => setLook((prev) => ({ ...prev, ...(typeof patch === "function" ? patch(prev) : patch) })),
       resetAll: () => {
         setSessionState(null);
         setLook(EMPTY_LOOK);
