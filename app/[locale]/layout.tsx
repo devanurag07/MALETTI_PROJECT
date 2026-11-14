@@ -3,7 +3,7 @@ import { Jost, Noto_Sans } from "next/font/google";
 import "../globals.css";
 import "react-toastify/dist/ReactToastify.css";
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages } from "next-intl/server";
+import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { locales } from "@/i18n";
 
@@ -43,6 +43,14 @@ export const viewport: Viewport = {
   colorScheme: "light dark",
 };
 
+/**
+ * Pre-render every page per locale at build time. Without this (and setRequestLocale below) next-intl read the request
+ * headers, which made every page server-rendered on every navigation: each tap waited for a server round trip.
+ */
+export function generateStaticParams() {
+  return locales.map((locale) => ({ locale }));
+}
+
 export default async function RootLayout({
   children,
   params,
@@ -56,6 +64,7 @@ export default async function RootLayout({
     notFound();
   }
 
+  setRequestLocale(locale); // static rendering: no request headers needed
   const messages = await getMessages();
 
   const isRtl = locale === "ar";

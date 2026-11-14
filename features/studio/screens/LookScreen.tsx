@@ -9,7 +9,7 @@ import { hairColourOf, isFluxShade } from "../data/haircolor";
 import { lookParams } from "../save-look";
 import { theme } from "../theme";
 import { ActionBar, c, CompareArch, Diamond, ErrorLine, H1, Icon, ICON, LoadingStage, PrimaryButton, Screen } from "../ui";
-import { useNav, usePrefetch } from "../use-nav";
+import { useNav } from "../use-nav";
 
 const absolute = (url: string | null) => (!url ? "" : url.startsWith("http") ? url : `${window.location.origin}${url}`);
 
@@ -17,7 +17,6 @@ const absolute = (url: string | null) => (!url ? "" : url.startsWith("http") ? u
 export default function LookScreen() {
   const router = useRouter();
   const { go, pending } = useNav();
-  usePrefetch("/report");
   const { t, tx, config, session, setSession, look, gender, photo } = useStudio();
   const [qrUrl, setQrUrl] = useState<string | null>(null);
   const [shareToken, setShareToken] = useState<string | null>(null);
@@ -172,7 +171,7 @@ export default function LookScreen() {
       {/* Like beauty_platform: the journey ends on the report page (QR → PDF download). */}
       <ActionBar>
         <PrimaryButton disabled={!saved}
-          loading={pending} onClick={() => go(shareToken ? `/report?token=${encodeURIComponent(shareToken)}` : "/report")}>
+          onClick={() => go(shareToken ? `/report?token=${encodeURIComponent(shareToken)}` : "/report")}>
           {t("report", "cta")}
         </PrimaryButton>
       </ActionBar>

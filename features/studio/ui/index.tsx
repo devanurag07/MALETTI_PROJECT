@@ -8,7 +8,6 @@ import { createContext, useContext, useLayoutEffect, useMemo, useRef, useState, 
 import { useRouter } from "next/navigation";
 import { ReactCompareSlider, ReactCompareSliderImage } from "react-compare-slider";
 import { theme } from "../theme";
-import { useNavPending } from "../use-nav";
 import { useStudio } from "../context/StudioContext";
 
 export const c = (name: string) => `var(--mm-${name})`;
@@ -77,23 +76,6 @@ export function Stage({ children, animKey }: { children: ReactNode; animKey?: st
         fontFamily: c("font-body"), animation: "mmIn 0.5s ease-out both",
       }}>
         {children}
-      </div>
-      <NavLoading />
-    </div>
-  );
-}
-
-/** Full loading screen over the stage from the tap on a forward button until the next screen is there. */
-function NavLoading() {
-  if (!useNavPending()) return null;
-  return (
-    <div style={{
-      position: "absolute", inset: 0, zIndex: 50, display: "flex", flexDirection: "column",
-      background: c("background"), color: c("ink"), fontFamily: c("font-body"),
-    }}>
-      <Header />
-      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <Spinner size={40} />
       </div>
     </div>
   );

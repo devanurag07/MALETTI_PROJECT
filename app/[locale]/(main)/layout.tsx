@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import MirrorFrame from "@/design-system/components/common/mirror-frame";
 import { StudioProvider } from "@/features/studio/context/StudioContext";
 import { StudioTheme } from "@/features/studio/theme";
@@ -8,7 +9,8 @@ export default function MainLayout({ children }: Readonly<{ children: React.Reac
     <StudioTheme>
       <MirrorFrame>
         {/* Inside MirrorFrame so the Studio config loads only after the salon login. */}
-        <StudioProvider>{children}</StudioProvider>
+        {/* Suspense: screens read the query string (useSearchParams), which static pages require a boundary for. */}
+        <StudioProvider><Suspense fallback={null}>{children}</Suspense></StudioProvider>
       </MirrorFrame>
     </StudioTheme>
   );

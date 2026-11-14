@@ -6,7 +6,8 @@ import type { AnalysisTab, CatalogItem, I18n, PublicReport, TryOn } from "../api
 import { theme } from "../theme";
 import type { SkinServiceCard } from "../context/StudioContext";
 import { fluxShade } from "../data/haircolor";
-import { c, Diamond, SERIF } from "../ui";
+import { c, Diamond, ICON, SERIF } from "../ui";
+import { mediaUrl } from "../api";
 import { markingsOf, SkinMapLegend, SkinMapPhoto, SKIN_METRICS } from "../components/SkinMap";
 import ColourHarmonyPages, { colourHarmonyData } from "./ColourHarmonyPages";
 
@@ -142,7 +143,6 @@ export default function StudioReport({ report: raw, variant = "screen" }: { repo
               );
             })}
           </div>
-          <Products ctx={ctx} title={tr("look.productsTitle")} items={skinProducts} />
         </Page>
       ) : null}
 
@@ -152,6 +152,15 @@ export default function StudioReport({ report: raw, variant = "screen" }: { repo
           <SkinMapPhoto src={report.source_image_url} markings={markingsOf(skin.zones)} size="100%" />
           <SkinMapLegend metrics={skin.metrics} markings={markingsOf(skin.zones)} fontSize={16}
             label={(k) => tr(`skin.metric_${k}`)} areasLabel={(n) => tr("skinMap.areas", { n })} />
+        </Page>
+      ) : null}
+
+      {/* ---------------------------------------------------------------- skin products (before the services, like the mirror) */}
+      {skin ? (
+        <Page ctx={ctx} eyebrow={tr("results.tabSkin")} title={tr("look.productsTitle")}>
+          {skinProducts.length ? <Products ctx={ctx} items={skinProducts} /> : (
+            <span style={{ fontSize: 16, color: c("ink-muted") }}>{tr("look.noSkinProducts")}</span>
+          )}
         </Page>
       ) : null}
 
@@ -345,14 +354,17 @@ function Services({ ctx, items }: { ctx: Ctx; items: SkinServiceCard[] }) {
     <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
       {items.map((x, i) => (
         <div key={`${x.title}-${i}`} style={{ ...card, display: "flex", gap: 14, padding: 10, alignItems: "center" }}>
-          <div style={{ width: 84, height: 84, flex: "0 0 auto", borderRadius: 12, overflow: "hidden", background: c("photo") }}>
-            {x.image ? <img src={x.image} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} /> : null}
+          <div style={{ position: "relative", width: 84, height: 84, flex: "0 0 auto", borderRadius: 12, overflow: "hidden", background: c("photo"), display: "flex", alignItems: "center", justifyContent: "center", color: c("ink-muted") }}>
+            {/* Skin icon underneath: shows when there's no picture or it fails to load. */}
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d={ICON.skin} /></svg>
+            {mediaUrl(x.image) ? <img src={mediaUrl(x.image)} alt="" onError={(e) => { e.currentTarget.style.display = "none"; }}
+              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block" }} /> : null}
           </div>
           <div style={{ minWidth: 0, display: "flex", flexDirection: "column", gap: 3 }}>
             <span style={{ ...SERIF, fontSize: 20, lineHeight: 1.2 }}>{x.title}</span>
-            {x.duration || x.price != null ? (
+            {x.duration || x.price ? (
               <span style={{ fontSize: 14, color: c("accent") }}>
-                {[x.duration ? `${x.duration} ${ctx.tr("skinServices.min")}` : "", x.price != null ? String(x.price) : ""].filter(Boolean).join(" · ")}
+                {[x.duration ? `${x.duration} ${ctx.tr("skinServices.min")}` : "", x.price ? String(x.price) : ""].filter(Boolean).join(" · ")}
               </span>
             ) : null}
             {x.reason ? <span style={{ fontSize: 14, lineHeight: 1.4, color: c("ink-muted") }}>{x.reason}</span> : null}

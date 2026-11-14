@@ -2,6 +2,21 @@ import axios from "axios";
 import axiosClient from "@/core/network/axios-client";
 import { renameMakeupLooks } from "./data/makeup";
 import { fillFluxHairColour } from "./data/haircolor";
+import { BASE_URL } from "@/core/constants/url-constants";
+
+/**
+ * Salon-entered picture URL → one the browser can load: trimmed, `//host` and `http://` upgraded to https (an http
+ * image is blocked on the https mirror), and a server path (`/media/…`) put on the API host instead of the mirror's.
+ */
+export function mediaUrl(url: string | null | undefined): string {
+  const u = (url ?? "").trim();
+  if (!u) return "";
+  if (u.startsWith("//")) return `https:${u}`;
+  if (u.startsWith("http://")) return `https://${u.slice(7)}`;
+  if (u.startsWith("/")) return new URL(u, BASE_URL).toString();
+  if (!/^(https:|data:|blob:)/.test(u)) return `https://${u}`; // "cdn.example.com/x.jpg"
+  return u;
+}
 
 /** Studio backend (ADMIN---DJANGO app `studio`), through the template's authenticated axios client. */
 const api = axiosClient;
@@ -211,7 +226,11 @@ export const studioApi = {
   /** AI picks from the salon's skin services for this skin analysis (same endpoint as FLUX_VERSION_3). */
   skinServices: (skinAnalysis: unknown) =>
     unwrap<{ recommended_services: SkinService[] }>(api.post("salon/recommend-skin-services/", { skin_analysis: skinAnalysis }))
-      .then((d) => d?.recommended_services ?? []),
+      .then((d) => (d?.recommended_services ?? []).map((x) => ({
+        ...x,
+        image: mediaUrl(x.image),
+        price: x.price ? x.price : null, // 0 = no price set in the admin: don't show "0"
+      }))),
   publicLook: (token: string) =>
     unwrap<PublicReport>(
       api.get(`studio/public/looks/${token}/`)

@@ -6,7 +6,7 @@ import { useStudio } from "../context/StudioContext";
 import { FLOWS, type FlowKey } from "../flows";
 import { ensureAnalysis } from "../pending-upload";
 import { c, Diamond, H1, H2, Icon, ICON, LoadingStage, Photo, PillButton, Screen, SERIF, Spacer } from "../ui";
-import { useNav, usePrefetch } from "../use-nav";
+import { useNav } from "../use-nav";
 
 /** Woman / man icons from the main software (FLUX_VERSION_3 look advisor): black on light, white when selected. */
 const GENDER_ICON: Record<Gender, { black: string; white: string }> = {
@@ -18,7 +18,6 @@ const GENDER_ICON: Record<Gender, { black: string; white: string }> = {
 export default function ProfileScreen() {
   const router = useRouter();
   const { go } = useNav();
-  usePrefetch(...FLOWS.map((f) => f.start));
   const { t, config, session, setSession, photo } = useStudio();
   if (!config || !session) return <LoadingStage />;
 

@@ -2,6 +2,10 @@ import { notFound } from "next/navigation";
 import { SkinProductsPage } from "@/features/studio/screens/JourneyScreen";
 
 /** Only the skin service has a products page: /journey/skin/products (after the skin map). */
+/** Only skin has this page; pre-rendered at build time (fast navigation). */
+export const generateStaticParams = () => [{ service: "skin" }];
+export const dynamicParams = false;
+
 export default async function Page({ params }: { params: Promise<{ service: string }> }) {
   const { service } = await params;
   if (service !== "skin") notFound();

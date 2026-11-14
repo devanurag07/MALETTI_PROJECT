@@ -15,7 +15,7 @@ import {
   ActionBar, Arch, c, ShadeSwatch, ColorDot, CompareArch, ErrorLine, GuidePill, H1, HeroBackdrop, ICON, ImageOption, LoadingStage, Muted,
   Photo, PrimaryButton, Screen, Segmented, SERIF, Tabs, UploadOption,
 } from "../ui";
-import { useNav, usePrefetch } from "../use-nav";
+import { useNav } from "../use-nav";
 
 /** Typical try-on wait (FLUX_VERSION_3 PROGRESS_DURATION_MS.generation); progress holds at 92% until the picture is in. */
 const GEN_MS = 25_000;
@@ -104,7 +104,6 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
   const { go, pending } = useNav();
   const { t, tx, config, session, gender, look, updateLook, photo } = useStudio();
   const next = search.get("next") ?? "/look";
-  usePrefetch(next);
   // Step-by-step mode (Simple Service): Save goes cut → colour → beard/make-up → next. Edit links return directly.
   const chain = search.get("chain") === "1";
   // Journey mode: one service only (no kind switcher); Save goes on to the next service.
@@ -554,7 +553,7 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
 
       <ActionBar>
         <div style={{ flex: "1 1 auto", minWidth: 0 }}>
-          <PrimaryButton icon={ICON.save} onClick={save} disabled={busy} loading={pending}>{t("tryon", "save")}</PrimaryButton>
+          <PrimaryButton icon={ICON.save} onClick={save} disabled={busy}>{t("tryon", "save")}</PrimaryButton>
         </div>
         {/* QR: download the picture shown (this step's result, else the image it starts from). */}
         <PhotoQR src={look.layers[kind]?.output_url ?? startImage} name={look.layers[kind] ? `${t("tryon", KIND_CAT[kind])} - ${line1}` : t("qr", "original")}
