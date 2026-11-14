@@ -94,7 +94,6 @@ export function ServiceIntro({ service }: { service: Service }) {
       {/* Same bottom as every screen: "Skip this service" link, then Back · Proceed. */}
       <ActionBar link={{
         label: t("journey", "skipService"),
-        disabled: pending,
         onClick: () => {
           if (!simple && status !== "done") mark("skipped");
           go(skipTo);
@@ -185,7 +184,7 @@ export function ServicePage({ service }: { service: Service }) {
       {/* Skin results don't fill the height: push the button to the bottom. */}
       {service === "skin" ? <div style={{ flex: "1 1 auto" }} /> : null}
       {/* Try-on services: "Skip this service" link, then Back · Try it on. Others: Back · Next. */}
-      <ActionBar link={kind ? { label: last ? t("journey", "finish") : t("journey", "skipService"), onClick: () => go(next), disabled: pending } : null}>
+      <ActionBar link={kind ? { label: last ? t("journey", "finish") : t("journey", "skipService"), onClick: () => go(next) } : null}>
         {kind ? (
           <PrimaryButton icon={ICON.sparkle} disabled={!sel} loading={pending} onClick={tryIt}>{t("journey", "try")}</PrimaryButton>
         ) : (

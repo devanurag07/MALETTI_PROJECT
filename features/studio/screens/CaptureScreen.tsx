@@ -1,5 +1,6 @@
 "use client";
 
+import { useLoadingOverlay } from "../use-nav";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { setPendingUpload } from "../pending-upload";
@@ -41,6 +42,8 @@ export default function CaptureScreen() {
   const [deviceId, setDeviceId] = useState<string | undefined>();
   const [camError, setCamError] = useState(false);
   const [saving, setSaving] = useState(false);
+  // Saving the photo → loading screen over the camera (no spinner in the button).
+  useLoadingOverlay(saving);
   const [flash, setFlash] = useState(0);
   // Settings page: "invert on capture" turns the mirror off; rotation fixes a camera mounted sideways.
   const [mirror, setMirror] = useState(true);

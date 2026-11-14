@@ -8,6 +8,7 @@ import { createContext, useContext, useLayoutEffect, useMemo, useRef, useState, 
 import { useRouter } from "next/navigation";
 import { ReactCompareSlider, ReactCompareSliderImage } from "react-compare-slider";
 import { theme } from "../theme";
+import { useNavPending } from "../use-nav";
 import { useStudio } from "../context/StudioContext";
 
 export const c = (name: string) => `var(--mm-${name})`;
@@ -76,6 +77,23 @@ export function Stage({ children, animKey }: { children: ReactNode; animKey?: st
         fontFamily: c("font-body"), animation: "mmIn 0.5s ease-out both",
       }}>
         {children}
+      </div>
+      <NavLoading />
+    </div>
+  );
+}
+
+/** Full loading screen over the stage from the tap on a forward button until the next screen is there. */
+function NavLoading() {
+  if (!useNavPending()) return null;
+  return (
+    <div style={{
+      position: "absolute", inset: 0, zIndex: 50, display: "flex", flexDirection: "column",
+      background: c("background"), color: c("ink"), fontFamily: c("font-body"),
+    }}>
+      <Header />
+      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <Spinner size={40} />
       </div>
     </div>
   );
@@ -223,18 +241,19 @@ export function SectionTitle({ title, hint }: { title: string; hint?: string }) 
 
 export function PrimaryButton({ children, onClick, icon, iconRight, disabled, loading, style }: {
   children: ReactNode; onClick?: () => void; icon?: string; iconRight?: string;
+  /** `loading`: the tap is being handled (e.g. navigating) — only ignores repeat taps; no spinner in the button. */
   disabled?: boolean; loading?: boolean; style?: CSSProperties;
 }) {
   return (
-    <button type="button" onClick={onClick} disabled={disabled || loading} style={{
+    <button type="button" onClick={loading ? undefined : onClick} disabled={disabled} style={{
       display: "flex", alignItems: "center", justifyContent: "center", gap: 12, width: "100%", height: 64,
       margin: 0, border: "none", borderRadius: 32, background: c("ink"), color: c("on-dark"), fontSize: 17,
-      fontWeight: 500, cursor: disabled || loading ? "default" : "pointer", boxShadow: c("shadow-cta"),
+      fontWeight: 500, cursor: disabled ? "default" : "pointer", boxShadow: c("shadow-cta"),
       opacity: disabled ? 0.45 : 1, ...style,
     }}>
-      {loading ? <Spinner size={20} color={c("on-dark")} /> : icon ? <Icon d={icon} size={22} /> : null}
+      {icon ? <Icon d={icon} size={22} /> : null}
       <span>{children}</span>
-      {iconRight && !loading ? <Icon d={iconRight} size={20} width={1.8} /> : null}
+      {iconRight ? <Icon d={iconRight} size={20} width={1.8} /> : null}
     </button>
   );
 }

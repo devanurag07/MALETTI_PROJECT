@@ -1,4 +1,5 @@
 import { studioApi, type Results } from "./api";
+import { preloadResultImages } from "./preload-images";
 
 
 /**
@@ -27,8 +28,9 @@ export function ensureAnalysis(sessionId: string): Promise<Results> {
     run = (async () => {
       await waitForPendingUpload(); // photo may still be uploading from the Capture screen
       const r = await studioApi.results(sessionId);
-      if (r.tabs.some((x) => x.status === "done")) return r;
-      return studioApi.analyze(sessionId);
+      const done = r.tabs.some((x) => x.status === "done") ? r : await studioApi.analyze(sessionId);
+      preloadResultImages(done);
+      return done;
     })();
     analyses.set(sessionId, run);
     run.catch(() => analyses.delete(sessionId)); // failed: the next screen tries again
