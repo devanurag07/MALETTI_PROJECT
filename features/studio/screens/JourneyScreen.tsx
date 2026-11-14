@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useSearchParams } from "next/navigation";
 import { ensureAnalysis } from "../pending-upload";
 import { useNav } from "../use-nav";
+import { GeneratingScan, markGenStart } from "../components/GeneratingScan";
 import { studioApi, type AnalysisTab, type CatalogItem, type Recommendation, type Results, type SkinService } from "../api";
 import { useCatalog, useCustomShades, useStudio } from "../context/StudioContext";
 import {
@@ -111,7 +112,9 @@ export function ServiceIntro({ service }: { service: Service }) {
 
 /** The service itself: pick an option, Try it on (AI), or continue to the next service. */
 export function ServicePage({ service }: { service: Service }) {
-  const { t, tx, config, session, gender } = useStudio();
+  const { t, tx, config, session, gender, photo } = useStudio();
+  /** Try tapped: show the processing scan right away while the try-on screen loads (it continues the same scan). */
+  const [starting, setStarting] = useState(false);
   // Simple Service (one service on its own): no journey bar, back to the service list when done.
   const simple = useSearchParams().get("simple") === "1";
   const { go, pending } = useNav();
@@ -144,7 +147,7 @@ export function ServicePage({ service }: { service: Service }) {
     const id = setTimeout(() => {
       try { sessionStorage.setItem(scanKey, "1"); } catch {}
       setScanning(false);
-    }, Math.max(0, SCAN_MS - (Date.now() - scanStart(service))));
+    }, Math.max(0, scanMs(service) - (Date.now() - scanStart(service))));
     return () => clearTimeout(id);
   }, [scanning, scanKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -155,6 +158,7 @@ export function ServicePage({ service }: { service: Service }) {
   }, [session?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!config || !session) return <LoadingStage />;
+  if (starting) return <Screen animKey="try-loading" onBack={false}><GeneratingScan image={photo} preview /></Screen>;
   // The scan animation stays until the results are there (at least 5 s the first time).
   if (scanning || (!results && !error))
     return <ServiceScan service={service} />;
@@ -162,7 +166,7 @@ export function ServicePage({ service }: { service: Service }) {
   const a = tab(SERVICE_MODULE[service]);
   const kind = SERVICE_TRY[service];
   const param = kind === "cut" ? "item" : kind === "colour" ? "shade" : kind === "makeup" ? "look" : "beard";
-  const tryIt = () => sel && kind && go(`/try/${kind}?${param}=${encodeURIComponent(sel)}&single=1&next=${encodeURIComponent(next)}&back=${encodeURIComponent(journeyPage(service) + (simple ? "?simple=1" : ""))}`);
+  const tryIt = () => sel && kind && (markGenStart(), setStarting(true), go(`/try/${kind}?${param}=${encodeURIComponent(sel)}&single=1&next=${encodeURIComponent(next)}&back=${encodeURIComponent(journeyPage(service) + (simple ? "?simple=1" : ""))}`));
 
   let body: ReactNode;
   if (!results && !error) body = <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}><Spinner size={36} /></div>;
@@ -219,7 +223,16 @@ export function Options({ service, a, sel, setSel, tab: tabProp, bare }: {
     colour: { items: shades, rec: recOf("hair_shade"), current: look.hair_shade },
     makeup: { items: looks, rec: recOf("makeup_look"), current: look.makeup_look ?? (look.lip || look.eye || look.blush ? "custom" : null) },
   };
-  const { items, rec, current } = list[service];
+  const { items, current } = list[service];
+  // Beard: always three suggestions, like the hairstyles — the analysis' own picks first (it suggests three for men),
+  // topped up from the beard catalogue if it has fewer (e.g. none yet).
+  const rec: Recommendation[] = service !== "beard" ? list[service].rec : (() => {
+    const own = list.beard.rec.filter((x) => x.key !== "none").slice(0, 3);
+    const taken = new Set(own.map((x) => x.key));
+    const extra = beards.filter((b) => !taken.has(b.key)).slice(0, 3 - own.length)
+      .map((b, i) => ({ ...b, rank: own.length + i + 1, is_best: own.length === 0 && i === 0, reason: {} }) as Recommendation);
+    return [...own, ...extra];
+  })();
   const recKeys = new Set(rec.map((x) => x.key));
   const best = rec.find((x) => x.is_best)?.key ?? rec[0]?.key;
   const ordered = forYouFirst(items, recKeys);
@@ -240,6 +253,7 @@ export function Options({ service, a, sel, setSel, tab: tabProp, bare }: {
   // Hairstyle "why": the backend's reason when it has one, else what the cut does for this face shape.
   const shape = String(a?.label?.key ?? "");
   const hairWhy = t("hair", ["oval", "round", "square", "oblong", "heart", "diamond", "triangle"].includes(shape) ? `why_${shape}` : "why_default");
+  const beardWhy = t("hair", ["oval", "round", "square", "oblong", "heart", "diamond", "triangle"].includes(shape) ? `beardWhy_${shape}` : "beardWhy_default");
   // Hair colour "why": the backend's reason when it has one, else the colour season it was picked for.
   const season = tx(a?.label?.name);
   const shadeWhy = season ? t("colour", "whyShade", { season }) : t("colour", "whyShadeDefault");
@@ -252,8 +266,8 @@ export function Options({ service, a, sel, setSel, tab: tabProp, bare }: {
     // Haircuts / beards / hair colours / make-up looks: all recommendations on one page.
     content = (
       <RecommendedGrid key={service} items={rec} active={sel} onChange={setSel}
-        rows={service === "hairstyle" || service === "colour"}
-        why={service === "hairstyle" ? () => hairWhy : service === "colour" ? () => shadeWhy : undefined}
+        rows={service === "hairstyle" || service === "beard" || service === "colour"}
+        why={service === "hairstyle" ? () => hairWhy : service === "beard" ? () => beardWhy : service === "colour" ? () => shadeWhy : undefined}
         models={service === "colour" ? (x) => colourModels(gender, x.key) : undefined}
         focus={service === "beard" ? "50% 60%" : "50% 8%"}
         image={(x) => service === "makeup" ? styleImage("makeup_look", x.key, x.image_url) || null : styleImage(imageKind, x.key, x.image_url) || thumb} />
@@ -557,15 +571,25 @@ export function SkinServicesPage() {
 }
 
 /**
- * 5-second processing screen for Armocromia / Skin: the same scan UI as the Analysis screen (photo in the arch,
- * scan line, brackets, "<stage> NN%" pill), counting to 100 % in 5 s.
+ * Processing screen before each service's results: the same scan UI as the Analysis screen (photo in the arch,
+ * scan line, brackets, "<stage> NN%" pill).
+ *
+ * Shown for at least `scanMs(service)`; it then stays until the results are in. The bar never sits at 100 % while
+ * nothing happens: it eases to 90 % over the minimum time, then creeps towards 99 % — the screen changes to the
+ * results the moment they arrive.
  */
 const SCAN_MS = 5000;
+/** Hairstyle is the first service: the background analysis is often still running, so its scan is longer. */
+const scanMs = (service: Service) => (service === "hairstyle" ? 9000 : SCAN_MS);
+function scanPct(elapsed: number, ms: number) {
+  if (elapsed < ms) return Math.round(90 * (1 - Math.pow(1 - elapsed / ms, 2))); // ease-out to 90 %
+  return Math.min(99, Math.round(90 + 9 * (1 - Math.exp(-(elapsed - ms) / 12000)))); // then slowly to 99 %
+}
 /** When this service's scan began: the loading screen (tap on Proceed) and the page share it, so the bar never restarts. */
 const scanStarts: Partial<Record<Service, number>> = {};
 function scanStart(service: Service) {
   const t = scanStarts[service];
-  if (t && Date.now() - t < SCAN_MS + 2000) return t;
+  if (t && Date.now() - t < scanMs(service) + 60_000) return t;
   return (scanStarts[service] = Date.now());
 }
 
@@ -575,7 +599,8 @@ export function ServiceScan({ service }: { service: Service }) {
   const [pct, setPct] = useState(0);
   useEffect(() => {
     const start = scanStart(service);
-    const id = setInterval(() => setPct(Math.min(100, Math.round(((Date.now() - start) / SCAN_MS) * 100))), 100);
+    const ms = scanMs(service);
+    const id = setInterval(() => setPct(scanPct(Date.now() - start, ms)), 100);
     return () => clearInterval(id);
   }, []);
   // Labels: skin → skin.*, hairstyle / beard → face.* (face analysis), colour services → colour.*.

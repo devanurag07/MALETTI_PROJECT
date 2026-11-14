@@ -193,7 +193,11 @@ export const studioApi = {
   createSession: (body: { gender?: Gender; locale?: string; flow?: string }) =>
     unwrap<Session>(api.post("studio/sessions/", body)),
   updateSession: (id: string, body: Record<string, unknown>) =>
-    unwrap<Session>(api.patch(`studio/sessions/${id}/`, body)),
+    unwrap<Session>(api.patch(`studio/sessions/${id}/`, body)).then((r) => {
+      // New gender: the backend redoes the suggestions (women's cuts → men's cuts + beards), so drop the old copy.
+      if ("gender" in body) RESULTS.delete(id);
+      return r;
+    }),
   uploadPhoto: (id: string, blob: Blob) => {
     const fd = new FormData();
     fd.append("image", blob, "photo.jpg");

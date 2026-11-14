@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { studioApi, type Gender } from "../api";
 import { useStudio } from "../context/StudioContext";
 import { FLOWS, type FlowKey } from "../flows";
-import { ensureAnalysis } from "../pending-upload";
+import { ensureAnalysis, forgetAnalysis } from "../pending-upload";
 import { c, Diamond, H1, H2, Icon, ICON, LoadingStage, Photo, PillButton, Screen, SERIF, Spacer } from "../ui";
 import { useNav } from "../use-nav";
 
@@ -22,7 +22,11 @@ export default function ProfileScreen() {
   if (!config || !session) return <LoadingStage />;
 
   async function setGender(g: Gender) {
-    if (session) setSession(await studioApi.updateSession(session.id, { gender: g }));
+    if (!session || session.gender === g) return;
+    // An analysis already fetched for the other gender would keep women's cuts / no beards: fetch it again.
+    forgetAnalysis(session.id);
+    setSession(await studioApi.updateSession(session.id, { gender: g }));
+    forgetAnalysis(session.id);
   }
   async function choose(flow: FlowKey) {
     if (!session) return;

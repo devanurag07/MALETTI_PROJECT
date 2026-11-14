@@ -1187,7 +1187,15 @@
       "why_heart": "Balances a wider forehead and a narrow chin by adding fullness towards the jaw.",
       "why_diamond": "Softens high cheekbones and fills out a narrow forehead and chin.",
       "why_triangle": "Adds volume at the crown and temples to balance a wider jawline.",
-      "why_default": "Chosen for your face shape and proportions."
+      "why_default": "Chosen for your face shape and proportions.",
+      "beardWhy_oval": "Your balanced oval face suits a neat, even beard that keeps its natural lines.",
+      "beardWhy_round": "Longer at the chin and shorter at the sides, it lengthens a round face and defines the jaw.",
+      "beardWhy_square": "Rounded edges soften a strong, angular jawline.",
+      "beardWhy_oblong": "Fuller at the sides and kept short at the chin, it balances a longer face.",
+      "beardWhy_heart": "Adds fullness at the chin to balance a wider forehead.",
+      "beardWhy_diamond": "Fills out the chin and jaw to balance high cheekbones.",
+      "beardWhy_triangle": "Kept short along the jaw and fuller above, it balances a wider jawline.",
+      "beardWhy_default": "Chosen for your face shape and proportions."
     },
     "simple": {
       "report": "See your report",

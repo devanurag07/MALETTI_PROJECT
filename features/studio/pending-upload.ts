@@ -22,6 +22,11 @@ export function waitForPendingUpload(): Promise<unknown> {
  * the first service intro, and each service page shows its own scan until its module's results are in.
  */
 const analyses = new Map<string, Promise<Results>>();
+/** Forget the session's analysis run (gender changed: the suggestions are redone, fetch them again). */
+export function forgetAnalysis(sessionId: string) {
+  analyses.delete(sessionId);
+}
+
 export function ensureAnalysis(sessionId: string): Promise<Results> {
   let run = analyses.get(sessionId);
   if (!run) {

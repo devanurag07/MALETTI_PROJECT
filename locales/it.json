@@ -1059,7 +1059,15 @@
       "why_heart": "Bilancia una fronte più ampia e un mento sottile dando volume verso la mascella.",
       "why_diamond": "Ammorbidisce gli zigomi alti e riempie fronte e mento più stretti.",
       "why_triangle": "Aggiunge volume sulla nuca e alle tempie per bilanciare una mascella più ampia.",
-      "why_default": "Scelto per la forma e le proporzioni del tuo viso."
+      "why_default": "Scelto per la forma e le proporzioni del tuo viso.",
+      "beardWhy_oval": "Il tuo viso ovale e armonioso valorizza una barba curata e uniforme che segue le linee naturali.",
+      "beardWhy_round": "Più lunga sul mento e corta ai lati, allunga il viso tondo e definisce la mascella.",
+      "beardWhy_square": "I contorni arrotondati ammorbidiscono una mascella forte e angolare.",
+      "beardWhy_oblong": "Più piena ai lati e corta sul mento, bilancia un viso allungato.",
+      "beardWhy_heart": "Dà volume al mento per bilanciare una fronte più ampia.",
+      "beardWhy_diamond": "Riempie mento e mascella per bilanciare zigomi alti.",
+      "beardWhy_triangle": "Corta lungo la mascella e più piena sopra, bilancia una mascella ampia.",
+      "beardWhy_default": "Scelta per la forma e le proporzioni del tuo viso."
     },
     "simple": {
       "report": "Vedi il tuo report",

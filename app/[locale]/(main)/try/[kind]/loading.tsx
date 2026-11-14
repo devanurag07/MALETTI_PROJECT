@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { GeneratingScan, markGenStart } from "@/features/studio/screens/TryScreen";
+import { GeneratingScan, markGenStart } from "@/features/studio/components/GeneratingScan";
 import { useStudio } from "@/features/studio/context/StudioContext";
 import { Screen } from "@/features/studio/ui";
 
@@ -13,7 +13,7 @@ export default function Loading() {
   const { photo } = useStudio();
   useState(markGenStart);
   return (
-    <Screen animKey="try-loading">
+    <Screen animKey="try-loading" onBack={false}>
       <GeneratingScan image={photo} preview />
     </Screen>
   );
