@@ -6,6 +6,7 @@ import { useStudio } from "../context/StudioContext";
 import { FLOWS, type FlowKey } from "../flows";
 import { ensureAnalysis } from "../pending-upload";
 import { c, Diamond, H1, H2, Icon, ICON, LoadingStage, Photo, PillButton, Screen, SERIF, Spacer } from "../ui";
+import { useNav, usePrefetch } from "../use-nav";
 
 /** Woman / man icons from the main software (FLUX_VERSION_3 look advisor): black on light, white when selected. */
 const GENDER_ICON: Record<Gender, { black: string; white: string }> = {
@@ -16,6 +17,8 @@ const GENDER_ICON: Record<Gender, { black: string; white: string }> = {
 /** Step 2 — Profile (woman/man) and path (Beauty Consultant / Simple Service). */
 export default function ProfileScreen() {
   const router = useRouter();
+  const { go } = useNav();
+  usePrefetch(...FLOWS.map((f) => f.start));
   const { t, config, session, setSession, photo } = useStudio();
   if (!config || !session) return <LoadingStage />;
 
@@ -27,7 +30,7 @@ export default function ProfileScreen() {
     setSession(await studioApi.updateSession(session.id, { flow, current_step: "profile" }));
     // Consultation: no separate analysis screen — it runs in the background, each service shows its own scan.
     if (flow === "consultant") ensureAnalysis(session.id).catch(() => {});
-    router.push(FLOWS.find((f) => f.key === flow)!.start);
+    go(FLOWS.find((f) => f.key === flow)!.start);
   }
 
   return (

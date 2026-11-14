@@ -11,6 +11,7 @@ import {
   ActionBar, c, Card, ColorChip, ColorDot, Diamond, ErrorLine, H1, Icon, ICON, LoadingStage, Muted, OutlineButton, Photo,
   PillButton, PrimaryButton, Screen, SectionTitle, Segmented, SERIF, Spinner, Tabs, Carousel, ShadeSwatch,
 } from "../ui";
+import { useNav, usePrefetch } from "../use-nav";
 
 type Tab = "skin" | "face" | "styles" | "colour";
 const TAB_LABEL: Record<Tab, string> = { skin: "tabSkin", face: "tabFace", styles: "tabStyles", colour: "tabColour" };
@@ -21,6 +22,8 @@ const MODULE: Record<Tab, string> = { skin: "skin", face: "face", styles: "face"
 /** Step 4 — Results: skin → products, face → cuts/beard, colour harmony. */
 export default function ResultsScreen({ tab }: { tab: Tab }) {
   const router = useRouter();
+  const { go, pending } = useNav();
+  usePrefetch(NEXT[tab]);
   const { t, config, session } = useStudio();
   const [results, setResults] = useState<Results | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -56,7 +59,7 @@ export default function ResultsScreen({ tab }: { tab: Tab }) {
       )}
       {status(tab) !== "coming_soon" ? (
         <ActionBar>
-          <PrimaryButton iconRight={ICON.next} onClick={() => router.push(NEXT[tab])}>{t(tab, "cta")}</PrimaryButton>
+          <PrimaryButton iconRight={ICON.next} loading={pending} onClick={() => go(NEXT[tab])}>{t(tab, "cta")}</PrimaryButton>
         </ActionBar>
       ) : null}
     </Screen>

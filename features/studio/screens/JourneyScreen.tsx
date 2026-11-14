@@ -3,8 +3,9 @@
 import ColourHarmonyPages, { colourHarmonyData, harmonyPageCount } from "../report/ColourHarmonyPages";
 import { BLUSH, EYESHADOW, LIPSTICK } from "../data/makeup";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { ensureAnalysis } from "../pending-upload";
+import { useNav, usePrefetch } from "../use-nav";
 import { studioApi, type AnalysisTab, type CatalogItem, type Recommendation, type Results, type SkinService } from "../api";
 import { useCatalog, useCustomShades, useStudio } from "../context/StudioContext";
 import {
@@ -53,10 +54,13 @@ export function JourneyBar({ service }: { service: Service }) {
 
 /** Intro page shown before each service: what it is, then Skip or Proceed. */
 export function ServiceIntro({ service }: { service: Service }) {
-  const router = useRouter();
   const { t, config, session, gender, look, updateLook } = useStudio();
   // Simple Service (one service on its own): same intro, but no journey bar / status; Skip goes back to the list.
   const simple = useSearchParams().get("simple") === "1";
+  const { go, pending } = useNav();
+  const proceedTo = simple ? `${journeyPage(service)}?simple=1` : journeyPage(service);
+  const skipTo = simple ? "/service" : journeyNext(gender, service);
+  usePrefetch(proceedTo, skipTo);
   if (!config || !session) return <LoadingStage />;
   const status = simple ? undefined : look.journey?.[service];
   const mark = (st: "done" | "skipped") => updateLook({ journey: { ...look.journey, [service]: st } });
@@ -90,15 +94,15 @@ export function ServiceIntro({ service }: { service: Service }) {
       {/* Same bottom as every screen: "Skip this service" link, then Back · Proceed. */}
       <ActionBar link={{
         label: t("journey", "skipService"),
+        disabled: pending,
         onClick: () => {
-          if (simple) return router.push("/service");
-          if (status !== "done") mark("skipped");
-          router.push(journeyNext(gender, service));
+          if (!simple && status !== "done") mark("skipped");
+          go(skipTo);
         },
       }}>
-        <PrimaryButton iconRight={ICON.next} onClick={() => {
-          if (simple) return router.push(`${journeyPage(service)}?simple=1`);
-          mark("done"); router.push(journeyPage(service));
+        <PrimaryButton iconRight={ICON.next} loading={pending} onClick={() => {
+          if (!simple) mark("done");
+          go(proceedTo);
         }}>
           {t("journey", "proceed")}
         </PrimaryButton>
@@ -109,10 +113,13 @@ export function ServiceIntro({ service }: { service: Service }) {
 
 /** The service itself: pick an option, Try it on (AI), or continue to the next service. */
 export function ServicePage({ service }: { service: Service }) {
-  const router = useRouter();
   const { t, tx, config, session, gender } = useStudio();
   // Simple Service (one service on its own): no journey bar, back to the service list when done.
   const simple = useSearchParams().get("simple") === "1";
+  const { go, pending } = useNav();
+  // Skin: Next first shows the skin map (markings on the photo), then goes on.
+  const next = service === "skin" ? `/journey/skin/map${simple ? "?simple=1" : ""}` : simple ? `/service/result?s=${service}` : journeyNext(gender, service);
+  usePrefetch(next, SERVICE_TRY[service] && `/try/${SERVICE_TRY[service]}`);
   const needsAnalysis = service === "armocromia" || service === "skin";
   // Cached results only count once this service's module is analysed (an earlier fetch may predate the analysis).
   const [results, setResults] = useState<Results | null>(() => {
@@ -127,7 +134,7 @@ export function ServicePage({ service }: { service: Service }) {
    */
   const search = useSearchParams();
   const armoPage = Math.max(0, Number(search.get("p")) || 0);
-  const setArmoPage = (n: number) => router.push(`${journeyPage(service)}?p=${n}${simple ? "&simple=1" : ""}`);
+  const setArmoPage = (n: number) => go(`${journeyPage(service)}?p=${n}${simple ? "&simple=1" : ""}`);
   // Every service: a 5-second "analysing" animation on the photo before its results (once per service and session).
   // There is no separate analysis screen: the analysis runs in the background from the Profile step.
   const scanKey = session ? `mm-${service}-scan:${session.id}` : "";
@@ -154,14 +161,11 @@ export function ServicePage({ service }: { service: Service }) {
   // The scan animation stays until the results are there (at least 5 s the first time).
   if (scanning || (!results && !error))
     return <ServiceScan service={service} />;
-  // Skin: Next first shows the skin map (markings on the photo), then goes on.
-  const result = `/service/result?s=${service}`;
-  const next = service === "skin" ? `/journey/skin/map${simple ? "?simple=1" : ""}` : simple ? result : journeyNext(gender, service);
   const tab = (m: string) => results?.tabs.find((x) => x.module === m && x.status === "done");
   const a = tab(SERVICE_MODULE[service]);
   const kind = SERVICE_TRY[service];
   const param = kind === "cut" ? "item" : kind === "colour" ? "shade" : kind === "makeup" ? "look" : "beard";
-  const tryIt = () => sel && kind && router.push(`/try/${kind}?${param}=${encodeURIComponent(sel)}&single=1&next=${encodeURIComponent(next)}&back=${encodeURIComponent(journeyPage(service) + (simple ? "?simple=1" : ""))}`);
+  const tryIt = () => sel && kind && go(`/try/${kind}?${param}=${encodeURIComponent(sel)}&single=1&next=${encodeURIComponent(next)}&back=${encodeURIComponent(journeyPage(service) + (simple ? "?simple=1" : ""))}`);
 
   let body: ReactNode;
   if (!results && !error) body = <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}><Spinner size={36} /></div>;
@@ -181,13 +185,13 @@ export function ServicePage({ service }: { service: Service }) {
       {/* Skin results don't fill the height: push the button to the bottom. */}
       {service === "skin" ? <div style={{ flex: "1 1 auto" }} /> : null}
       {/* Try-on services: "Skip this service" link, then Back · Try it on. Others: Back · Next. */}
-      <ActionBar link={kind ? { label: last ? t("journey", "finish") : t("journey", "skipService"), onClick: () => router.push(next) } : null}>
+      <ActionBar link={kind ? { label: last ? t("journey", "finish") : t("journey", "skipService"), onClick: () => go(next), disabled: pending } : null}>
         {kind ? (
-          <PrimaryButton icon={ICON.sparkle} disabled={!sel} onClick={tryIt}>{t("journey", "try")}</PrimaryButton>
+          <PrimaryButton icon={ICON.sparkle} disabled={!sel} loading={pending} onClick={tryIt}>{t("journey", "try")}</PrimaryButton>
         ) : (
-          <PrimaryButton iconRight={ICON.next} onClick={() => {
+          <PrimaryButton iconRight={ICON.next} loading={pending} onClick={() => {
             if (armoPage < armoPages - 1) { setArmoPage(armoPage + 1); return; }
-            router.push(next);
+            go(next);
           }}>{nextLabel}</PrimaryButton>
         )}
       </ActionBar>
@@ -399,7 +403,6 @@ function Armocromia({ a, face, page }: { a: AnalysisTab; face?: AnalysisTab; pag
 
 /** After Skin analysis → Next: one page with every finding marked on the photo (also in the report). */
 export function SkinMapPage() {
-  const router = useRouter();
   const simple = useSearchParams().get("simple") === "1";
   const { t, tx, config, session, gender, photo } = useStudio();
   const [results, setResults] = useState<Results | null>(null);
@@ -407,6 +410,8 @@ export function SkinMapPage() {
   useEffect(() => {
     if (session) studioApi.results(session.id).then(setResults).catch((e: Error) => setError(e.message));
   }, [session?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  const { go, pending } = useNav();
+  usePrefetch(`/journey/skin/products${simple ? "?simple=1" : ""}`);
   if (!config || !session) return <LoadingStage />;
   const skin = results?.tabs.find((x) => x.module === "skin" && x.status === "done");
   const markings = markingsOf(skin?.zones);
@@ -433,7 +438,7 @@ export function SkinMapPage() {
         </div>
       )}
       {!results && !error ? null : <ActionBar>
-        <PrimaryButton iconRight={ICON.next} onClick={() => router.push(next)}>{t("skin", "productsCta")}</PrimaryButton>
+        <PrimaryButton iconRight={ICON.next} loading={pending} onClick={() => go(next)}>{t("skin", "productsCta")}</PrimaryButton>
       </ActionBar>}
     </Screen>
   );
@@ -442,7 +447,6 @@ export function SkinMapPage() {
 
 /** After the skin map: the recommended skin products, then on to the next service. */
 export function SkinProductsPage() {
-  const router = useRouter();
   const simple = useSearchParams().get("simple") === "1";
   const { t, config, session, gender } = useStudio();
   const [results, setResults] = useState<Results | null>(null);
@@ -450,6 +454,8 @@ export function SkinProductsPage() {
   useEffect(() => {
     if (session) studioApi.results(session.id).then(setResults).catch((e: Error) => setError(e.message));
   }, [session?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  const { go, pending } = useNav();
+  usePrefetch(`/journey/skin/services${simple ? "?simple=1" : ""}`);
   if (!config || !session) return <LoadingStage />;
   const skin = results?.tabs.find((x) => x.module === "skin" && x.status === "done");
   // Products → the salon's skin treatments (services) → on to the next service.
@@ -465,7 +471,7 @@ export function SkinProductsPage() {
         <SkinProducts a={skin} />
       )}
       {!results && !error ? null : <ActionBar>
-        <PrimaryButton iconRight={ICON.next} onClick={() => router.push(next)}>{t("skinServices", "cta")}</PrimaryButton>
+        <PrimaryButton iconRight={ICON.next} loading={pending} onClick={() => go(next)}>{t("skinServices", "cta")}</PrimaryButton>
       </ActionBar>}
     </Screen>
   );
@@ -473,7 +479,6 @@ export function SkinProductsPage() {
 
 /** After the skin products: the salon's skin services (treatments) the AI picks for this skin, then the next service. */
 export function SkinServicesPage() {
-  const router = useRouter();
   const simple = useSearchParams().get("simple") === "1";
   const { t, tx, config, session, gender, updateLook } = useStudio();
   const cacheKey = session ? `mm-skin-services:${session.id}` : "";
@@ -503,6 +508,8 @@ export function SkinServicesPage() {
       })
       .catch((e: Error) => setError(e.message || t("skinServices", "failed")));
   }, [session?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  const { go, pending } = useNav();
+  usePrefetch((simple ? "/service/result?s=skin" : journeyNext(gender, "skin")));
   if (!config || !session) return <LoadingStage />;
   const next = simple ? "/service/result?s=skin" : journeyNext(gender, "skin");
   const price = (x: SkinService) => (x.price != null ? String(x.price) : ""); // no currency code (INR) on the mirror
@@ -547,7 +554,7 @@ export function SkinServicesPage() {
         ))}
       </div>
       {!services && !error ? null : <ActionBar>
-        <PrimaryButton iconRight={ICON.next} onClick={() => router.push(next)}>{t("journey", next === "/look" || next.startsWith("/service") ? "finish" : "next")}</PrimaryButton>
+        <PrimaryButton iconRight={ICON.next} loading={pending} onClick={() => go(next)}>{t("journey", next === "/look" || next.startsWith("/service") ? "finish" : "next")}</PrimaryButton>
       </ActionBar>}
     </Screen>
   );
