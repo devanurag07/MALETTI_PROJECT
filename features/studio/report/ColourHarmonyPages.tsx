@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import type { AnalysisTab, I18n } from "../api";
 import { c, SERIF } from "../ui";
+import SeasonWheel from "./SeasonWheel";
 
 /**
  * The colour-harmony report pages (content from the color-harmony app's report), drawn in the studio theme:
@@ -121,11 +122,8 @@ export default function ColourHarmonyPages({ data, pad, only }: { data: ColourHa
               </div>
             ))}
           </div>
-          {/* Season wheel artwork from the color-harmony report (cropped per season, current season highlighted). */}
-          <div style={{ borderRadius: 16, overflow: "hidden", background: "#fff", aspectRatio: "700 / 485" }}>
-            <img src={`/studio/report/seasons/${data.seasonKey}.jpg`} alt={data.seasonName}
-              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-          </div>
+          {/* 12-season wheel on the dark theme: the backend's season is pulled out and the needle points at it. */}
+          <SeasonWheel season={data.seasonKey} />
         </>
       )}
 
@@ -169,9 +167,9 @@ export default function ColourHarmonyPages({ data, pad, only }: { data: ColourHa
             const a = combo.accents.length ? combo.accents : [combo.dominant];
             return (
               <div key={i} style={{ display: "flex", flexDirection: "column", borderRadius: 14, overflow: "hidden", border: `1px solid ${c("line")}` }}>
-                <Cell hex={combo.dominant} height={56} text={tr("dominant")} />
+                <Cell hex={combo.dominant} height={48} text={tr("dominant")} />
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)" }}>
-                  {[a[0], a[1] ?? a[0], a[2] ?? a[1] ?? a[0]].map((h, k) => <Cell key={k} hex={h} height={44} text="" center />)}
+                  {[a[0], a[1] ?? a[0], a[2] ?? a[1] ?? a[0]].map((h, k) => <Cell key={k} hex={h} height={37} text="" center />)}
                 </div>
               </div>
             );

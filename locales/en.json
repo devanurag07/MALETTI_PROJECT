@@ -899,7 +899,9 @@
       "scanningSub": "Skin undertone, eyes and hair: finding your season…",
       "scanStage1": "Reading your undertone…",
       "scanStage2": "Comparing palettes…",
-      "scanStage3": "Finding your season…"
+      "scanStage3": "Finding your season…",
+      "whyShade": "Matches your {season} colouring: it flatters your undertone, eyes and natural contrast.",
+      "whyShadeDefault": "Chosen for your undertone, eyes and natural contrast."
     },
     "service": {
       "live": "Live reflection",
@@ -1075,6 +1077,20 @@
           "deep_winter": "Deep winter",
           "cool_winter": "Cool winter",
           "bright_winter": "Bright winter"
+        },
+        "wheel": {
+          "light_spring": "Light\nSpring",
+          "warm_spring": "Warm\nSpring",
+          "bright_spring": "Bright\nSpring",
+          "light_summer": "Light\nSummer",
+          "cool_summer": "Cool\nSummer",
+          "soft_summer": "Soft\nSummer",
+          "soft_autumn": "Soft\nAutumn",
+          "warm_autumn": "Warm\nAutumn",
+          "deep_autumn": "Deep\nAutumn",
+          "deep_winter": "Deep\nWinter",
+          "cool_winter": "Cool\nWinter",
+          "bright_winter": "Bright\nWinter"
         }
       },
       "triedEyebrow": "Your try-ons",
@@ -1085,7 +1101,13 @@
       "downloadTitle": "Download your report",
       "namePlaceholder": "Your name",
       "download": "Download PDF",
-      "preparing": "Preparing your report…"
+      "preparing": "Preparing your report…",
+      "pdfPreparing": "Preparing your PDF… you can scan now, it downloads as soon as it is ready.",
+      "pdfReady": "Your PDF is ready.",
+      "pdfFailed": "The PDF could not be prepared.",
+      "retry": "Try again",
+      "localhostWarning": "This QR code points to this device (localhost), so a phone cannot open it. Set NEXT_PUBLIC_SITE_URL to the mirror's public address.",
+      "downloadFailed": "The report could not be downloaded. Please try again in a moment."
     },
     "styles": {
       "cta": "Continue to colour harmony"
@@ -1124,7 +1146,8 @@
       "skin": {
         "name": "Skin analysis",
         "intro": "Our analysis measures hydration, sebum, pores, redness and spots.\nYou'll see your scores and the products we recommend for your skin."
-      }
+      },
+      "skipService": "Skip this service"
     },
     "skinMap": {
       "title": "Your skin map",
@@ -1155,7 +1178,15 @@
       "styling_blow_dry": "Blow-dry",
       "styling_straight": "Straight",
       "styling_curly": "Curly",
-      "styling_waves": "Waves"
+      "styling_waves": "Waves",
+      "why_oval": "Your oval face has balanced proportions: this cut keeps that harmony and lets your features lead.",
+      "why_round": "Adds height and clean lines that lengthen a round face and lift the cheekbones.",
+      "why_square": "Softens a strong jawline with movement and texture around the face.",
+      "why_oblong": "Adds width and volume at the sides, so a longer face looks more balanced.",
+      "why_heart": "Balances a wider forehead and a narrow chin by adding fullness towards the jaw.",
+      "why_diamond": "Softens high cheekbones and fills out a narrow forehead and chin.",
+      "why_triangle": "Adds volume at the crown and temples to balance a wider jawline.",
+      "why_default": "Chosen for your face shape and proportions."
     },
     "simple": {
       "report": "See your report",
@@ -1168,6 +1199,22 @@
       "scanStage1": "Detecting your face…",
       "scanStage2": "Measuring proportions…",
       "scanStage3": "Choosing your styles…"
+    },
+    "skinServices": {
+      "title": "Recommended treatments",
+      "hint": "Salon services for your skin",
+      "none": "This salon has no skin services in its catalogue yet.",
+      "failed": "Could not load the services.",
+      "cta": "See your treatments",
+      "min": "min"
+    },
+    "makeupLooks": {
+      "lookOf": "Look {current} of {total}",
+      "suggested": "Suggested for you",
+      "prev": "Previous look",
+      "next": "Next look",
+      "why": "Suits your {season} colouring and brings out your eyes.",
+      "whyDefault": "Chosen for your undertone and eye colour."
     }
   }
 }

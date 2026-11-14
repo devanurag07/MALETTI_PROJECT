@@ -25,14 +25,18 @@ async function imagesSettled(root: HTMLElement) {
   while (root.querySelector("canvas[data-report-canvas]:not([data-ready])") && Date.now() < until) {
     await new Promise((r) => setTimeout(r, 100));
   }
-  await Promise.all(
-    Array.from(root.querySelectorAll("img")).map((img) =>
-      img.complete ? null : new Promise((resolve) => {
-        img.addEventListener("load", resolve);
-        img.addEventListener("error", resolve);
-      })
-    )
-  );
+  // Every picture loaded (or failed) — but never wait more than 20 s: one slow CDN image must not stop the PDF.
+  await Promise.race([
+    Promise.all(
+      Array.from(root.querySelectorAll("img")).map((img) =>
+        img.complete ? null : new Promise((resolve) => {
+          img.addEventListener("load", resolve);
+          img.addEventListener("error", resolve);
+        })
+      )
+    ),
+    new Promise((resolve) => setTimeout(resolve, 20_000)),
+  ]);
 }
 
 /** One named @page per `[data-report-page]`, sized to its content: each section is one PDF page, never split. */

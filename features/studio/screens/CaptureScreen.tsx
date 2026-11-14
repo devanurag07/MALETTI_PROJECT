@@ -12,7 +12,7 @@ import { TEST_PHOTOS } from "@/features/customer-session/flow/testPhotos";
 import { convertFileToJpeg } from "@/core/utils/common";
 import { studioApi } from "../api";
 import { EMPTY_LOOK, useStudio } from "../context/StudioContext";
-import { Arch, c, ErrorLine, GuidePill, H1, HeroBackdrop, Icon, ICON, LoadingStage, PrimaryButton, Screen } from "../ui";
+import { BackButton, Arch, c, ErrorLine, GuidePill, H1, HeroBackdrop, Icon, ICON, LoadingStage, PrimaryButton, Screen } from "../ui";
 
 const ARCH = { w: 440, h: 440 }; // square: the photo is saved 1:1 so before/after compare at the same size
 
@@ -196,6 +196,7 @@ export default function CaptureScreen() {
         </div>
         {error ? <ErrorLine message={error} /> : null}
         <div style={{ display: "flex", gap: 12, width: "100%", marginTop: 6 }}>
+          <BackButton />
           <PrimaryButton icon={ICON.camera} onClick={shoot} loading={saving} disabled={camError} style={{ flex: "1 1 auto", width: "auto" }}>
             {t("capture", "cta")}
           </PrimaryButton>

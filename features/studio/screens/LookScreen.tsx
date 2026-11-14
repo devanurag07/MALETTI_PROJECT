@@ -6,7 +6,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { studioApi, type I18n } from "../api";
 import { catalogKey, useStudio } from "../context/StudioContext";
 import { theme } from "../theme";
-import { c, CompareArch, Diamond, ErrorLine, H1, Icon, ICON, LoadingStage, PrimaryButton, Screen } from "../ui";
+import { ActionBar, c, CompareArch, Diamond, ErrorLine, H1, Icon, ICON, LoadingStage, PrimaryButton, Screen } from "../ui";
 
 const absolute = (url: string | null) => (!url ? "" : url.startsWith("http") ? url : `${window.location.origin}${url}`);
 
@@ -47,7 +47,8 @@ export default function LookScreen() {
           lip: look.lip ?? lp("makeup", "lip"),
           eye: look.eye ?? lp("makeup", "eye"),
           beard: catalogKey(look.beard ?? lp("beard", "beard")),
-          params: look.params,
+          // Recommended salon skin services ride along in params, so the report (and its PDF) can list them.
+          params: look.skinServices?.length ? { ...look.params, skin_services: look.skinServices } : look.params,
           products: look.products,
           final_tryon_id: look.lastTryon?.status === "done" ? look.lastTryon.id : null,
           headline,
@@ -73,7 +74,7 @@ export default function LookScreen() {
     ? { key: "beard", label: t("look", "beard"), value: tx(s?.beard?.name), hex: c("ink") }
     : {
         key: "makeup", label: t("look", "makeup"),
-        value: tx(s?.makeup_look?.name) || [tx(s?.lip?.name), tx(s?.eye?.name)].filter(Boolean).join(", "),
+        value: tx(s?.makeup_look?.name) || [tx(s?.lip?.name), tx(s?.eye?.name)].filter(Boolean).join(" - "),
         hex: s?.lip?.hex ?? (s?.makeup_look?.attributes.lip_hex as string | undefined) ?? c("accent"),
       };
   const items = [
@@ -85,10 +86,8 @@ export default function LookScreen() {
     },
     third,
   ];
-  const productsFor = (area: "skin" | "hair") =>
-    (s?.products ?? []).filter((p) => p.area === area).map((p) => tx(p.name)).join(", ");
-  const skinProducts = productsFor("skin");
-  const hairProducts = productsFor("hair");
+  // Skin products only: Maletti does no hair analysis, so no hair products.
+  const skinProducts = (s?.products ?? []).filter((p) => p.area === "skin").map((p) => tx(p.name)).join(", ");
 
   return (
     <Screen step={6}>
@@ -126,9 +125,9 @@ export default function LookScreen() {
         borderRadius: 16, background: c("surface"), border: `1px solid ${c("line")}`,
       }}>
         <Icon d={ICON.bottle} size={20} width={1.5} stroke="var(--mm-icon-fg)" />
-        {/* Skin: what the customer added from the AI picks · Hair: AI picks for the chosen hair look */}
+        {/* Skin: what the customer added from the AI picks */}
         <span style={{ flex: "1 1 auto", minWidth: 0, display: "flex", flexDirection: "column", gap: 3 }}>
-          {[["productsTitle", skinProducts], ["hairProductsTitle", hairProducts]].map(([title, list]) => (
+          {[["productsTitle", skinProducts]].map(([title, list]) => (
             <span key={title} style={{ display: "flex", flexDirection: "column", gap: 1, minWidth: 0 }}>
               <span style={{ fontSize: 12, color: c("ink-muted") }}>{t("look", title)}</span>
               <span style={{ fontSize: 14, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", color: list ? c("ink") : c("ink-faint") }}>
@@ -159,13 +158,13 @@ export default function LookScreen() {
       </div>
       <ErrorLine message={error} />
 
-      <div style={{ flex: "0 0 auto", padding: "12px 34px 30px 34px", display: "flex", flexDirection: "column", gap: 10 }}>
-        {/* Like beauty_platform: the journey ends on the report page (QR → PDF download). */}
+      {/* Like beauty_platform: the journey ends on the report page (QR → PDF download). */}
+      <ActionBar>
         <PrimaryButton disabled={!saved}
           onClick={() => router.push(shareToken ? `/report?token=${encodeURIComponent(shareToken)}` : "/report")}>
           {t("report", "cta")}
         </PrimaryButton>
-      </div>
+      </ActionBar>
     </Screen>
   );
 }

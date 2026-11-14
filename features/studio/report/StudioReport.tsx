@@ -4,7 +4,7 @@ import { useMemo, type CSSProperties, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import type { AnalysisTab, CatalogItem, I18n, PublicReport, TryOn } from "../api";
 import { theme } from "../theme";
-import { styleImage } from "../theme/styleImages";
+import type { SkinServiceCard } from "../context/StudioContext";
 import { c, Diamond, SERIF } from "../ui";
 import { markingsOf, SkinMapLegend, SkinMapPhoto, SKIN_METRICS } from "../components/SkinMap";
 import ColourHarmonyPages, { colourHarmonyData } from "./ColourHarmonyPages";
@@ -40,16 +40,16 @@ export default function StudioReport({ report: raw, variant = "screen" }: { repo
    * Every finished try-on of one kind (one per picture), oldest first; the one the customer went on with is
    * marked: the look's choice for that step (same option), its latest picture.
    */
-  const tried = (kind: "cut" | "colour"): TriedItem[] => {
-    const field = kind === "cut" ? "item" : "shade";
-    const chosenKey = kind === "cut" ? look?.cut?.key : look?.hair_shade?.key;
-    const chosenItem = kind === "cut" ? look?.cut : look?.hair_shade;
+  const tried = (kind: TryOn["kind"]): TriedItem[] => {
+    const field = { cut: "item", colour: "shade", beard: "beard", makeup: "look" }[kind];
+    const chosenItem = { cut: look?.cut, colour: look?.hair_shade, beard: look?.beard, makeup: look?.makeup_look }[kind];
+    const chosenKey = chosenItem?.key;
     const seen = new Set<string>();
     const list = report.tryons.filter((x) => x.kind === kind && x.status === "done" && x.output_url && !seen.has(x.output_url) && seen.add(x.output_url));
     const chosenId = [...list].reverse().find((x) => chosenKey && x.params[field] === chosenKey)?.id;
     return list.map((x) => {
       const key = x.params[field] as string | undefined;
-      const name = !key ? tr("tryon.yourPhoto")
+      const name = !key ? (kind === "makeup" && (x.params.lip || x.params.eye || x.params.lip_key || x.params.eye_key) ? tr("look.makeup") : tr("tryon.yourPhoto"))
         : key === chosenKey && chosenItem ? tx(chosenItem.name)
         : key.replace(/_/g, " ").replace(/^./, (ch) => ch.toUpperCase());
       return { id: x.id, src: x.output_url as string, name, chosen: x.id === chosenId };
@@ -61,7 +61,9 @@ export default function StudioReport({ report: raw, variant = "screen" }: { repo
   const face = tab("face");
   const colour = tab("colour");
   const skinProducts = (look?.products ?? []).filter((p) => p.area === "skin");
-  const hairProducts = (look?.products ?? []).filter((p) => p.area === "hair");
+  /** Salon skin services recommended on the mirror (saved with the look in params.skin_services). */
+  const skinServices = (((look?.params as Record<string, unknown> | undefined)?.skin_services as SkinServiceCard[] | undefined) ?? [])
+    .filter((x) => x && x.title);
   const date = new Date(report.created_at ?? report.started_at ?? Date.now()).toLocaleDateString(report.locale, {
     day: "numeric", month: "long", year: "numeric",
   });
@@ -107,11 +109,14 @@ export default function StudioReport({ report: raw, variant = "screen" }: { repo
         ]} />
       </Page>
 
-      {/* ---------------------------------------------------------------- tried looks */}
-      {tried("cut").length || tried("colour").length ? (
+      {/* ---------------------------------------------------------------- tried looks
+          Only the customer's own try-on results — no catalogue / model pictures anywhere in the report. */}
+      {(["cut", "colour", "beard", "makeup"] as const).some((k) => tried(k).length) ? (
         <Page ctx={ctx} eyebrow={tr("report.triedEyebrow")} title={tr("report.triedTitle")} text={tr("report.triedText")}>
           <Tried ctx={ctx} title={tr("look.cut")} items={tried("cut")} />
           <Tried ctx={ctx} title={tr("look.colour")} items={tried("colour")} />
+          {report.gender === "man" ? <Tried ctx={ctx} title={tr("look.beard")} items={tried("beard")} />
+            : <Tried ctx={ctx} title={tr("look.makeup")} items={tried("makeup")} />}
         </Page>
       ) : null}
 
@@ -146,6 +151,13 @@ export default function StudioReport({ report: raw, variant = "screen" }: { repo
         </Page>
       ) : null}
 
+      {/* ---------------------------------------------------------------- salon skin services (with their images) */}
+      {skinServices.length ? (
+        <Page ctx={ctx} eyebrow={tr("results.tabSkin")} title={tr("skinServices.title")} text={tr("skinServices.hint")}>
+          <Services ctx={ctx} items={skinServices} />
+        </Page>
+      ) : null}
+
       {/* ---------------------------------------------------------------- face */}
       {face ? (
         <Page ctx={ctx} eyebrow={tr("results.tabFace")} title={tx(face.label?.name)} text={tx(face.summary) || tx(face.label?.desc)}>
@@ -155,11 +167,9 @@ export default function StudioReport({ report: raw, variant = "screen" }: { repo
             [tr("face.jaw"), value(tr, face.metrics.jawline)],
           ]} />
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-            {look?.cut ? <Pick ctx={ctx} label={tr("look.cut")} item={look.cut} image={shot("cut") || styleImage("haircut", look.cut.key, look.cut.image_url)} /> : null}
-            {look?.beard ? <Pick ctx={ctx} label={tr("look.beard")} item={look.beard} image={shot("beard") || styleImage("beard_style", look.beard.key, look.beard.image_url)} /> : null}
+            {look?.cut && shot("cut") ? <Pick ctx={ctx} label={tr("look.cut")} item={look.cut} image={shot("cut")} /> : null}
+            {look?.beard && shot("beard") ? <Pick ctx={ctx} label={tr("look.beard")} item={look.beard} image={shot("beard")} /> : null}
           </div>
-          <Suggested ctx={ctx} title={tr("face.cutsTitle")} items={face.recommendations.haircut ?? []} kind="haircut" />
-          {report.gender === "man" ? <Suggested ctx={ctx} title={tr("face.beardTitle")} items={face.recommendations.beard_style ?? []} kind="beard_style" /> : null}
         </Page>
       ) : null}
 
@@ -168,25 +178,18 @@ export default function StudioReport({ report: raw, variant = "screen" }: { repo
         <Page ctx={ctx} eyebrow={tr("results.tabColour")} title={tx(colour.label?.name)} text={tx(colour.summary) || tx(colour.label?.desc)}>
           <Swatches title={tr("report.palette")} hexes={((colour.label?.attributes?.palette as string[] | undefined) ?? []).slice(0, 8)} />
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-            {look?.hair_shade ? (
+            {look?.hair_shade && shot("colour") ? (
               <Pick ctx={ctx} label={tr("look.colour")} item={look.hair_shade} sub={look.technique ? tx(look.technique.name) : undefined}
-                image={shot("colour") || styleImage("hair_shade", look.hair_shade.key, look.hair_shade.image_url)} />
+                image={shot("colour")} />
             ) : null}
-            {look?.makeup_look ? <Pick ctx={ctx} label={tr("look.makeup")} item={look.makeup_look} image={shot("makeup")} /> : null}
+            {look?.makeup_look && shot("makeup") ? <Pick ctx={ctx} label={tr("look.makeup")} item={look.makeup_look} image={shot("makeup")} /> : null}
           </div>
-          <Suggested ctx={ctx} title={tr("face.colourTitle")} items={colour.recommendations.hair_shade ?? []} kind="hair_shade" wide />
           <Swatches title={tr("colour.dressTitle")} hexes={(colour.recommendations.clothing_colour ?? []).map((x) => x.hex).filter(Boolean) as string[]} />
         </Page>
       ) : null}
 
       {harmony ? <ColourHarmonyPages data={harmony} pad={pad} /> : null}
 
-      {/* ---------------------------------------------------------------- hair products */}
-      {hairProducts.length ? (
-        <Page ctx={ctx} eyebrow={tr("report.homeCare")} title={tr("look.hairProductsTitle")}>
-          <Products ctx={ctx} items={hairProducts} />
-        </Page>
-      ) : null}
     </div>
   );
 }
@@ -317,28 +320,6 @@ function Pick({ ctx, label, item, image, sub }: { ctx: Ctx; label: string; item:
   );
 }
 
-function Suggested({ ctx, title, items, kind, wide }: { ctx: Ctx; title: string; items: CatalogItem[]; kind: string; wide?: boolean }) {
-  const list = items.slice(0, 3);
-  if (!list.length) return null;
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-      <span style={{ ...SERIF, fontSize: 22 }}>{title}</span>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 12 }}>
-        {list.map((i) => {
-          const img = styleImage(kind, i.key, i.image_url);
-          return (
-            <div key={i.key} style={{ display: "flex", flexDirection: "column", gap: 5, minWidth: 0 }}>
-              <div style={{ aspectRatio: wide ? "2 / 1" : "4 / 5", borderRadius: 10, overflow: "hidden", background: i.hex || c("photo") }}>
-                {img ? <img src={img} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "50% 15%", display: "block" }} /> : null}
-              </div>
-              <span style={{ fontSize: 14, lineHeight: 1.25, textAlign: "center", color: c("ink-muted") }}>{ctx.tx(i.name)}</span>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
 
 function Swatches({ title, hexes }: { title: string; hexes: string[] }) {
   if (!hexes.length) return null;
@@ -350,6 +331,30 @@ function Swatches({ title, hexes }: { title: string; hexes: string[] }) {
           <span key={`${h}-${i}`} style={{ width: 38, height: 38, borderRadius: 19, background: h, border: `1px solid ${c("line")}` }} />
         ))}
       </div>
+    </div>
+  );
+}
+
+/** Recommended salon skin services: picture, name, duration · price, why. */
+function Services({ ctx, items }: { ctx: Ctx; items: SkinServiceCard[] }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      {items.map((x, i) => (
+        <div key={`${x.title}-${i}`} style={{ ...card, display: "flex", gap: 14, padding: 10, alignItems: "center" }}>
+          <div style={{ width: 84, height: 84, flex: "0 0 auto", borderRadius: 12, overflow: "hidden", background: c("photo") }}>
+            {x.image ? <img src={x.image} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} /> : null}
+          </div>
+          <div style={{ minWidth: 0, display: "flex", flexDirection: "column", gap: 3 }}>
+            <span style={{ ...SERIF, fontSize: 20, lineHeight: 1.2 }}>{x.title}</span>
+            {x.duration || x.price != null ? (
+              <span style={{ fontSize: 14, color: c("accent") }}>
+                {[x.duration ? `${x.duration} ${ctx.tr("skinServices.min")}` : "", x.price != null ? String(x.price) : ""].filter(Boolean).join(" · ")}
+              </span>
+            ) : null}
+            {x.reason ? <span style={{ fontSize: 14, lineHeight: 1.4, color: c("ink-muted") }}>{x.reason}</span> : null}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
@@ -368,7 +373,7 @@ function Products({ ctx, title, items }: { ctx: Ctx; title?: string; items: Prod
             <span style={{ fontSize: 17 }}>{ctx.tx(p.name)}</span>
             {p.product?.brand ? (
               <span style={{ fontSize: 14, color: c("ink-muted") }}>
-                {p.product.brand}{p.product.price != null ? ` · ${p.product.price} ${p.product.currency ?? ""}` : ""}
+                {p.product.brand}{p.product.price != null ? ` · ${p.product.price}` : ""}
               </span>
             ) : null}
             {ctx.tx(p.reason) || ctx.tx(p.sub) ? <span style={{ fontSize: 14, color: c("ink-muted") }}>{ctx.tx(p.reason) || ctx.tx(p.sub)}</span> : null}

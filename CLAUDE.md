@@ -16,6 +16,9 @@ feature module: `features/studio/`.
   (sessionStorage), theme → `--bv-*` CSS variables.
 - `features/studio/screens/*` – one screen per mockup step; `app/[locale]/(main)/*` routes are thin wrappers.
 - `/` = dark welcome screen (`HomeScreen`, `home*` colours in the theme) → `/capture` (step 1, camera).
+- Consultation: Profile → straight to `/journey/hairstyle` (no analysis screen). The analysis runs once in the background
+  (`ensureAnalysis` in `pending-upload.ts`); each service page shows its own 5 s scan. Skin: results → map → products → services.
+- Custom hair colours = FLUX_VERSION_3's 24 shades only (`hair_shade` items `flux_*`, `attributes.source = "flux"`), 4×4 per page.
 - `app/[locale]/l/[token]` – public QR / e-mail page (outside MirrorFrame, no login).
 - `/stylist` – stylist tablet inbox (polls every 5 s).
 

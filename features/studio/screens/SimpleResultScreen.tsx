@@ -7,7 +7,7 @@ import { useCatalog, useStudio } from "../context/StudioContext";
 import { SERVICE_MODULE, SERVICE_TRY, type Service } from "../flows";
 import { saveLookDraft } from "../save-look";
 import { markingsOf, SkinMapPhoto, SKIN_METRICS } from "../components/SkinMap";
-import { c, CompareArch, ErrorLine, H1, ICON, LoadingStage, Muted, OutlineButton, PrimaryButton, Screen, SERIF } from "../ui";
+import { ActionBar, c, CompareArch, ErrorLine, H1, ICON, LoadingStage, Muted, PrimaryButton, Screen, SERIF } from "../ui";
 
 const SERVICES: Service[] = ["hairstyle", "beard", "colour", "armocromia", "makeup", "skin"];
 
@@ -97,10 +97,9 @@ export default function SimpleResultScreen() {
       </div>
 
       <ErrorLine message={error} />
-      <div style={{ flex: "0 0 auto", display: "flex", flexDirection: "column", gap: 10, padding: "14px 34px 34px" }}>
+      <ActionBar link={{ label: t("simple", "another"), onClick: () => router.push("/service") }}>
         <PrimaryButton iconRight={ICON.next} disabled={saving} onClick={report}>{t("simple", "report")}</PrimaryButton>
-        <OutlineButton onClick={() => router.push("/service")}>{t("simple", "another")}</OutlineButton>
-      </div>
+      </ActionBar>
     </Screen>
   );
 }

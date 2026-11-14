@@ -4,7 +4,7 @@
  * Mockup building blocks ("Smart Mirror Maletti"). Sizes are mockup pixels (540 × 960 stage, zoomed ×2);
  * every colour/font/shadow is a theme variable — see features/studio/theme/maletti.ts.
  */
-import { useState, type CSSProperties, type ReactNode, type SyntheticEvent } from "react";
+import { createContext, useContext, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode, type SyntheticEvent } from "react";
 import { useRouter } from "next/navigation";
 import { ReactCompareSlider, ReactCompareSliderImage } from "react-compare-slider";
 import { theme } from "../theme";
@@ -81,30 +81,45 @@ export function Stage({ children, animKey }: { children: ReactNode; animKey?: st
   );
 }
 
-export function Header({ onBack }: { onBack?: (() => void) | false }) {
-  const router = useRouter();
-  const { t } = useStudio();
-  const back = onBack === undefined ? () => router.back() : onBack;
+export function Header() {
   return (
     <div style={{
       flex: "0 0 auto", height: 88, boxSizing: "border-box", padding: "0 22px", background: c("header"),
-      borderBottom: `1px solid ${c("header-line")}`, display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center",
+      borderBottom: `1px solid ${c("header-line")}`, display: "flex", alignItems: "center", justifyContent: "center",
     }}>
-      {back ? (
-        <button type="button" onClick={back} style={{
-          justifySelf: "start", display: "flex", alignItems: "center", gap: 6, height: 44, padding: "0 16px 0 10px",
-          borderRadius: 22, border: `1px solid ${c("line-strong")}`, background: c("surface"),
-          color: c("ink"), fontSize: 14, cursor: "pointer",
-        }}>
-          <Icon d={ICON.back} size={18} width={1.8} />
-          <span>{t("common", "back")}</span>
-        </button>
-      ) : <div style={{ width: 44, height: 44 }} />}
       <img src={theme.brand.logo} alt={theme.brand.name} style={{ display: "block", height: theme.brand.logoHeight, width: "auto" }} />
-      {/* Language is changed in Settings (camera setup), not from the header. */}
-      <div />
+      {/* Language is changed in Settings (camera setup), not from the header. Back is at the bottom (BackBar). */}
     </div>
   );
+}
+
+/**
+ * "Back" on every screen: always the previous step the customer actually saw (browser history), not the previous module.
+ * Screens with steps inside one page (the try-on chain) pass their own `onBack` to <Screen>.
+ * A screen puts <BackButton /> on the left of its bottom button row; a screen without one gets it alone at the bottom.
+ */
+type BackApi = { back: () => void; register: () => () => void };
+const BackCtx = createContext<BackApi | null>(null);
+
+function BackPill({ onClick, style }: { onClick: () => void; style?: CSSProperties }) {
+  const { t } = useStudio();
+  return (
+    <button type="button" onClick={onClick} aria-label={t("common", "back")} style={{
+      flex: "0 0 auto", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, height: 64, padding: "0 24px 0 18px",
+      borderRadius: 32, border: `1px solid ${c("line-strong")}`, background: "transparent", color: c("ink"), fontSize: 16, cursor: "pointer",
+      ...style,
+    }}>
+      <Icon d={ICON.back} size={20} width={1.8} />
+      <span>{t("common", "back")}</span>
+    </button>
+  );
+}
+
+/** Back, for the left of a screen's bottom button row (hides the screen's stand-alone Back while it is shown). */
+export function BackButton({ style }: { style?: CSSProperties }) {
+  const ctx = useContext(BackCtx);
+  useLayoutEffect(() => ctx?.register(), [ctx]);
+  return ctx ? <BackPill onClick={ctx.back} style={style} /> : null;
 }
 
 export function StepBar({ step, total = 6 }: { step: number; total?: number }) {
@@ -124,15 +139,58 @@ export function StepBar({ step, total = 6 }: { step: number; total?: number }) {
   );
 }
 
-/** Header + step bar + content column. */
+/** Small underlined text action ("Skip this service", "Try another service", "Show QR code"). */
+export function TextLink({ children, onClick, disabled }: { children: ReactNode; onClick: () => void; disabled?: boolean }) {
+  return (
+    <button type="button" onClick={onClick} disabled={disabled} style={{
+      padding: "4px 2px", background: "none", border: "none", fontSize: 14, color: c("ink-muted"), cursor: disabled ? "default" : "pointer",
+      textDecoration: "underline", textUnderlineOffset: 4, opacity: disabled ? 0.45 : 1,
+    }}>
+      {children}
+    </button>
+  );
+}
+
+/**
+ * The bottom of every screen, same everywhere: an optional small underlined link on top (the secondary action), then
+ * Back on the left and the screen's main button(s) in one row.
+ */
+export function ActionBar({ link, children }: {
+  link?: { label: string; onClick: () => void; disabled?: boolean } | null; children?: ReactNode;
+}) {
+  return (
+    <div style={{ flex: "0 0 auto", display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 10, padding: "10px 34px 32px 34px" }}>
+      {link ? <TextLink onClick={link.onClick} disabled={link.disabled}>{link.label}</TextLink> : null}
+      <div style={{ display: "flex", alignItems: "stretch", gap: 12, width: "100%" }}>
+        <BackButton />
+        {children}
+      </div>
+    </div>
+  );
+}
+
+/** Header + step bar + content column + Back (`onBack={false}`: none; a function: a step inside the page). */
 export function Screen({ step, onBack, animKey, children }: {
   step?: number; onBack?: (() => void) | false; animKey?: string; children: ReactNode;
 }) {
+  const router = useRouter();
+  const backRef = useRef<() => void>(() => {});
+  backRef.current = onBack || (() => (window.history.length > 1 ? router.back() : router.push("/")));
+  const [inline, setInline] = useState(0); // <BackButton>s shown in the screen's own button rows
+  const api = useMemo<BackApi>(() => ({
+    back: () => backRef.current(),
+    register: () => { setInline((n) => n + 1); return () => setInline((n) => n - 1); },
+  }), []);
   return (
     <Stage animKey={animKey}>
-      <Header onBack={onBack} />
-      {step ? <StepBar step={step} /> : null}
-      {children}
+      <BackCtx.Provider value={onBack === false ? null : api}>
+        <Header />
+        {step ? <StepBar step={step} /> : null}
+        {children}
+        {onBack === false || inline > 0 ? null : (
+          <div style={{ flex: "0 0 auto", display: "flex", padding: "10px 34px 32px 34px" }}><BackPill onClick={api.back} /></div>
+        )}
+      </BackCtx.Provider>
     </Stage>
   );
 }

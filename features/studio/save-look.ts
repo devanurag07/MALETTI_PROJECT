@@ -17,7 +17,8 @@ export async function saveLookDraft(session: Session, look: LookDraft): Promise<
     lip: look.lip ?? lp("makeup", "lip"),
     eye: look.eye ?? lp("makeup", "eye"),
     beard: catalogKey(look.beard ?? lp("beard", "beard")),
-    params: look.params,
+    // Recommended salon skin services ride along in params, so the report (and its PDF) can list them.
+    params: look.skinServices?.length ? { ...look.params, skin_services: look.skinServices } : look.params,
     products: look.products,
     final_tryon_id: look.lastTryon?.status === "done" ? look.lastTryon.id : null,
     headline: {},

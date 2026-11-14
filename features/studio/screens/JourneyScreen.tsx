@@ -4,21 +4,21 @@ import ColourHarmonyPages, { colourHarmonyData, harmonyPageCount } from "../repo
 import { BLUSH, EYESHADOW, LIPSTICK } from "../data/makeup";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { waitForPendingUpload } from "../pending-upload";
-import { studioApi, type AnalysisTab, type CatalogItem, type Recommendation, type Results } from "../api";
-import { useCatalog, useStudio } from "../context/StudioContext";
+import { ensureAnalysis } from "../pending-upload";
+import { studioApi, type AnalysisTab, type CatalogItem, type Recommendation, type Results, type SkinService } from "../api";
+import { useCatalog, useCustomShades, useStudio } from "../context/StudioContext";
 import {
   JOURNEY, journeyNext, journeyPage, SERVICE_MODULE, SERVICE_TRY, type Service,
 } from "../flows";
 import { styleImage } from "../theme/styleImages";
 import {
-  Arch, c, Card, Carousel, ColorChip, ColorDot, ErrorLine, GuidePill, H1, HeroBackdrop, Icon, ICON, LoadingStage, Muted, OutlineButton, Photo,
-  PrimaryButton, Screen, SERIF, ShadeSwatch, Spinner, Tabs,
+  Arch, c, Card, Carousel, ColorChip, ColorDot, ErrorLine, GuidePill, H1, HeroBackdrop, Icon, ICON, LoadingStage, Muted, Photo,
+  ActionBar, PrimaryButton, Screen, SectionTitle, SERIF, ShadeSwatch, Spinner, Tabs,
 } from "../ui";
 import { markingsOf, SkinMapLegend, SkinMapPhoto } from "../components/SkinMap";
 import PhotoQR from "../components/PhotoQR";
 import ScanOverlay from "../components/ScanOverlay";
-import { colourModels, HairCustomise, MakeupPalette, forYouFirst, RecommendedGrid, useShadeDetails, SkinProducts, SkinTab, StyleCard, TechniqueCard } from "./ResultsScreen";
+import { colourModels, HairCustomise, MakeupLookCards, forYouFirst, RecommendedGrid, useShadeDetails, SkinProducts, SkinTab, StyleCard, TechniqueCard } from "./ResultsScreen";
 
 const SERVICE_ICON: Record<Service, string> = {
   hairstyle: ICON.serviceCut, beard: ICON.serviceBeard, armocromia: ICON.colour,
@@ -75,7 +75,7 @@ export function ServiceIntro({ service }: { service: Service }) {
           <Icon d={SERVICE_ICON[service]} size={58} width={1.2} stroke="var(--mm-ink)" style={{ position: "relative" }} />
         </div>
       </div>
-      <div style={{ flex: "0 0 auto", padding: "4px 34px 34px 34px", display: "flex", flexDirection: "column", gap: 14 }}>
+      <div style={{ flex: "0 0 auto", padding: "4px 34px 0 34px", display: "flex", flexDirection: "column", gap: 14 }}>
         {status ? (
           <span style={{ alignSelf: "flex-start", display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 500, color: c("on-dark"), background: c("accent-soft"), borderRadius: 10, padding: "3px 12px" }}>
             {status === "done" ? <Icon d={ICON.check} size={12} width={2.4} /> : null}
@@ -86,19 +86,23 @@ export function ServiceIntro({ service }: { service: Service }) {
         <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 10 }}>
           {lines.map((l, i) => <Muted key={i} size={16} style={{ lineHeight: 1.55 }}>{l}</Muted>)}
         </div>
+      </div>
+      {/* Same bottom as every screen: "Skip this service" link, then Back · Proceed. */}
+      <ActionBar link={{
+        label: t("journey", "skipService"),
+        onClick: () => {
+          if (simple) return router.push("/service");
+          if (status !== "done") mark("skipped");
+          router.push(journeyNext(gender, service));
+        },
+      }}>
         <PrimaryButton iconRight={ICON.next} onClick={() => {
           if (simple) return router.push(`${journeyPage(service)}?simple=1`);
           mark("done"); router.push(journeyPage(service));
         }}>
           {t("journey", "proceed")}
         </PrimaryButton>
-        <OutlineButton onClick={() => {
-          if (simple) return router.push("/service");
-          if (status !== "done") mark("skipped"); router.push(journeyNext(gender, service));
-        }}>
-          {t("journey", "skip")}
-        </OutlineButton>
-      </div>
+      </ActionBar>
     </Screen>
   );
 }
@@ -110,16 +114,24 @@ export function ServicePage({ service }: { service: Service }) {
   // Simple Service (one service on its own): no journey bar, back to the service list when done.
   const simple = useSearchParams().get("simple") === "1";
   const needsAnalysis = service === "armocromia" || service === "skin";
-  const [results, setResults] = useState<Results | null>(() => studioApi.cachedResults(session?.id));
+  // Cached results only count once this service's module is analysed (an earlier fetch may predate the analysis).
+  const [results, setResults] = useState<Results | null>(() => {
+    const r = studioApi.cachedResults(session?.id);
+    return r?.tabs.some((x) => x.module === SERVICE_MODULE[service] && x.status === "done") ? r : null;
+  });
   const [error, setError] = useState<string | null>(null);
   const [sel, setSel] = useState<string | null>(null);
-  /** Armocromia: which of its pages is shown (Next goes through them, then on to the next service). */
-  const [armoPage, setArmoPage] = useState(0);
-  // Skin / colour harmony: a 5-second "analysing" animation on the photo before the results (once per session).
+  /**
+   * Armocromia: which of its pages is shown (Next goes through them, then on to the next service). In the URL (`?p=`),
+   * so each page is a step of its own: the bottom Back returns to the previous page, and coming back lands on the last one.
+   */
+  const search = useSearchParams();
+  const armoPage = Math.max(0, Number(search.get("p")) || 0);
+  const setArmoPage = (n: number) => router.push(`${journeyPage(service)}?p=${n}${simple ? "&simple=1" : ""}`);
+  // Every service: a 5-second "analysing" animation on the photo before its results (once per service and session).
+  // There is no separate analysis screen: the analysis runs in the background from the Profile step.
   const scanKey = session ? `mm-${service}-scan:${session.id}` : "";
   const [scanning, setScanning] = useState(() => {
-    if (service !== "skin" && service !== "armocromia") return false;
-    if (studioApi.cachedResults(session?.id)?.tabs.some((x) => x.module === SERVICE_MODULE[service] && x.status === "done")) return false;
     try { return !sessionStorage.getItem(scanKey); } catch { return true; }
   });
   useEffect(() => {
@@ -134,18 +146,13 @@ export function ServicePage({ service }: { service: Service }) {
 
   useEffect(() => {
     if (!session) return;
-    // Armocromia / skin need the analysis: run it when this session has none yet (e.g. Simple Service).
-    (async () => {
-      await waitForPendingUpload();
-      let r = await studioApi.results(session.id);
-      if ((needsAnalysis || simple) && !r.tabs.some((x) => x.module === SERVICE_MODULE[service] && x.status === "done")) r = await studioApi.analyze(session.id);
-      return r;
-    })().then(setResults).catch((e: Error) => setError(e.message));
+    // The (shared, once per session) analysis — already running in the background, or started now (Simple Service).
+    ensureAnalysis(session.id).then(setResults).catch((e: Error) => setError(e.message));
   }, [session?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!config || !session) return <LoadingStage />;
-  // The scan animation stays until the results are there (at least 5 s).
-  if (scanning || ((needsAnalysis || simple) && !results && !error))
+  // The scan animation stays until the results are there (at least 5 s the first time).
+  if (scanning || (!results && !error))
     return <ServiceScan service={service} />;
   // Skin: Next first shows the skin map (markings on the photo), then goes on.
   const result = `/service/result?s=${service}`;
@@ -173,19 +180,17 @@ export function ServicePage({ service }: { service: Service }) {
       {body}
       {/* Skin results don't fill the height: push the button to the bottom. */}
       {service === "skin" ? <div style={{ flex: "1 1 auto" }} /> : null}
-      <div style={{ flex: "0 0 auto", display: "grid", gridTemplateColumns: kind ? "1fr 1fr" : "1fr", gap: 12, padding: "14px 34px 34px 34px" }}>
+      {/* Try-on services: "Skip this service" link, then Back · Try it on. Others: Back · Next. */}
+      <ActionBar link={kind ? { label: last ? t("journey", "finish") : t("journey", "skipService"), onClick: () => router.push(next) } : null}>
         {kind ? (
-          <>
-            <OutlineButton onClick={() => router.push(next)}>{t("journey", last ? "finish" : "next")}</OutlineButton>
-            <PrimaryButton icon={ICON.sparkle} disabled={!sel} onClick={tryIt}>{t("journey", "try")}</PrimaryButton>
-          </>
+          <PrimaryButton icon={ICON.sparkle} disabled={!sel} onClick={tryIt}>{t("journey", "try")}</PrimaryButton>
         ) : (
           <PrimaryButton iconRight={ICON.next} onClick={() => {
-            if (armoPage < armoPages - 1) { setArmoPage((p) => p + 1); return; }
+            if (armoPage < armoPages - 1) { setArmoPage(armoPage + 1); return; }
             router.push(next);
           }}>{nextLabel}</PrimaryButton>
         )}
-      </div>
+      </ActionBar>
     </Screen>
   );
 }
@@ -200,6 +205,7 @@ export function Options({ service, a, sel, setSel, tab: tabProp, bare }: {
   const cuts = useCatalog("haircut");
   const beards = useCatalog("beard_style").filter((b) => b.key !== "none");
   const shades = useCatalog("hair_shade");
+  const customShades = useCustomShades();
   const looks = useCatalog("makeup_look");
   const techniques = useCatalog("hair_technique");
   const technique = look.technique ?? techniques[0]?.key ?? null;
@@ -222,7 +228,6 @@ export function Options({ service, a, sel, setSel, tab: tabProp, bare }: {
     if (sel === null) { const k = current ?? best ?? null; if (k) setSel(k); }
   }, [current, best]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const badge = (key: string) => (key === best ? t("face", "best") : recKeys.has(key) ? t("face", "forYou") : undefined);
   const imageKind = service === "hairstyle" ? "haircut" : service === "beard" ? "beard_style" : "hair_shade";
 
   const shadeDetails = useShadeDetails();
@@ -231,20 +236,31 @@ export function Options({ service, a, sel, setSel, tab: tabProp, bare }: {
   /** Custom make-up: which FLUX category is shown (0 lipstick, 1 blush, 2 eyeshadow). */
   const [makeupCat, setMakeupCat] = useState(0);
   const tab = tabProp ?? tabState;
+  // Hairstyle "why": the backend's reason when it has one, else what the cut does for this face shape.
+  const shape = String(a?.label?.key ?? "");
+  const hairWhy = t("hair", ["oval", "round", "square", "oblong", "heart", "diamond", "triangle"].includes(shape) ? `why_${shape}` : "why_default");
+  // Hair colour "why": the backend's reason when it has one, else the colour season it was picked for.
+  const season = tx(a?.label?.name);
+  const shadeWhy = season ? t("colour", "whyShade", { season }) : t("colour", "whyShadeDefault");
   let content: ReactNode;
-  if (tab === "recommended") {
+  if (tab === "recommended" && service === "makeup") {
+    // Make-up: FLUX_VERSION_3-style look cards (one look at a time, its three shades).
+    const makeupWhy = season ? t("makeupLooks", "why", { season }) : t("makeupLooks", "whyDefault");
+    content = <MakeupLookCards items={rec} active={sel} onChange={setSel} why={() => makeupWhy} />;
+  } else if (tab === "recommended") {
     // Haircuts / beards / hair colours / make-up looks: all recommendations on one page.
     content = (
       <RecommendedGrid key={service} items={rec} active={sel} onChange={setSel}
+        rows={service === "hairstyle" || service === "colour"}
+        why={service === "hairstyle" ? () => hairWhy : service === "colour" ? () => shadeWhy : undefined}
         models={service === "colour" ? (x) => colourModels(gender, x.key) : undefined}
-        visual={service === "makeup" ? (x) => <MakeupPalette look={x} compact /> : undefined}
         focus={service === "beard" ? "50% 60%" : "50% 8%"}
         image={(x) => service === "makeup" ? styleImage("makeup_look", x.key, x.image_url) || null : styleImage(imageKind, x.key, x.image_url) || thumb} />
     );
   } else if (service === "colour") {
     content = (
       <>
-        <Carousel key="colour" perPage={12} columns={4} items={ordered.map((x) => (
+        <Carousel key="colour" perPage={16} columns={4} items={customShades.map((x) => (
           <ShadeSwatch key={x.key} image={styleImage("hair_shade", x.key, x.image_url) || thumb} name={tx(x.name)} mark={recKeys.has(x.key)}
             active={sel === x.key} onClick={() => setSel(x.key)} />
         ))} />
@@ -416,9 +432,9 @@ export function SkinMapPage() {
           <SkinMapLegend metrics={skin.metrics} markings={markings} label={(k) => t("skin", `metric_${k}`)} areasLabel={(n) => t("skinMap", "areas", { n })} />
         </div>
       )}
-      <div style={{ flex: "0 0 auto", padding: "14px 34px 34px 34px" }}>
+      {!results && !error ? null : <ActionBar>
         <PrimaryButton iconRight={ICON.next} onClick={() => router.push(next)}>{t("skin", "productsCta")}</PrimaryButton>
-      </div>
+      </ActionBar>}
     </Screen>
   );
 }
@@ -436,7 +452,8 @@ export function SkinProductsPage() {
   }, [session?.id]); // eslint-disable-line react-hooks/exhaustive-deps
   if (!config || !session) return <LoadingStage />;
   const skin = results?.tabs.find((x) => x.module === "skin" && x.status === "done");
-  const next = simple ? "/service/result?s=skin" : journeyNext(gender, "skin");
+  // Products → the salon's skin treatments (services) → on to the next service.
+  const next = `/journey/skin/services${simple ? "?simple=1" : ""}`;
   return (
     <Screen animKey="skin-products">
       {simple ? null : <JourneyBar service="skin" />}
@@ -447,9 +464,91 @@ export function SkinProductsPage() {
       ) : (
         <SkinProducts a={skin} />
       )}
-      <div style={{ flex: "0 0 auto", padding: "14px 34px 34px 34px" }}>
-        <PrimaryButton iconRight={ICON.next} onClick={() => router.push(next)}>{t("journey", next === "/look" || next.startsWith("/service") ? "finish" : "next")}</PrimaryButton>
+      {!results && !error ? null : <ActionBar>
+        <PrimaryButton iconRight={ICON.next} onClick={() => router.push(next)}>{t("skinServices", "cta")}</PrimaryButton>
+      </ActionBar>}
+    </Screen>
+  );
+}
+
+/** After the skin products: the salon's skin services (treatments) the AI picks for this skin, then the next service. */
+export function SkinServicesPage() {
+  const router = useRouter();
+  const simple = useSearchParams().get("simple") === "1";
+  const { t, tx, config, session, gender, updateLook } = useStudio();
+  const cacheKey = session ? `mm-skin-services:${session.id}` : "";
+  const [services, setServices] = useState<SkinService[] | null>(() => {
+    try { return cacheKey ? JSON.parse(sessionStorage.getItem(cacheKey) ?? "null") : null; } catch { return null; }
+  });
+  const [error, setError] = useState<string | null>(null);
+  useEffect(() => {
+    if (!session || services) return;
+    (async () => {
+      const r = await studioApi.results(session.id);
+      const skin = r.tabs.find((x) => x.module === "skin" && x.status === "done");
+      if (!skin) throw new Error(t("analysis", "failed"));
+      // Same input shape as the products: skin type, the 6 parameters (0–100, higher is better), concerns.
+      const metrics = Object.entries(skin.metrics).map(([k, v]) => ({ parameter: k, score: v }));
+      return studioApi.skinServices([{ skin_type: tx(skin.label?.name) || skin.label?.key || null, summary: tx(skin.summary) }, ...metrics]);
+    })()
+      .then((list) => {
+        setServices(list);
+        try { sessionStorage.setItem(cacheKey, JSON.stringify(list)); } catch {}
+        // Keep them with the look: the report shows them (with their images).
+        updateLook({
+          skinServices: list.map((x) => ({
+            title: x.title, image: x.image, price: x.price, duration: x.duration, reason: x.recommendation_reason || x.description,
+          })),
+        });
+      })
+      .catch((e: Error) => setError(e.message || t("skinServices", "failed")));
+  }, [session?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  if (!config || !session) return <LoadingStage />;
+  const next = simple ? "/service/result?s=skin" : journeyNext(gender, "skin");
+  const price = (x: SkinService) => (x.price != null ? String(x.price) : ""); // no currency code (INR) on the mirror
+
+  return (
+    <Screen animKey="skin-services">
+      {simple ? null : <JourneyBar service="skin" />}
+      <div style={{ flex: "1 1 auto", minHeight: 0, overflowY: "auto", display: "flex", flexDirection: "column", gap: 10, padding: "20px 34px 0 34px" }}>
+        <SectionTitle title={t("skinServices", "title")} hint={t("skinServices", "hint")} />
+        {!services && !error ? (
+          <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}><Spinner size={36} /></div>
+        ) : error ? (
+          <ErrorLine message={t("skinServices", "failed")} />
+        ) : !services?.length ? (
+          <div style={{ flex: "1 1 auto", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12, paddingBottom: 40, textAlign: "center" }}>
+            <span style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 64, height: 64, borderRadius: 20, background: c("icon-bg"), color: c("icon-fg") }}>
+              <Icon d={ICON.skin} size={28} width={1.5} />
+            </span>
+            <Muted size={15} style={{ maxWidth: 300 }}>{t("skinServices", "none")}</Muted>
+          </div>
+        ) : services.map((x) => (
+          <div key={x.id} style={{
+            display: "flex", alignItems: "flex-start", gap: 14, padding: "10px 12px 10px 10px", borderRadius: 20,
+            background: c("surface"), border: `1px solid ${c("line")}`,
+          }}>
+            <span style={{ flex: "0 0 auto", position: "relative", display: "flex", alignItems: "center", justifyContent: "center", width: 64, height: 64, borderRadius: 14, overflow: "hidden", background: c("icon-bg"), color: c("icon-fg") }}>
+              {x.image ? <Photo src={x.image} /> : <Icon d={ICON.skin} size={24} width={1.5} />}
+            </span>
+            <span style={{ display: "flex", flexDirection: "column", gap: 4, flex: "1 1 auto", minWidth: 0 }}>
+              <span style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 10 }}>
+                <span style={{ ...SERIF, fontSize: 18, lineHeight: 1.2 }}>{x.title}</span>
+                {price(x) ? <span style={{ flex: "0 0 auto", fontSize: 14, color: c("accent") }}>{price(x)}</span> : null}
+              </span>
+              {x.duration ? <span style={{ fontSize: 12, color: c("ink-muted") }}>{x.duration} {t("skinServices", "min")}</span> : null}
+              {x.recommendation_reason || x.description ? (
+                <span style={{ fontSize: 13, lineHeight: 1.45, color: c("ink-muted"), overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical" }}>
+                  {x.recommendation_reason || x.description}
+                </span>
+              ) : null}
+            </span>
+          </div>
+        ))}
       </div>
+      {!services && !error ? null : <ActionBar>
+        <PrimaryButton iconRight={ICON.next} onClick={() => router.push(next)}>{t("journey", next === "/look" || next.startsWith("/service") ? "finish" : "next")}</PrimaryButton>
+      </ActionBar>}
     </Screen>
   );
 }
@@ -473,7 +572,7 @@ function ServiceScan({ service }: { service: Service }) {
   const stages = [t(ns, "scanStage1"), t(ns, "scanStage2"), t(ns, "scanStage3")];
   const stage = stages[Math.min(stages.length - 1, Math.floor((pct / 100) * stages.length))];
   return (
-    <Screen animKey={`${service}-scan`}>
+    <Screen animKey={`${service}-scan`} onBack={false}>
       {simple ? null : <JourneyBar service={service} />}
       <div style={{ flex: "1 1 auto", minHeight: 0, position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <HeroBackdrop halo={[500, 520]} squares={[

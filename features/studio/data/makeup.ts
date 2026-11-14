@@ -84,3 +84,34 @@ export function lookShades(look: { key: string; attributes?: Record<string, unkn
   if (!look || !m) return null;
   return { lip: lipByKey(m.lip), eye: eyeByKey(m.eye), blush: lookBlush(look) };
 }
+
+/**
+ * A make-up look is named after its three FLUX shades: "Lips colour - Eyes colour - Blush colour" (per locale).
+ * Null for a look that is not in the table above (it keeps its own name).
+ */
+export function makeupLookName(look: { key: string; attributes?: Record<string, unknown> } | null | undefined): Record<string, string> | null {
+  const s = lookShades(look);
+  const parts = s ? [s.lip, s.eye, s.blush].filter(Boolean) : [];
+  if (!parts.length) return null;
+  const locales = new Set(parts.flatMap((p) => Object.keys(p!.name)));
+  return Object.fromEntries([...locales].map((l) => [l, parts.map((p) => p!.name[l] ?? p!.name.en).join(" - ")]));
+}
+
+/** Rename every make-up look in an API payload (catalogue, recommendations, saved look, report) — deep, in place. */
+export function renameMakeupLooks<T>(value: T, seen = new WeakSet<object>()): T {
+  if (!value || typeof value !== "object" || seen.has(value as object)) return value;
+  seen.add(value as object);
+  if (Array.isArray(value)) { value.forEach((v) => renameMakeupLooks(v, seen)); return value; }
+  const o = value as Record<string, unknown>;
+  if (o.kind === "makeup_look" && typeof o.key === "string") {
+    const name = makeupLookName(o as { key: string; attributes?: Record<string, unknown> });
+    if (name) {
+      // Keep the look's own title ("Peach glow") for headings; the name becomes "Lips - Eyes - Blush".
+      const attrs = (o.attributes as Record<string, unknown> | undefined) ?? {};
+      if (!attrs.look_title) o.attributes = { ...attrs, look_title: o.name };
+      o.name = name;
+    }
+  }
+  for (const v of Object.values(o)) renameMakeupLooks(v, seen);
+  return value;
+}

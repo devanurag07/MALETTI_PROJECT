@@ -1,6 +1,7 @@
 // Studio report → PDF (from beauty_platform app/api/session-report). Renders /<locale>/report-print/<token>.
 import { NextRequest, NextResponse } from "next/server";
 import { BASE_URL } from "@/core/constants/url-constants";
+import sharp from "sharp";
 
 
 export const runtime = 'nodejs';          // IMPORTANT: not 'edge'
@@ -53,15 +54,42 @@ export async function GET(req: NextRequest,
         const page = await browser.newPage();
         await page.setViewport(VIEWPORT);
 
-        // Wait for page to load with all resources
-        await page.goto(target, {
-            waitUntil: ["load", "domcontentloaded", "networkidle0"],
-            timeout: 60_000
+        // Shrink every remote photo as it loads (try-on results / the customer's photo come full size from the CDN):
+        // the PDF looks the same but is a fraction of the size, so storing and downloading it is fast.
+        await page.setRequestInterception(true);
+        page.on("request", (request) => {
+            const src = request.url();
+            if (request.resourceType() !== "image" || !/^https?:/.test(src) || src.startsWith(origin)) {
+                void request.continue();
+                return;
+            }
+            void (async () => {
+                try {
+                    const res = await fetch(src, { signal: AbortSignal.timeout(15_000) });
+                    if (!res.ok) throw new Error(String(res.status));
+                    const small = await sharp(Buffer.from(await res.arrayBuffer()))
+                        .rotate()
+                        .resize({ width: 1200, height: 1600, fit: "inside", withoutEnlargement: true })
+                        .flatten({ background: "#000000" })
+                        .jpeg({ quality: 78, mozjpeg: true })
+                        .toBuffer();
+                    await request.respond({ status: 200, contentType: "image/jpeg", body: small, headers: { "Access-Control-Allow-Origin": "*" } });
+                } catch {
+                    await request.continue().catch(() => {});
+                }
+            })();
         });
 
-        // The print page sizes one PDF page per report section once its images load.
-        await page.waitForFunction(() => window.__reportReady === true, { timeout: 45_000 });
+        const t0 = Date.now();
+        // Only the document itself: the print page waits for its own data, fonts and images and then sets
+        // window.__reportReady. ("networkidle0" here used to burn most of the serverless time limit before rendering.)
+        await page.goto(target, { waitUntil: "domcontentloaded", timeout: 30_000 });
 
+        // The print page sizes one PDF page per report section once its images load.
+        await page.waitForFunction(() => window.__reportReady === true, { timeout: 45_000, polling: 250 });
+        console.log(`[studio-report] ${token}: page ready in ${Date.now() - t0} ms`);
+
+        const t1 = Date.now();
         const pdf = await page.pdf({
             printBackground: true,
             preferCSSPageSize: true, // page sizes come from the print page's @page rules
@@ -69,12 +97,14 @@ export async function GET(req: NextRequest,
         });
 
 
+        console.log(`[studio-report] ${token}: PDF ${Math.round(pdf.length / 1024)} KB in ${Date.now() - t1} ms`);
+
         // ?store=1 (kiosk, in the background): keep the PDF on the share, so the phone downloads it with no wait.
         if (url.searchParams.get("store") === "1") {
             const form = new FormData();
             form.append("file", new Blob([Buffer.from(pdf)], { type: "application/pdf" }), "beauty-report.pdf");
             const res = await fetch(`${BASE_URL.replace(/\/$/, "")}/studio/public/looks/${encodeURIComponent(token)}/pdf/`, {
-                method: "POST", body: form,
+                method: "POST", body: form, signal: AbortSignal.timeout(90_000), // never hang the kiosk on a slow upload
             });
             const body = await res.json().catch(() => null);
             if (!res.ok) return NextResponse.json({ error: body?.message ?? `Store failed (${res.status})` }, { status: 502 });

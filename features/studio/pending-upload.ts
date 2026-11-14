@@ -1,3 +1,6 @@
+import { studioApi, type Results } from "./api";
+
+
 /**
  * The capture photo uploads in the background so the customer moves on instantly.
  * Screens that need the uploaded photo on the server (Analysis) await this first.
@@ -11,4 +14,24 @@ export function setPendingUpload(p: Promise<unknown>) {
 
 export function waitForPendingUpload(): Promise<unknown> {
   return pending ?? Promise.resolve();
+}
+
+/**
+ * The analysis (all modules, one backend call) runs once per session in the background: the journey starts straight on
+ * the first service intro, and each service page shows its own scan until its module's results are in.
+ */
+const analyses = new Map<string, Promise<Results>>();
+export function ensureAnalysis(sessionId: string): Promise<Results> {
+  let run = analyses.get(sessionId);
+  if (!run) {
+    run = (async () => {
+      await waitForPendingUpload(); // photo may still be uploading from the Capture screen
+      const r = await studioApi.results(sessionId);
+      if (r.tabs.some((x) => x.status === "done")) return r;
+      return studioApi.analyze(sessionId);
+    })();
+    analyses.set(sessionId, run);
+    run.catch(() => analyses.delete(sessionId)); // failed: the next screen tries again
+  }
+  return run;
 }

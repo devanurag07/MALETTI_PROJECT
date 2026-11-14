@@ -32,7 +32,12 @@ export type LookDraft = {
   journey: Record<string, "done" | "skipped">;
   /** Hairstyle customisation added to the haircut try-on (backend studio/services/tryon.py HAIR_MODIFIERS). */
   hairMods: HairMods;
+  /** Salon skin services recommended on the Services page; saved with the look (params.skin_services) for the report. */
+  skinServices?: SkinServiceCard[];
 };
+
+/** What the report needs of a recommended salon skin service. */
+export type SkinServiceCard = { title: string; image: string; price: number | null; duration: number | null; reason: string };
 
 export type HairMods = { bangs?: string | null; fade?: string | null; styling?: string | null };
 /** Options per group; bangs for women, fade for men, styling for everyone. */
@@ -213,4 +218,15 @@ export function useStudio() {
 export function useCatalog(kind: string) {
   const { config, gender } = useStudio();
   return (config?.catalog?.[kind] ?? []).filter((i) => i.gender === "all" || i.gender === gender);
+}
+
+/**
+ * Hair colours for the Custom page: only the FLUX_VERSION_3 catalogue (24 shades, `attributes.source === "flux"`,
+ * seeded by `seed_studio_maletti`), in FLUX order — 4×4 per page, so 2 pages. The season shades stay for the
+ * Recommended tab. Falls back to the whole catalogue only on a backend that was not re-seeded yet.
+ */
+export function useCustomShades() {
+  const shades = useCatalog("hair_shade");
+  const flux = shades.filter((x) => x.attributes?.source === "flux");
+  return flux.length ? flux : shades;
 }

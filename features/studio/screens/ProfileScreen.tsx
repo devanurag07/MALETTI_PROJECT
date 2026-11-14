@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { studioApi, type Gender } from "../api";
 import { useStudio } from "../context/StudioContext";
 import { FLOWS, type FlowKey } from "../flows";
+import { ensureAnalysis } from "../pending-upload";
 import { c, Diamond, H1, H2, Icon, ICON, LoadingStage, Photo, PillButton, Screen, SERIF, Spacer } from "../ui";
 
 /** Woman / man icons from the main software (FLUX_VERSION_3 look advisor): black on light, white when selected. */
@@ -24,6 +25,8 @@ export default function ProfileScreen() {
   async function choose(flow: FlowKey) {
     if (!session) return;
     setSession(await studioApi.updateSession(session.id, { flow, current_step: "profile" }));
+    // Consultation: no separate analysis screen — it runs in the background, each service shows its own scan.
+    if (flow === "consultant") ensureAnalysis(session.id).catch(() => {});
     router.push(FLOWS.find((f) => f.key === flow)!.start);
   }
 

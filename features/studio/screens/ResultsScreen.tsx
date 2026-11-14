@@ -1,14 +1,14 @@
 "use client";
 
 import { lookShades } from "../data/makeup";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import { studioApi, type AnalysisTab, type CatalogItem, type Recommendation, type Results } from "../api";
-import { HAIR_MOD_OPTIONS, useCatalog, useStudio, type HairMods } from "../context/StudioContext";
+import { studioApi, type AnalysisTab, type CatalogItem, type I18n, type Recommendation, type Results } from "../api";
+import { HAIR_MOD_OPTIONS, useCatalog, useCustomShades, useStudio, type HairMods } from "../context/StudioContext";
 import { styleImage } from "../theme/styleImages";
 import { markingsOf, SkinMapPhoto, SKIN_METRICS } from "../components/SkinMap";
 import {
-  c, Card, ColorChip, ColorDot, Diamond, ErrorLine, H1, Icon, ICON, LoadingStage, Muted, OutlineButton, Photo,
+  ActionBar, c, Card, ColorChip, ColorDot, Diamond, ErrorLine, H1, Icon, ICON, LoadingStage, Muted, OutlineButton, Photo,
   PillButton, PrimaryButton, Screen, SectionTitle, Segmented, SERIF, Spinner, Tabs, Carousel, ShadeSwatch,
 } from "../ui";
 
@@ -55,9 +55,9 @@ export default function ResultsScreen({ tab }: { tab: Tab }) {
         <ColourTab a={current} />
       )}
       {status(tab) !== "coming_soon" ? (
-        <div style={{ flex: "0 0 auto", padding: "14px 34px 34px 34px" }}>
+        <ActionBar>
           <PrimaryButton iconRight={ICON.next} onClick={() => router.push(NEXT[tab])}>{t(tab, "cta")}</PrimaryButton>
-        </div>
+        </ActionBar>
       ) : null}
     </Screen>
   );
@@ -232,7 +232,7 @@ function FaceTab({ a, colour }: { a: AnalysisTab; colour?: AnalysisTab }) {
   const beardCatalogue = useCatalog("beard_style").filter((b) => b.key !== "none");
   const recBeardKeys = new Set(beards.map((x) => x.key));
   const shades = (colour?.recommendations.hair_shade ?? []).slice(0, 4);
-  const shadeCatalogue = useCatalog("hair_shade");
+  const shadeCatalogue = useCustomShades();
   const recShadeKeys = new Set((colour?.recommendations.hair_shade ?? []).map((x) => x.key));
   const [catKind, setCatKind] = useState<"cut" | "beard" | "colour" | "makeup">("cut");
   const makeupRecs = colour?.recommendations.makeup_look ?? [];
@@ -277,15 +277,12 @@ function FaceTab({ a, colour }: { a: AnalysisTab; colour?: AnalysisTab }) {
     <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 10, width: "83.3%", margin: "0 auto" }}>{children}</div>
   );
   // One card per style, used by BOTH tabs (Recommended + Custom): same size, same badges, same marks.
-  const bestCut = (a.recommendations.haircut ?? []).find((x) => x.is_best)?.key ?? cuts[0]?.key;
-  const badge = (key: string, best: string | undefined, rec: Set<string>) =>
-    key === best ? t("face", "best") : rec.has(key) ? t("face", "forYou") : undefined;
   const cutTile = (x: CatalogItem) => (
-    <StyleCard key={x.key} compact image={cutImage(x)} tried={tried("cut", x.key)} focus="50% 8%" name={tx(x.name)} badge={badge(x.key, bestCut, recKeys)}
+    <StyleCard key={x.key} compact image={cutImage(x)} tried={tried("cut", x.key)} focus="50% 8%" name={tx(x.name)}
       active={look.cut === x.key} onClick={() => tryCut(x.key)} />
   );
   const beardTile = (x: CatalogItem) => (
-    <StyleCard key={x.key} compact image={beardImage(x)} tried={tried("beard", x.key)} focus="50% 60%" name={tx(x.name)} badge={badge(x.key, beards[0]?.key, recBeardKeys)}
+    <StyleCard key={x.key} compact image={beardImage(x)} tried={tried("beard", x.key)} focus="50% 60%" name={tx(x.name)}
       active={look.beard === x.key} onClick={() => tryBeard(x.key)} />
   );
   const shadeTile = (x: CatalogItem) => (
@@ -326,13 +323,13 @@ function FaceTab({ a, colour }: { a: AnalysisTab; colour?: AnalysisTab }) {
               {catKind === "makeup" && !isMan ? (
                 <div style={{ width: "83.3%", margin: "0 auto" }}><Carousel key="makeup" perPage={9} columns={3} items={forYouFirst(makeupCatalogue, recMakeupKeys).map((x) => (
                   <StyleCard key={x.key} image={styleImage("makeup_look", x.key, x.image_url) || thumb} focus="50% 40%" name={tx(x.name)}
-                    badge={recMakeupKeys.has(x.key) ? t("face", "forYou") : undefined} active={look.makeup_look === x.key} onClick={() => tryMakeup(x.key)} />
+                    active={look.makeup_look === x.key} onClick={() => tryMakeup(x.key)} />
                 ))} /></div>
               ) : catKind === "beard" && isMan ? (
                 <div style={{ width: "83.3%", margin: "0 auto" }}><Carousel key="beard" perPage={9} columns={3} items={forYouFirst(beardCatalogue, recBeardKeys).map(beardTile)} /></div>
               ) : catKind === "colour" ? (
                 <>
-                  <Carousel key="colour" perPage={12} columns={4} items={forYouFirst(shadeCatalogue, recShadeKeys).map(shadeTile)} />
+                  <Carousel key="colour" perPage={16} columns={4} items={shadeCatalogue.map(shadeTile)} />
                   {/* Technique for the colour try-on (the try-on screen uses the one picked here). */}
                   <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                     <span style={{ fontSize: 13, color: c("ink-muted") }}>{t("tryon", "technique")}</span>
@@ -360,16 +357,51 @@ function FaceTab({ a, colour }: { a: AnalysisTab; colour?: AnalysisTab }) {
 }
 
 /** All recommendations at once (3 across): picture, Best match / For you, name, why it suits. Tap = select. */
-export function RecommendedGrid({ items, image, focus, onChange, active, models, visual }: {
+export function RecommendedGrid({ items, image, focus, onChange, active, models, visual, rows, why, dense }: {
   items: Recommendation[]; image: (x: CatalogItem) => string | null; focus: string; active: string | null;
   models?: (x: CatalogItem) => readonly [string, string];
   /** Custom picture (e.g. the make-up palette) when there is no photo. */
   visual?: (x: Recommendation) => ReactNode;
   onChange: (k: string) => void;
+  /** One recommendation per row (picture left, name + why it was chosen right), e.g. the hairstyles. */
+  rows?: boolean;
+  /** "Why we chose it" when the recommendation has no reason of its own. */
+  why?: (x: Recommendation) => string;
+  /** Quieter rows (make-up: long "Lips - Eyes - Blush" names): smaller name, no subtitle, 2-line reason. */
+  dense?: boolean;
 }) {
   const { t, tx } = useStudio();
   useEffect(() => { if (items.length && !items.some((x) => x.key === active)) onChange(items[0].key); }, [items.length]); // eslint-disable-line react-hooks/exhaustive-deps
   if (!items.length) return <Muted size={14}>{t("face", "noRecommendations")}</Muted>;
+  if (rows) return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      {items.map((x, i) => {
+        const on = active === x.key;
+        const src = models ? models(x)[0] : image(x);
+        const reason = tx(x.reason) || why?.(x) || "";
+        return (
+          <button key={x.key} type="button" onClick={() => onChange(x.key)} style={{
+            display: "flex", alignItems: "center", gap: 14, minWidth: 0, padding: 8, borderRadius: 18, textAlign: "left",
+            background: on ? c("surface-raised") : c("surface"), border: `2px solid ${on ? c("accent") : c("line")}`, color: c("ink"), cursor: "pointer",
+          }}>
+            <span style={{ flex: "0 0 auto", position: "relative", display: "block", width: 128, aspectRatio: "1 / 1", overflow: "hidden", borderRadius: 12, background: c("photo") }}>
+              {!src && visual ? visual(x) : <Photo src={src} style={{ objectPosition: models ? "50% 30%" : focus }} />}
+            </span>
+            <span style={{ flex: "1 1 auto", minWidth: 0, display: "flex", flexDirection: "column", gap: 5 }}>
+              <span style={{ ...SERIF, fontSize: dense ? 16 : 20, lineHeight: 1.2 }}>{tx(x.name)}</span>
+              {!dense && tx(x.sub) ? <span style={{ fontSize: 12, color: c("accent") }}>{tx(x.sub)}</span> : null}
+              {reason ? (
+                <span style={{ fontSize: dense ? 12 : 13, lineHeight: 1.4, color: c("ink-muted"), overflow: "hidden", display: "-webkit-box", WebkitLineClamp: dense ? 2 : 4, WebkitBoxOrient: "vertical" }}>
+                  {reason}
+                </span>
+              ) : null}
+            </span>
+            {on ? <Icon d={ICON.check} size={18} width={2.4} stroke="var(--mm-accent)" style={{ flex: "0 0 auto", alignSelf: "flex-start", marginTop: 4 }} /> : null}
+          </button>
+        );
+      })}
+    </div>
+  );
   return (
     <div style={{ display: "grid", gridTemplateColumns: `repeat(${Math.min(items.length, 3)}, minmax(0, 1fr))`, gap: 12 }}>
       {items.map((x, i) => {
@@ -382,9 +414,6 @@ export function RecommendedGrid({ items, image, focus, onChange, active, models,
           }}>
             <span style={{ position: "relative", display: "block", width: "100%", aspectRatio: models ? "3 / 4" : "1 / 1", overflow: "hidden", borderRadius: 12, background: x.hex ?? c("photo") }}>
               {!src && visual ? visual(x) : <Photo src={src} style={{ objectPosition: models ? "50% 30%" : focus }} />}
-              <span style={{ position: "absolute", left: 6, top: 6, zIndex: 1, lineHeight: 1.3, whiteSpace: "nowrap", maxWidth: "calc(100% - 12px)", overflow: "hidden", textOverflow: "ellipsis", fontSize: 10, fontWeight: 500, color: c("on-dark"), background: c("accent-soft"), borderRadius: 8, padding: "2px 7px" }}>
-                {x.is_best || i === 0 ? t("face", "best") : t("face", "forYou")}
-              </span>
             </span>
             <span style={{ ...SERIF, fontSize: 17, lineHeight: 1.15 }}>{tx(x.name)}</span>
             {tx(x.reason) || tx(x.sub) ? (
@@ -450,20 +479,12 @@ export function RecommendedCard({ items, image, focus, onTry, onChange, active, 
                 <span style={{ position: "absolute", right: 8, top: 8, fontSize: 11, color: c("ink"), background: c("veil"), borderRadius: 8, padding: "3px 9px" }}>
                   {t("face", k === 0 ? "front" : "back")}
                 </span>
-                {k === 0 ? (
-                  <span style={{ position: "absolute", left: 8, top: 8, zIndex: 1, lineHeight: 1.3, whiteSpace: "nowrap", maxWidth: "calc(100% - 12px)", overflow: "hidden", textOverflow: "ellipsis", fontSize: 11, fontWeight: 500, color: c("on-dark"), background: c("accent-soft"), borderRadius: 8, padding: "3px 9px" }}>
-                    {x.is_best || i === 0 ? t("face", "best") : t("face", "forYou")}
-                  </span>
-                ) : null}
               </span>
             ))}
           </div>
         ) : (
         <span style={{ position: "relative", display: "block", width: "62%", margin: "0 auto", aspectRatio: "1 / 1", overflow: "hidden", borderRadius: 16, background: x.hex ?? c("photo") }}>
           {!image(x) && visual ? visual(x) : <Photo src={image(x)} style={{ objectPosition: focus }} />}
-          <span style={{ position: "absolute", left: 8, top: 8, zIndex: 1, lineHeight: 1.3, whiteSpace: "nowrap", maxWidth: "calc(100% - 12px)", overflow: "hidden", textOverflow: "ellipsis", fontSize: 11, fontWeight: 500, color: c("on-dark"), background: c("accent-soft"), borderRadius: 8, padding: "3px 9px" }}>
-            {x.is_best || i === 0 ? t("face", "best") : t("face", "forYou")}
-          </span>
         </span>
         )}
         <span style={{ ...SERIF, fontSize: 26, lineHeight: 1.1, textAlign: "center" }}>{tx(x.name)}</span>
@@ -517,6 +538,60 @@ export function useShadeDetails() {
 }
 
 /** Make-up look without a photo: a gold lipstick in the lip shade and an open eyeshadow compact in the eye shade. */
+/**
+ * Recommended make-up: all looks at once, one card each (like FLUX_VERSION_3's look card) — the look's title as a
+ * heading, its three shades (colour circle + shade name: lips · blush · eyes) and a short description. Tap to select.
+ */
+export function MakeupLookCards({ items, active, onChange, why }: {
+  items: Recommendation[]; active: string | null; onChange: (k: string) => void; why?: (x: Recommendation) => string;
+}) {
+  const { t, tx } = useStudio();
+  useEffect(() => { if (items.length && !items.some((x) => x.key === active)) onChange(items[0].key); }, [items.length]); // eslint-disable-line react-hooks/exhaustive-deps
+  if (!items.length) return <Muted size={14}>{t("face", "noRecommendations")}</Muted>;
+  const title = (look: Recommendation) => {
+    const v = tx(look.attributes.look_title as I18n | undefined) || tx(look.name);
+    return v.replace(/(^|\s)\p{Ll}/gu, (m) => m.toUpperCase()); // "Peach glow" → "Peach Glow"
+  };
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      {items.map((look) => {
+        const on = look.key === active;
+        const flux = lookShades(look);
+        const shades: [string, string | undefined, string][] = [
+          ["lip", flux?.lip?.hex ?? (look.attributes.lip_hex as string | undefined), tx(flux?.lip?.name)],
+          ["blush", flux?.blush?.hex ?? (look.attributes.blush_hex as string | undefined), tx(flux?.blush?.name)],
+          ["eye", flux?.eye?.hex ?? (look.attributes.eye_hex as string | undefined), tx(flux?.eye?.name)],
+        ];
+        const desc = tx(look.reason) || why?.(look) || "";
+        return (
+          <button key={look.key} type="button" onClick={() => onChange(look.key)} style={{
+            display: "flex", flexDirection: "column", gap: 12, padding: "14px 16px", borderRadius: 20, textAlign: "left", cursor: "pointer",
+            background: on ? c("surface-raised") : c("surface"), border: `1.5px solid ${on ? c("accent") : c("line")}`, color: c("ink"),
+          }}>
+            <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+              <span style={{ fontSize: 20, fontWeight: 700, lineHeight: 1.15 }}>{title(look)}</span>
+              {on ? <Icon d={ICON.check} size={18} width={2.4} stroke="var(--mm-accent)" style={{ flex: "0 0 auto" }} /> : null}
+            </span>
+            <span style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 8 }}>
+              {shades.map(([k, hex, name]) => (
+                <span key={k} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6, padding: "10px 4px", borderRadius: 14, background: c("background"), border: `1px solid ${c("line")}`, minWidth: 0 }}>
+                  <span style={{ display: "block", width: 40, height: 40, borderRadius: 20, background: hex ?? c("surface-raised"), boxShadow: "inset 0 0 0 2px rgba(255,255,255,0.15)" }} />
+                  <span style={{ fontSize: 12, fontWeight: 600, textAlign: "center", lineHeight: 1.2, maxWidth: "100%", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{name || "—"}</span>
+                </span>
+              ))}
+            </span>
+            {desc ? (
+              <span style={{ fontSize: 13, lineHeight: 1.4, color: c("ink-muted"), overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
+                {desc}
+              </span>
+            ) : null}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 /** `compact`: picture only (small tiles), no Lips / Eyes / Blush chips. */
 export function MakeupPalette({ look, compact }: { look: CatalogItem; compact?: boolean }) {
   const { t, tx } = useStudio();
@@ -601,7 +676,7 @@ export function HairCustomise({ onChange, compact }: { onChange?: (mods: HairMod
   };
   /** Icons from FLUX_VERSION_3 (white line art) in /public/studio/hair-mods; no icon → text-only chip. */
   const ICONED = new Set(["none", "fade_taper", "fade_medium", "fade_skin", "bangs_curtain", "bangs_fringe", "bangs_side_swept",
-    "styling_blow_dry", "styling_straight", "styling_curly"]);
+    "styling_blow_dry", "styling_straight", "styling_curly", "styling_waves"]);
   const chip = (active: boolean, label: string, onClick: () => void, icon?: string) => {
     const src = icon && ICONED.has(icon) ? `/studio/hair-mods/${icon}.png` : null;
     const h = compact ? 34 : 40;
@@ -661,11 +736,6 @@ export function StyleCard({ image, focus, name, badge, tried, active, onClick, c
         {tried ? (
           <span style={{ position: "absolute", right: 6, top: 6, display: "flex", alignItems: "center", gap: 3, fontSize: 10, fontWeight: 500, color: c("on-dark"), background: c("ink"), borderRadius: 8, padding: "2px 7px" }}>
             <Icon d={ICON.check} size={10} width={2.4} />{tried}
-          </span>
-        ) : null}
-        {badge ? (
-          <span style={{ position: "absolute", left: 6, top: 6, zIndex: 1, lineHeight: 1.3, whiteSpace: "nowrap", maxWidth: "calc(100% - 12px)", overflow: "hidden", textOverflow: "ellipsis", fontSize: 10, fontWeight: 500, color: c("on-dark"), background: c("accent-soft"), borderRadius: 8, padding: "2px 7px" }}>
-            {badge}
           </span>
         ) : null}
       </span>

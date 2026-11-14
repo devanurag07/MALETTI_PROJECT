@@ -5,7 +5,7 @@ import type { Gender, TryKind } from "./api";
  * The backend only records which one the customer picked (StudioSession.flow).
  */
 export const FLOWS = [
-  { key: "consultant", recommended: true, start: "/analysis" },
+  { key: "consultant", recommended: true, start: "/journey/hairstyle" },
   { key: "service", recommended: false, start: "/service" },
 ] as const;
 

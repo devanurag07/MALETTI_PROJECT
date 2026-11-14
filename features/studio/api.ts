@@ -1,5 +1,6 @@
 import axios from "axios";
 import axiosClient from "@/core/network/axios-client";
+import { renameMakeupLooks } from "./data/makeup";
 
 /** Studio backend (ADMIN---DJANGO app `studio`), through the template's authenticated axios client. */
 const api = axiosClient;
@@ -17,7 +18,8 @@ export class StudioApiError extends Error {
 async function unwrap<T>(p: Promise<{ data: Envelope<T> }>): Promise<T> {
   try {
     const res = await p;
-    return res.data.data;
+    // Make-up looks are shown as "Lips - Eyes - Blush" (their FLUX shades) everywhere: renamed once, here.
+    return renameMakeupLooks(res.data.data);
   } catch (err) {
     if (axios.isAxiosError(err)) {
       const body = err.response?.data;
@@ -147,6 +149,18 @@ export type LookPayload = Partial<{
   headline: I18n;
 }>;
 
+/** Salon service picked for the skin analysis (`salon/recommend-skin-services/`, the salon's own skin services). */
+export type SkinService = {
+  id: string;
+  title: string;
+  description: string;
+  image: string;
+  price: number | null;
+  currency: string | null;
+  duration: number | null;
+  recommendation_reason: string;
+};
+
 // ---------- Endpoints ----------
 
 const RESULTS = new Map<string, Results>();
@@ -192,6 +206,10 @@ export const studioApi = {
   complete: (id: string) => unwrap<Session>(api.post(`studio/sessions/${id}/complete/`)),
   stylistInbox: () => unwrap<(Share & { session: Session })[]>(api.get("studio/stylist/inbox/")),
   stylistAck: (shareId: number) => unwrap<Share>(api.post(`studio/stylist/inbox/${shareId}/ack/`)),
+  /** AI picks from the salon's skin services for this skin analysis (same endpoint as FLUX_VERSION_3). */
+  skinServices: (skinAnalysis: unknown) =>
+    unwrap<{ recommended_services: SkinService[] }>(api.post("salon/recommend-skin-services/", { skin_analysis: skinAnalysis }))
+      .then((d) => d?.recommended_services ?? []),
   publicLook: (token: string) =>
     unwrap<PublicReport>(
       api.get(`studio/public/looks/${token}/`)

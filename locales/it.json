@@ -771,7 +771,9 @@
       "scanningSub": "Sottotono, occhi e capelli: cerchiamo la tua stagione…",
       "scanStage1": "Lettura del sottotono…",
       "scanStage2": "Confronto delle palette…",
-      "scanStage3": "Ricerca della stagione…"
+      "scanStage3": "Ricerca della stagione…",
+      "whyShade": "In armonia con la tua stagione {season}: valorizza sottotono, occhi e contrasto naturale.",
+      "whyShadeDefault": "Scelto per il tuo sottotono, gli occhi e il contrasto naturale."
     },
     "service": {
       "live": "Riflesso dal vivo",
@@ -947,6 +949,20 @@
           "deep_winter": "Inverno profondo",
           "cool_winter": "Inverno freddo",
           "bright_winter": "Inverno brillante"
+        },
+        "wheel": {
+          "light_spring": "Primavera\nchiara",
+          "warm_spring": "Primavera\ncalda",
+          "bright_spring": "Primavera\nbrillante",
+          "light_summer": "Estate\nchiara",
+          "cool_summer": "Estate\nfredda",
+          "soft_summer": "Estate\nsoft",
+          "soft_autumn": "Autunno\nsoft",
+          "warm_autumn": "Autunno\ncaldo",
+          "deep_autumn": "Autunno\nprofondo",
+          "deep_winter": "Inverno\nprofondo",
+          "cool_winter": "Inverno\nfreddo",
+          "bright_winter": "Inverno\nbrillante"
         }
       },
       "triedEyebrow": "Le tue prove",
@@ -957,7 +973,13 @@
       "downloadTitle": "Scarica il tuo report",
       "namePlaceholder": "Il tuo nome",
       "download": "Scarica PDF",
-      "preparing": "Stiamo preparando il report…"
+      "preparing": "Stiamo preparando il report…",
+      "pdfPreparing": "Stiamo preparando il PDF… puoi già scansionare, il download parte appena è pronto.",
+      "pdfReady": "Il tuo PDF è pronto.",
+      "pdfFailed": "Non è stato possibile preparare il PDF.",
+      "retry": "Riprova",
+      "localhostWarning": "Questo QR punta a questo dispositivo (localhost), quindi un telefono non può aprirlo. Imposta NEXT_PUBLIC_SITE_URL con l'indirizzo pubblico dello specchio.",
+      "downloadFailed": "Non è stato possibile scaricare il report. Riprova tra un momento."
     },
     "styles": {
       "cta": "Continua con l'armonia colori"
@@ -996,7 +1018,8 @@
       "skin": {
         "name": "Analisi della pelle",
         "intro": "La nostra analisi misura idratazione, sebo, pori, rossori e macchie.\nVedrai i tuoi punteggi e i prodotti consigliati per la tua pelle."
-      }
+      },
+      "skipService": "Salta questo servizio"
     },
     "skinMap": {
       "title": "La tua mappa della pelle",
@@ -1027,7 +1050,15 @@
       "styling_blow_dry": "Brushing",
       "styling_straight": "Liscia",
       "styling_curly": "Ricci",
-      "styling_waves": "Onde"
+      "styling_waves": "Onde",
+      "why_oval": "Il tuo viso ovale ha proporzioni equilibrate: questo taglio ne mantiene l'armonia e valorizza i tuoi lineamenti.",
+      "why_round": "Aggiunge altezza e linee pulite che allungano il viso tondo e sollevano gli zigomi.",
+      "why_square": "Ammorbidisce una mascella decisa con movimento e texture intorno al viso.",
+      "why_oblong": "Aggiunge ampiezza e volume ai lati, così il viso allungato appare più equilibrato.",
+      "why_heart": "Bilancia una fronte più ampia e un mento sottile dando volume verso la mascella.",
+      "why_diamond": "Ammorbidisce gli zigomi alti e riempie fronte e mento più stretti.",
+      "why_triangle": "Aggiunge volume sulla nuca e alle tempie per bilanciare una mascella più ampia.",
+      "why_default": "Scelto per la forma e le proporzioni del tuo viso."
     },
     "simple": {
       "report": "Vedi il tuo report",
@@ -1040,6 +1071,22 @@
       "scanStage1": "Rilevamento del viso…",
       "scanStage2": "Misura delle proporzioni…",
       "scanStage3": "Scelta degli stili…"
+    },
+    "skinServices": {
+      "title": "Trattamenti consigliati",
+      "hint": "Servizi del salone per la tua pelle",
+      "none": "Questo salone non ha ancora servizi per la pelle nel catalogo.",
+      "failed": "Impossibile caricare i servizi.",
+      "cta": "Vedi i tuoi trattamenti",
+      "min": "min"
+    },
+    "makeupLooks": {
+      "lookOf": "Look {current} di {total}",
+      "suggested": "Suggerito per te",
+      "prev": "Look precedente",
+      "next": "Look successivo",
+      "why": "Si adatta alla tua stagione {season} e valorizza i tuoi occhi.",
+      "whyDefault": "Scelto per il tuo sottotono e il colore degli occhi."
     }
   }
 }

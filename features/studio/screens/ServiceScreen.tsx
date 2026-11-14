@@ -3,7 +3,8 @@
 import { useRouter } from "next/navigation";
 import { studioApi, type TryKind } from "../api";
 import { useStudio } from "../context/StudioContext";
-import { SERVICE_KINDS } from "../flows";
+import { FLOWS, SERVICE_KINDS } from "../flows";
+import { ensureAnalysis } from "../pending-upload";
 import { Arch, c, GuidePill, H1, HeroBackdrop, Icon, ICON, LoadingStage, Muted, Photo, Screen } from "../ui";
 
 const ICONS: Record<TryKind, string> = {
@@ -25,7 +26,8 @@ export default function ServiceScreen() {
   async function switchToConsultant() {
     if (!session) return;
     setSession(await studioApi.updateSession(session.id, { flow: "consultant" }));
-    router.push("/analysis");
+    ensureAnalysis(session.id).catch(() => {});
+    router.push(FLOWS[0].start);
   }
 
   return (

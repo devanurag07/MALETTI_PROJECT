@@ -11,7 +11,7 @@ import ScanOverlay from "../components/ScanOverlay";
 import PhotoQR from "../components/PhotoQR";
 import { styleImage } from "../theme/styleImages";
 import {
-  Arch, c, ShadeSwatch, ColorDot, CompareArch, ErrorLine, GuidePill, H1, HeroBackdrop, ICON, ImageOption, LoadingStage, Muted,
+  ActionBar, Arch, c, ShadeSwatch, ColorDot, CompareArch, ErrorLine, GuidePill, H1, HeroBackdrop, ICON, ImageOption, LoadingStage, Muted,
   Photo, PrimaryButton, Screen, Segmented, SERIF, Tabs, UploadOption,
 } from "../ui";
 
@@ -475,7 +475,9 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
 
   return (
     // Journey (one service): the journey's own progress ("Service 3 of 5 · Hair colour"), not the step bar.
-    <Screen step={single ? undefined : 5}>
+    // Try-on chain (cut → colour → make-up/beard on one page): Back goes to the previous try-on step first.
+    <Screen step={single ? undefined : 5}
+      onBack={busy ? false : chain && kinds.indexOf(kind) > 0 ? () => switchTab(kinds[kinds.indexOf(kind) - 1]) : undefined}>
       {single && journeyService && !back?.includes("simple=1") ? <JourneyBar service={journeyService} /> : null}
       <div style={{ flex: "0 0 auto", display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 16, padding: "14px 34px 0 34px" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 3, minWidth: 0 }}>
@@ -500,9 +502,9 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
         <>
           <Options bare tab={view} service={journeyService} sel={optSel} setSel={setOptSel}
             a={results?.tabs.find((x) => x.module === SERVICE_MODULE[journeyService] && x.status === "done")} />
-          <div style={{ flex: "0 0 auto", padding: "12px 34px 32px 34px" }}>
+          <ActionBar>
             <PrimaryButton icon={ICON.sparkle} disabled={!optSel || !!busyKind} onClick={tryOption}>{t("tryon", "tryThis")}</PrimaryButton>
-          </div>
+          </ActionBar>
         </>
       ) : busy ? (
         <GeneratingScan image={startImage} />
@@ -534,7 +536,7 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
       </div>
       <ErrorLine message={error} />
 
-      <div style={{ flex: "0 0 auto", display: "flex", alignItems: "stretch", gap: 12, padding: "12px 34px 32px 34px" }}>
+      <ActionBar>
         <div style={{ flex: "1 1 auto", minWidth: 0 }}>
           <PrimaryButton icon={ICON.save} onClick={save} disabled={busy}>{t("tryon", "save")}</PrimaryButton>
         </div>
@@ -542,7 +544,7 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
         <PhotoQR src={look.layers[kind]?.output_url ?? startImage} name={look.layers[kind] ? `${t("tryon", KIND_CAT[kind])} - ${line1}` : t("qr", "original")}
           style={{ position: "relative", top: "auto", left: "auto", height: "auto", minHeight: 56, padding: "0 22px", borderRadius: 999, fontSize: 15,
             background: "transparent", border: `1px solid ${c("line-strong")}`, boxShadow: "none" }} />
-      </div>
+      </ActionBar>
       </>)}
 
     </Screen>

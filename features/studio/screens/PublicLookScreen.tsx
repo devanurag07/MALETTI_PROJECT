@@ -35,6 +35,7 @@ export default function PublicLookScreen({ token }: { token: string }) {
   const look = data.look;
   const items = look ? [look.cut, look.hair_shade, look.technique, look.makeup_look, look.lip, look.eye, look.beard].filter(Boolean) : [];
   const after = look?.after_url;
+  const products = (look?.products ?? []).filter((p) => p.area !== "hair"); // no hair products for Maletti
 
   return shell(
     <>
@@ -63,13 +64,13 @@ export default function PublicLookScreen({ token }: { token: string }) {
           <span>{tx(i!.name)}</span>
         </div>
       ))}
-      {look?.products.length ? (
+      {products.length ? (
         <div style={{ padding: "12px 14px", borderRadius: 16, background: c("surface"), border: `1px solid ${c("line")}` }}>
           <div style={{ fontSize: 12, color: c("ink-muted"), marginBottom: 6 }}>{tr("look.productsTitle")}</div>
-          {look.products.map((p) => (
+          {products.map((p) => (
             <div key={p.key} style={{ padding: "4px 0", fontSize: 15 }}>
               {tx(p.name)}
-              {p.product ? <span style={{ color: c("ink-muted"), fontSize: 13 }}> · {p.product.brand} · {p.product.price} {p.product.currency}</span> : null}
+              {p.product ? <span style={{ color: c("ink-muted"), fontSize: 13 }}> · {p.product.brand} · {p.product.price}</span> : null}
             </div>
           ))}
         </div>
@@ -95,15 +96,48 @@ function DownloadForm({ token, locale, initialPdf }: { token: string; locale: st
     let pdf = initialPdf;
     try {
       pdf = (await studioApi.publicLead(token, name.trim())).pdf_url ?? pdf;
-      for (let i = 0; !pdf && i < 30; i++) { // up to ~60 s while the kiosk finishes it
+      // The mirror renders the PDF in the background: wait for it (up to ~90 s) before rendering one here.
+      for (let i = 0; !pdf && i < 45; i++) {
         await new Promise((r) => setTimeout(r, 2000));
         pdf = (await studioApi.publicLook(token)).pdf_url ?? null;
       }
     } catch { /* fall through to the on-demand render */ }
+    const stored = !!pdf;
     const href = pdf ?? `/api/studio-report/${encodeURIComponent(token)}/pdf?locale=${locale}`;
-    // Same tab: a new window opened after an await is blocked as a pop-up on phones.
-    window.location.href = href;
+    let res: Response;
+    try {
+      res = await fetch(href, { mode: "cors" });
+    } catch {
+      // Stored PDF on the CDN without CORS: open it in this tab (a new window after an await is blocked as a pop-up).
+      if (stored) { window.location.href = href; setState("idle"); return; }
+      setState("error");
+      return;
+    }
+    const type = res.headers.get("content-type") ?? "";
+    if (!res.ok || !/pdf|octet-stream/i.test(type)) {
+      console.error("[report] download failed:", res.status, await res.text().catch(() => ""));
+      setState("error"); // never send the customer to a raw error page
+      return;
+    }
+    const blob = await res.blob();
+    // Save it as a real file (a cross-origin link would just open the PDF, or not download at all on some phones).
+    const file = new File([blob], "beauty-report.pdf", { type: "application/pdf" });
+    if (/iPhone|iPad|Android/i.test(navigator.userAgent) && navigator.canShare?.({ files: [file] })) {
+      await navigator.share({ files: [file] }).catch(() => openBlob(blob)); // share sheet → "Save to Files"
+    } else {
+      openBlob(blob);
+    }
     setState("idle");
+  }
+
+  function openBlob(blob: Blob) {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "beauty-report.pdf";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 10_000);
   }
 
   return (
@@ -115,8 +149,9 @@ function DownloadForm({ token, locale, initialPdf }: { token: string; locale: st
         height: 50, borderRadius: 25, border: "none", fontSize: 16, fontWeight: 500, cursor: "pointer",
         background: c("ink"), color: c("on-dark"), opacity: !name.trim() || state === "waiting" ? 0.5 : 1,
       }}>
-        {state === "waiting" ? tr("report.preparing") : tr("report.download")}
+        {state === "waiting" ? tr("report.preparing") : state === "error" ? tr("report.retry") : tr("report.download")}
       </button>
+      {state === "error" ? <span style={{ fontSize: 14, color: c("ink-muted"), textAlign: "center" }}>{tr("report.downloadFailed")}</span> : null}
     </form>
   );
 }
