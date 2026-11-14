@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { QRCodeSVG } from "qrcode.react";
 import { studioApi, type I18n } from "../api";
-import { catalogKey, useStudio } from "../context/StudioContext";
+import { catalogKey, useCatalog, useStudio } from "../context/StudioContext";
+import { hairColourOf, isFluxShade } from "../data/haircolor";
+import { lookParams } from "../save-look";
 import { theme } from "../theme";
 import { ActionBar, c, CompareArch, Diamond, ErrorLine, H1, Icon, ICON, LoadingStage, PrimaryButton, Screen } from "../ui";
 
@@ -37,18 +39,19 @@ export default function LookScreen() {
         const lp = (k: "cut" | "colour" | "makeup" | "beard", f: string) =>
           (look.layers[k]?.params?.[f] as string | undefined) ?? null;
         const cut = look.cut ?? lp("cut", "item");
-        const shade = look.hair_shade ?? lp("colour", "shade");
+        const shade = look.hair_shade ?? lp("colour", "shade") ?? lp("colour", "shade_key"); // shade_key = FLUX colour
         const s = await studioApi.saveLook(session.id, {
           // An uploaded style ("your photo") has no catalog item: the try-on image is the result.
           cut: catalogKey(cut),
-          hair_shade: catalogKey(shade),
-          technique: catalogKey(shade) ? look.technique ?? lp("colour", "technique") : null,
+          // A FLUX_VERSION_3 colour is not a backend catalogue key: saved in params.hair_colour instead.
+          hair_shade: isFluxShade(shade) ? null : catalogKey(shade),
+          technique: catalogKey(shade) && !isFluxShade(shade) ? look.technique ?? lp("colour", "technique") : null,
           makeup_look: catalogKey(look.makeup_look ?? lp("makeup", "look")),
           lip: look.lip ?? lp("makeup", "lip"),
           eye: look.eye ?? lp("makeup", "eye"),
           beard: catalogKey(look.beard ?? lp("beard", "beard")),
           // Recommended salon skin services ride along in params, so the report (and its PDF) can list them.
-          params: look.skinServices?.length ? { ...look.params, skin_services: look.skinServices } : look.params,
+          params: lookParams(look, shade),
           products: look.products,
           final_tryon_id: look.lastTryon?.status === "done" ? look.lastTryon.id : null,
           headline,
@@ -67,8 +70,11 @@ export default function LookScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [config?.client.slug, session?.id]);
 
+  const techniques = useCatalog("hair_technique");
   if (!config || !session) return <LoadingStage />;
   const s = session.look;
+  const fluxColour = hairColourOf(s?.params);
+  const fluxTech = techniques.find((x) => x.key === fluxColour?.technique);
   const none = t("look", "none");
   const third = gender === "man"
     ? { key: "beard", label: t("look", "beard"), value: tx(s?.beard?.name), hex: c("ink") }
@@ -81,8 +87,10 @@ export default function LookScreen() {
     { key: "cut", label: t("look", "cut"), value: tx(s?.cut?.name), hex: c("ink") },
     {
       key: "colour", label: t("look", "colour"),
-      value: s?.hair_shade ? `${tx(s.hair_shade.name)}${s.technique ? `, ${tx(s.technique.name).toLowerCase()}` : ""}` : "",
-      hex: s?.hair_shade?.hex ?? c("ink"),
+      // Backend colour, else the FLUX_VERSION_3 colour saved in params.hair_colour.
+      value: s?.hair_shade ? `${tx(s.hair_shade.name)}${s.technique ? `, ${tx(s.technique.name).toLowerCase()}` : ""}`
+        : fluxColour ? `${tx(fluxColour.name)}${fluxTech ? `, ${tx(fluxTech.name).toLowerCase()}` : ""}` : "",
+      hex: s?.hair_shade?.hex ?? fluxColour?.hex ?? c("ink"),
     },
     third,
   ];

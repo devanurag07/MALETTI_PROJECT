@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import StudioUnavailable from "../components/StudioUnavailable";
 import { locales as appLocales, defaultLocale as appDefaultLocale } from "@/i18n";
 import { StudioApiError, studioApi, type Gender, type I18n, type Session, type StudioConfig, type TryOn } from "../api";
+import { FLUX_SHADES } from "../data/haircolor";
 
 /** Client-side draft of the look, built up across results + try-on screens (the mockup's `nav.look`). */
 export type LookDraft = {
@@ -221,12 +222,14 @@ export function useCatalog(kind: string) {
 }
 
 /**
- * Hair colours for the Custom page: only the FLUX_VERSION_3 catalogue (24 shades, `attributes.source === "flux"`,
- * seeded by `seed_studio_maletti`), in FLUX order — 4×4 per page, so 2 pages. The season shades stay for the
- * Recommended tab. Falls back to the whole catalogue only on a backend that was not re-seeded yet.
+ * Hair colours for the Custom page: only the FLUX_VERSION_3 catalogue (24 shades, frontend data/haircolor.ts, no
+ * backend seeding), in FLUX order — 4×4 per page, so 2 pages. The season shades stay for the Recommended tab.
  */
 export function useCustomShades() {
-  const shades = useCatalog("hair_shade");
-  const flux = shades.filter((x) => x.attributes?.source === "flux");
-  return flux.length ? flux : shades;
+  return FLUX_SHADES;
+}
+
+/** Every hair colour a key can name: the backend's (recommended) + the FLUX ones (custom). */
+export function useAllShades() {
+  return [...useCatalog("hair_shade"), ...FLUX_SHADES];
 }

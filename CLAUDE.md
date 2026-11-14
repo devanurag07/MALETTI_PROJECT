@@ -18,7 +18,8 @@ feature module: `features/studio/`.
 - `/` = dark welcome screen (`HomeScreen`, `home*` colours in the theme) → `/capture` (step 1, camera).
 - Consultation: Profile → straight to `/journey/hairstyle` (no analysis screen). The analysis runs once in the background
   (`ensureAnalysis` in `pending-upload.ts`); each service page shows its own 5 s scan. Skin: results → map → products → services.
-- Custom hair colours = FLUX_VERSION_3's 24 shades only (`hair_shade` items `flux_*`, `attributes.source = "flux"`), 4×4 per page.
+- Custom hair colours = FLUX_VERSION_3's 24 shades only, frontend data (`features/studio/data/haircolor.ts` + its JSON, no
+  seeding), 4×4 per page. Try-on sends `shade_key` + FLUX `shade_prompt`; a saved look keeps it in `params.hair_colour`.
 - `app/[locale]/l/[token]` – public QR / e-mail page (outside MirrorFrame, no login).
 - `/stylist` – stylist tablet inbox (polls every 5 s).
 

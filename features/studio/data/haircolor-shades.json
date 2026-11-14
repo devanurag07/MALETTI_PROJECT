@@ -1,0 +1,674 @@
+[
+  {
+    "Category": "Black & Deep Brown",
+    "Shade": "Natural Black",
+    "Technique": "Global",
+    "Prompt": "Give her natural black hair. Natural black is represented by RGB(25, 23, 22).",
+    "RGB": "RGB(25, 23, 22)"
+  },
+  {
+    "Category": "Black & Deep Brown",
+    "Shade": "Natural Black",
+    "Technique": "Ombre",
+    "Prompt": "Give her black-to-natural black ombre hair. Natural black is represented by RGB(25, 23, 22).",
+    "RGB": "RGB(25, 23, 22)"
+  },
+  {
+    "Category": "Black & Deep Brown",
+    "Shade": "Natural Black",
+    "Technique": "Balayage",
+    "Prompt": "Give her natural black balayage highlights on her existing hair. Natural black is represented by RGB(25, 23, 22).",
+    "RGB": "RGB(25, 23, 22)"
+  },
+  {
+    "Category": "Black & Deep Brown",
+    "Shade": "Natural Black",
+    "Technique": "Streaks",
+    "Prompt": "Give her natural black streaks in her existing hair. Natural black is represented by RGB(25, 23, 22).",
+    "RGB": "RGB(25, 23, 22)"
+  },
+  {
+    "Category": "Black & Deep Brown",
+    "Shade": "Soft Black",
+    "Technique": "Global",
+    "Prompt": "Give her soft black hair. Soft black is represented by RGB(40, 35, 33).",
+    "RGB": "RGB(40, 35, 33)"
+  },
+  {
+    "Category": "Black & Deep Brown",
+    "Shade": "Soft Black",
+    "Technique": "Ombre",
+    "Prompt": "Give her black-to-soft black ombre hair. Soft black is represented by RGB(40, 35, 33).",
+    "RGB": "RGB(40, 35, 33)"
+  },
+  {
+    "Category": "Black & Deep Brown",
+    "Shade": "Soft Black",
+    "Technique": "Balayage",
+    "Prompt": "Give her soft black balayage highlights on her existing hair. Soft black is represented by RGB(40, 35, 33).",
+    "RGB": "RGB(40, 35, 33)"
+  },
+  {
+    "Category": "Black & Deep Brown",
+    "Shade": "Soft Black",
+    "Technique": "Streaks",
+    "Prompt": "Give her soft black streaks in her existing hair. Soft black is represented by RGB(40, 35, 33).",
+    "RGB": "RGB(40, 35, 33)"
+  },
+  {
+    "Category": "Black & Deep Brown",
+    "Shade": "Espresso Brown",
+    "Technique": "Global",
+    "Prompt": "Give her espresso brown hair. Espresso brown is represented by RGB(55, 38, 30).",
+    "RGB": "RGB(55, 38, 30)"
+  },
+  {
+    "Category": "Black & Deep Brown",
+    "Shade": "Espresso Brown",
+    "Technique": "Ombre",
+    "Prompt": "Give her black-to-espresso brown ombre hair. Espresso brown is represented by RGB(55, 38, 30).",
+    "RGB": "RGB(55, 38, 30)"
+  },
+  {
+    "Category": "Black & Deep Brown",
+    "Shade": "Espresso Brown",
+    "Technique": "Balayage",
+    "Prompt": "Give her espresso brown balayage highlights on her existing hair. Espresso brown is represented by RGB(55, 38, 30).",
+    "RGB": "RGB(55, 38, 30)"
+  },
+  {
+    "Category": "Black & Deep Brown",
+    "Shade": "Espresso Brown",
+    "Technique": "Streaks",
+    "Prompt": "Give her espresso brown streaks in her existing hair. Espresso brown is represented by RGB(55, 38, 30).",
+    "RGB": "RGB(55, 38, 30)"
+  },
+  {
+    "Category": "Black & Deep Brown",
+    "Shade": "Dark Chocolate",
+    "Technique": "Global",
+    "Prompt": "Give her dark chocolate hair. Dark chocolate is represented by RGB(75, 45, 30).",
+    "RGB": "RGB(75, 45, 30)"
+  },
+  {
+    "Category": "Black & Deep Brown",
+    "Shade": "Dark Chocolate",
+    "Technique": "Ombre",
+    "Prompt": "Give her black-to-dark chocolate ombre hair. Dark chocolate is represented by RGB(75, 45, 30).",
+    "RGB": "RGB(75, 45, 30)"
+  },
+  {
+    "Category": "Black & Deep Brown",
+    "Shade": "Dark Chocolate",
+    "Technique": "Balayage",
+    "Prompt": "Give her dark chocolate balayage highlights on her existing hair. Dark chocolate is represented by RGB(75, 45, 30).",
+    "RGB": "RGB(75, 45, 30)"
+  },
+  {
+    "Category": "Black & Deep Brown",
+    "Shade": "Dark Chocolate",
+    "Technique": "Streaks",
+    "Prompt": "Give her dark chocolate streaks in her existing hair. Dark chocolate is represented by RGB(75, 45, 30).",
+    "RGB": "RGB(75, 45, 30)"
+  },
+  {
+    "Category": "Chocolate & Warm Brown",
+    "Shade": "Chocolate Brown",
+    "Technique": "Global",
+    "Prompt": "Give her chocolate brown hair. Chocolate brown is represented by RGB(105, 65, 40).",
+    "RGB": "RGB(105, 65, 40)"
+  },
+  {
+    "Category": "Chocolate & Warm Brown",
+    "Shade": "Chocolate Brown",
+    "Technique": "Ombre",
+    "Prompt": "Give her black-to-chocolate brown ombre hair. Chocolate brown is represented by RGB(105, 65, 40).",
+    "RGB": "RGB(105, 65, 40)"
+  },
+  {
+    "Category": "Chocolate & Warm Brown",
+    "Shade": "Chocolate Brown",
+    "Technique": "Balayage",
+    "Prompt": "Give her chocolate brown balayage highlights on her existing hair. Chocolate brown is represented by RGB(105, 65, 40).",
+    "RGB": "RGB(105, 65, 40)"
+  },
+  {
+    "Category": "Chocolate & Warm Brown",
+    "Shade": "Chocolate Brown",
+    "Technique": "Streaks",
+    "Prompt": "Give her chocolate brown streaks in her existing hair. Chocolate brown is represented by RGB(105, 65, 40).",
+    "RGB": "RGB(105, 65, 40)"
+  },
+  {
+    "Category": "Chocolate & Warm Brown",
+    "Shade": "Mocha Brown",
+    "Technique": "Global",
+    "Prompt": "Give her mocha brown hair. Mocha brown is represented by RGB(95, 65, 48).",
+    "RGB": "RGB(95, 65, 48)"
+  },
+  {
+    "Category": "Chocolate & Warm Brown",
+    "Shade": "Mocha Brown",
+    "Technique": "Ombre",
+    "Prompt": "Give her black-to-mocha brown ombre hair. Mocha brown is represented by RGB(95, 65, 48).",
+    "RGB": "RGB(95, 65, 48)"
+  },
+  {
+    "Category": "Chocolate & Warm Brown",
+    "Shade": "Mocha Brown",
+    "Technique": "Balayage",
+    "Prompt": "Give her mocha brown balayage highlights on her existing hair. Mocha brown is represented by RGB(95, 65, 48).",
+    "RGB": "RGB(95, 65, 48)"
+  },
+  {
+    "Category": "Chocolate & Warm Brown",
+    "Shade": "Mocha Brown",
+    "Technique": "Streaks",
+    "Prompt": "Give her mocha brown streaks in her existing hair. Mocha brown is represented by RGB(95, 65, 48).",
+    "RGB": "RGB(95, 65, 48)"
+  },
+  {
+    "Category": "Chocolate & Warm Brown",
+    "Shade": "Chestnut Brown",
+    "Technique": "Global",
+    "Prompt": "Give her chestnut brown hair. Chestnut brown is represented by RGB(125, 75, 45).",
+    "RGB": "RGB(125, 75, 45)"
+  },
+  {
+    "Category": "Chocolate & Warm Brown",
+    "Shade": "Chestnut Brown",
+    "Technique": "Ombre",
+    "Prompt": "Give her black-to-chestnut brown ombre hair. Chestnut brown is represented by RGB(125, 75, 45).",
+    "RGB": "RGB(125, 75, 45)"
+  },
+  {
+    "Category": "Chocolate & Warm Brown",
+    "Shade": "Chestnut Brown",
+    "Technique": "Balayage",
+    "Prompt": "Give her chestnut brown balayage highlights on her existing hair. Chestnut brown is represented by RGB(125, 75, 45).",
+    "RGB": "RGB(125, 75, 45)"
+  },
+  {
+    "Category": "Chocolate & Warm Brown",
+    "Shade": "Chestnut Brown",
+    "Technique": "Streaks",
+    "Prompt": "Give her chestnut brown streaks in her existing hair. Chestnut brown is represented by RGB(125, 75, 45).",
+    "RGB": "RGB(125, 75, 45)"
+  },
+  {
+    "Category": "Chocolate & Warm Brown",
+    "Shade": "Caramel Brown",
+    "Technique": "Global",
+    "Prompt": "Give her caramel brown hair. Caramel brown is represented by RGB(180, 120, 65).",
+    "RGB": "RGB(180, 120, 65)"
+  },
+  {
+    "Category": "Chocolate & Warm Brown",
+    "Shade": "Caramel Brown",
+    "Technique": "Ombre",
+    "Prompt": "Give her black-to-caramel brown ombre hair. Caramel brown is represented by RGB(180, 120, 65).",
+    "RGB": "RGB(180, 120, 65)"
+  },
+  {
+    "Category": "Chocolate & Warm Brown",
+    "Shade": "Caramel Brown",
+    "Technique": "Balayage",
+    "Prompt": "Give her caramel brown balayage highlights on her existing hair. Caramel brown is represented by RGB(180, 120, 65).",
+    "RGB": "RGB(180, 120, 65)"
+  },
+  {
+    "Category": "Chocolate & Warm Brown",
+    "Shade": "Caramel Brown",
+    "Technique": "Streaks",
+    "Prompt": "Give her caramel brown streaks in her existing hair. Caramel brown is represented by RGB(180, 120, 65).",
+    "RGB": "RGB(180, 120, 65)"
+  },
+  {
+    "Category": "Blonde",
+    "Shade": "Dark Blonde",
+    "Technique": "Global",
+    "Prompt": "Give her dark blonde hair. Dark blonde is represented by RGB(155, 125, 80).",
+    "RGB": "RGB(155, 125, 80)"
+  },
+  {
+    "Category": "Blonde",
+    "Shade": "Dark Blonde",
+    "Technique": "Ombre",
+    "Prompt": "Give her black-to-dark blonde ombre hair. Dark blonde is represented by RGB(155, 125, 80).",
+    "RGB": "RGB(155, 125, 80)"
+  },
+  {
+    "Category": "Blonde",
+    "Shade": "Dark Blonde",
+    "Technique": "Balayage",
+    "Prompt": "Give her dark blonde balayage highlights on her existing hair. Dark blonde is represented by RGB(155, 125, 80).",
+    "RGB": "RGB(155, 125, 80)"
+  },
+  {
+    "Category": "Blonde",
+    "Shade": "Dark Blonde",
+    "Technique": "Streaks",
+    "Prompt": "Give her dark blonde streaks in her existing hair. Dark blonde is represented by RGB(155, 125, 80).",
+    "RGB": "RGB(155, 125, 80)"
+  },
+  {
+    "Category": "Blonde",
+    "Shade": "Honey Blonde",
+    "Technique": "Global",
+    "Prompt": "Give her honey blonde hair. Honey blonde is represented by RGB(210, 170, 95).",
+    "RGB": "RGB(210, 170, 95)"
+  },
+  {
+    "Category": "Blonde",
+    "Shade": "Honey Blonde",
+    "Technique": "Ombre",
+    "Prompt": "Give her black-to-honey blonde ombre hair. Honey blonde is represented by RGB(210, 170, 95).",
+    "RGB": "RGB(210, 170, 95)"
+  },
+  {
+    "Category": "Blonde",
+    "Shade": "Honey Blonde",
+    "Technique": "Balayage",
+    "Prompt": "Give her honey blonde balayage highlights on her existing hair. Honey blonde is represented by RGB(210, 170, 95).",
+    "RGB": "RGB(210, 170, 95)"
+  },
+  {
+    "Category": "Blonde",
+    "Shade": "Honey Blonde",
+    "Technique": "Streaks",
+    "Prompt": "Give her honey blonde streaks in her existing hair. Honey blonde is represented by RGB(210, 170, 95).",
+    "RGB": "RGB(210, 170, 95)"
+  },
+  {
+    "Category": "Blonde",
+    "Shade": "Salt and Pepper",
+    "Technique": "Global",
+    "Prompt": "Give her hair a salt and pepper look with a natural white and grey blend hair colour",
+    "RGB": "RGB(150, 150, 148)"
+  },
+  {
+    "Category": "Blonde",
+    "Shade": "Salt and Pepper",
+    "Technique": "Ombre",
+    "Prompt": "Give her ombre with a salt and pepper hair look with a natural white and grey blend hair colour",
+    "RGB": "RGB(150, 150, 148)"
+  },
+  {
+    "Category": "Blonde",
+    "Shade": "Salt and Pepper",
+    "Technique": "Balayage",
+    "Prompt": "Give her balayage highlights with a salt and pepper hair look with a natural white and grey blend hair colour",
+    "RGB": "RGB(150, 150, 148)"
+  },
+  {
+    "Category": "Blonde",
+    "Shade": "Salt and Pepper",
+    "Technique": "Streaks",
+    "Prompt": "Give her streaks on a very few strands with a salt and pepper hair look with a natural white and grey blend hair colour",
+    "RGB": "RGB(150, 150, 148)"
+  },
+  {
+    "Category": "Blonde",
+    "Shade": "Ash Blonde",
+    "Technique": "Global",
+    "Prompt": "Give her ash blonde hair. Ash blonde is represented by RGB(175, 170, 160).",
+    "RGB": "RGB(175, 170, 160)"
+  },
+  {
+    "Category": "Blonde",
+    "Shade": "Ash Blonde",
+    "Technique": "Ombre",
+    "Prompt": "Give her black-to-ash blonde ombre hair. Ash blonde is represented by RGB(175, 170, 160).",
+    "RGB": "RGB(175, 170, 160)"
+  },
+  {
+    "Category": "Blonde",
+    "Shade": "Ash Blonde",
+    "Technique": "Balayage",
+    "Prompt": "Give her ash blonde balayage highlights on her existing hair. Ash blonde is represented by RGB(175, 170, 160).",
+    "RGB": "RGB(175, 170, 160)"
+  },
+  {
+    "Category": "Blonde",
+    "Shade": "Ash Blonde",
+    "Technique": "Streaks",
+    "Prompt": "Give her ash blonde streaks in her existing hair. Ash blonde is represented by RGB(175, 170, 160).",
+    "RGB": "RGB(175, 170, 160)"
+  },
+  {
+    "Category": "Copper & Auburn",
+    "Shade": "Light Copper",
+    "Technique": "Global",
+    "Prompt": "Give her light copper hair. Light copper is represented by RGB(205, 105, 55).",
+    "RGB": "RGB(205, 105, 55)"
+  },
+  {
+    "Category": "Copper & Auburn",
+    "Shade": "Light Copper",
+    "Technique": "Ombre",
+    "Prompt": "Give her black-to-light copper ombre hair. Light copper is represented by RGB(205, 105, 55).",
+    "RGB": "RGB(205, 105, 55)"
+  },
+  {
+    "Category": "Copper & Auburn",
+    "Shade": "Light Copper",
+    "Technique": "Balayage",
+    "Prompt": "Give her light copper balayage highlights on her existing hair. Light copper is represented by RGB(205, 105, 55).",
+    "RGB": "RGB(205, 105, 55)"
+  },
+  {
+    "Category": "Copper & Auburn",
+    "Shade": "Light Copper",
+    "Technique": "Streaks",
+    "Prompt": "Give her light copper streaks in her existing hair. Light copper is represented by RGB(205, 105, 55).",
+    "RGB": "RGB(205, 105, 55)"
+  },
+  {
+    "Category": "Copper & Auburn",
+    "Shade": "Copper",
+    "Technique": "Global",
+    "Prompt": "Give her copper hair. Copper is represented by RGB(180, 75, 35).",
+    "RGB": "RGB(180, 75, 35)"
+  },
+  {
+    "Category": "Copper & Auburn",
+    "Shade": "Copper",
+    "Technique": "Ombre",
+    "Prompt": "Give her black-to-copper ombre hair. Copper is represented by RGB(180, 75, 35).",
+    "RGB": "RGB(180, 75, 35)"
+  },
+  {
+    "Category": "Copper & Auburn",
+    "Shade": "Copper",
+    "Technique": "Balayage",
+    "Prompt": "Give her copper balayage highlights on her existing hair. Copper is represented by RGB(180, 75, 35).",
+    "RGB": "RGB(180, 75, 35)"
+  },
+  {
+    "Category": "Copper & Auburn",
+    "Shade": "Copper",
+    "Technique": "Streaks",
+    "Prompt": "Give her copper streaks in her existing hair. Copper is represented by RGB(180, 75, 35).",
+    "RGB": "RGB(180, 75, 35)"
+  },
+  {
+    "Category": "Copper & Auburn",
+    "Shade": "Cinnamon Red",
+    "Technique": "Global",
+    "Prompt": "Give her cinnamon red hair. Cinnamon red is represented by RGB(166, 76, 48).",
+    "RGB": "RGB(166, 76, 48)"
+  },
+  {
+    "Category": "Copper & Auburn",
+    "Shade": "Cinnamon Red",
+    "Technique": "Ombre",
+    "Prompt": "Give her black-to-cinnamon red ombre hair. Cinnamon red is represented by RGB(166, 76, 48).",
+    "RGB": "RGB(166, 76, 48)"
+  },
+  {
+    "Category": "Copper & Auburn",
+    "Shade": "Cinnamon Red",
+    "Technique": "Balayage",
+    "Prompt": "Give her cinnamon red balayage highlights on her existing hair. Cinnamon red is represented by RGB(166, 76, 48).",
+    "RGB": "RGB(166, 76, 48)"
+  },
+  {
+    "Category": "Copper & Auburn",
+    "Shade": "Cinnamon Red",
+    "Technique": "Streaks",
+    "Prompt": "Give her cinnamon red streaks in her existing hair. Cinnamon red is represented by RGB(166, 76, 48).",
+    "RGB": "RGB(166, 76, 48)"
+  },
+  {
+    "Category": "Copper & Auburn",
+    "Shade": "Auburn",
+    "Technique": "Global",
+    "Prompt": "Give her auburn hair. Auburn is represented by RGB(130, 55, 40).",
+    "RGB": "RGB(130, 55, 40)"
+  },
+  {
+    "Category": "Copper & Auburn",
+    "Shade": "Auburn",
+    "Technique": "Ombre",
+    "Prompt": "Give her black-to-auburn ombre hair. Auburn is represented by RGB(130, 55, 40).",
+    "RGB": "RGB(130, 55, 40)"
+  },
+  {
+    "Category": "Copper & Auburn",
+    "Shade": "Auburn",
+    "Technique": "Balayage",
+    "Prompt": "Give her auburn balayage highlights on her existing hair. Auburn is represented by RGB(130, 55, 40).",
+    "RGB": "RGB(130, 55, 40)"
+  },
+  {
+    "Category": "Copper & Auburn",
+    "Shade": "Auburn",
+    "Technique": "Streaks",
+    "Prompt": "Give her auburn streaks in her existing hair. Auburn is represented by RGB(130, 55, 40).",
+    "RGB": "RGB(130, 55, 40)"
+  },
+  {
+    "Category": "Burgundy & Plum",
+    "Shade": "Deep Red",
+    "Technique": "Global",
+    "Prompt": "Give her deep red hair. Deep red is represented by RGB(125, 30, 35).",
+    "RGB": "RGB(125, 30, 35)"
+  },
+  {
+    "Category": "Burgundy & Plum",
+    "Shade": "Deep Red",
+    "Technique": "Ombre",
+    "Prompt": "Give her black-to-deep red ombre hair. Deep red is represented by RGB(125, 30, 35).",
+    "RGB": "RGB(125, 30, 35)"
+  },
+  {
+    "Category": "Burgundy & Plum",
+    "Shade": "Deep Red",
+    "Technique": "Balayage",
+    "Prompt": "Give her deep red balayage highlights on her existing hair. Deep red is represented by RGB(125, 30, 35).",
+    "RGB": "RGB(125, 30, 35)"
+  },
+  {
+    "Category": "Burgundy & Plum",
+    "Shade": "Deep Red",
+    "Technique": "Streaks",
+    "Prompt": "Give her deep red streaks in her existing hair. Deep red is represented by RGB(125, 30, 35).",
+    "RGB": "RGB(125, 30, 35)"
+  },
+  {
+    "Category": "Burgundy & Plum",
+    "Shade": "Burgundy",
+    "Technique": "Global",
+    "Prompt": "Give her burgundy hair. Burgundy is represented by RGB(110, 25, 45).",
+    "RGB": "RGB(110, 25, 45)"
+  },
+  {
+    "Category": "Burgundy & Plum",
+    "Shade": "Burgundy",
+    "Technique": "Ombre",
+    "Prompt": "Give her black-to-burgundy ombre hair. Burgundy is represented by RGB(110, 25, 45).",
+    "RGB": "RGB(110, 25, 45)"
+  },
+  {
+    "Category": "Burgundy & Plum",
+    "Shade": "Burgundy",
+    "Technique": "Balayage",
+    "Prompt": "Give her burgundy balayage highlights on her existing hair. Burgundy is represented by RGB(110, 25, 45).",
+    "RGB": "RGB(110, 25, 45)"
+  },
+  {
+    "Category": "Burgundy & Plum",
+    "Shade": "Burgundy",
+    "Technique": "Streaks",
+    "Prompt": "Give her burgundy streaks in her existing hair. Burgundy is represented by RGB(110, 25, 45).",
+    "RGB": "RGB(110, 25, 45)"
+  },
+  {
+    "Category": "Burgundy & Plum",
+    "Shade": "Wine Red",
+    "Technique": "Global",
+    "Prompt": "Give her wine red hair. Wine red is represented by RGB(105, 30, 45).",
+    "RGB": "RGB(105, 30, 45)"
+  },
+  {
+    "Category": "Burgundy & Plum",
+    "Shade": "Wine Red",
+    "Technique": "Ombre",
+    "Prompt": "Give her black-to-wine red ombre hair. Wine red is represented by RGB(105, 30, 45).",
+    "RGB": "RGB(105, 30, 45)"
+  },
+  {
+    "Category": "Burgundy & Plum",
+    "Shade": "Wine Red",
+    "Technique": "Balayage",
+    "Prompt": "Give her wine red balayage highlights on her existing hair. Wine red is represented by RGB(105, 30, 45).",
+    "RGB": "RGB(105, 30, 45)"
+  },
+  {
+    "Category": "Burgundy & Plum",
+    "Shade": "Wine Red",
+    "Technique": "Streaks",
+    "Prompt": "Give her wine red streaks in her existing hair. Wine red is represented by RGB(105, 30, 45).",
+    "RGB": "RGB(105, 30, 45)"
+  },
+  {
+    "Category": "Burgundy & Plum",
+    "Shade": "Plum",
+    "Technique": "Global",
+    "Prompt": "Give her plum hair. Plum is represented by RGB(90, 45, 85).",
+    "RGB": "RGB(90, 45, 85)"
+  },
+  {
+    "Category": "Burgundy & Plum",
+    "Shade": "Plum",
+    "Technique": "Ombre",
+    "Prompt": "Give her black-to-plum ombre hair. Plum is represented by RGB(90, 45, 85).",
+    "RGB": "RGB(90, 45, 85)"
+  },
+  {
+    "Category": "Burgundy & Plum",
+    "Shade": "Plum",
+    "Technique": "Balayage",
+    "Prompt": "Give her plum balayage highlights on her existing hair. Plum is represented by RGB(90, 45, 85).",
+    "RGB": "RGB(90, 45, 85)"
+  },
+  {
+    "Category": "Burgundy & Plum",
+    "Shade": "Plum",
+    "Technique": "Streaks",
+    "Prompt": "Give her plum streaks in her existing hair. Plum is represented by RGB(90, 45, 85).",
+    "RGB": "RGB(90, 45, 85)"
+  },
+  {
+    "Category": "Fashion",
+    "Shade": "Rose Pink",
+    "Technique": "Global",
+    "Prompt": "Give her rose pink hair. Rose pink is represented by RGB(190, 95, 120).",
+    "RGB": "RGB(190, 95, 120)"
+  },
+  {
+    "Category": "Fashion",
+    "Shade": "Rose Pink",
+    "Technique": "Ombre",
+    "Prompt": "Give her black-to-rose pink ombre hair. Rose pink is represented by RGB(190, 95, 120).",
+    "RGB": "RGB(190, 95, 120)"
+  },
+  {
+    "Category": "Fashion",
+    "Shade": "Rose Pink",
+    "Technique": "Balayage",
+    "Prompt": "Give her rose pink balayage highlights on her existing hair. Rose pink is represented by RGB(190, 95, 120).",
+    "RGB": "RGB(190, 95, 120)"
+  },
+  {
+    "Category": "Fashion",
+    "Shade": "Rose Pink",
+    "Technique": "Streaks",
+    "Prompt": "Give her rose pink streaks in her existing hair. Rose pink is represented by RGB(190, 95, 120).",
+    "RGB": "RGB(190, 95, 120)"
+  },
+  {
+    "Category": "Fashion",
+    "Shade": "Lavender",
+    "Technique": "Global",
+    "Prompt": "Give her lavender hair. Lavender is represented by RGB(175, 145, 200).",
+    "RGB": "RGB(175, 145, 200)"
+  },
+  {
+    "Category": "Fashion",
+    "Shade": "Lavender",
+    "Technique": "Ombre",
+    "Prompt": "Give her black-to-lavender ombre hair. Lavender is represented by RGB(175, 145, 200).",
+    "RGB": "RGB(175, 145, 200)"
+  },
+  {
+    "Category": "Fashion",
+    "Shade": "Lavender",
+    "Technique": "Balayage",
+    "Prompt": "Give her lavender balayage highlights on her existing hair. Lavender is represented by RGB(175, 145, 200).",
+    "RGB": "RGB(175, 145, 200)"
+  },
+  {
+    "Category": "Fashion",
+    "Shade": "Lavender",
+    "Technique": "Streaks",
+    "Prompt": "Give her lavender streaks in her existing hair. Lavender is represented by RGB(175, 145, 200).",
+    "RGB": "RGB(175, 145, 200)"
+  },
+  {
+    "Category": "Fashion",
+    "Shade": "Blue",
+    "Technique": "Global",
+    "Prompt": "Give her blue hair. Blue is represented by RGB(50, 100, 180).",
+    "RGB": "RGB(50, 100, 180)"
+  },
+  {
+    "Category": "Fashion",
+    "Shade": "Blue",
+    "Technique": "Ombre",
+    "Prompt": "Give her black-to-blue ombre hair. Blue is represented by RGB(50, 100, 180).",
+    "RGB": "RGB(50, 100, 180)"
+  },
+  {
+    "Category": "Fashion",
+    "Shade": "Blue",
+    "Technique": "Balayage",
+    "Prompt": "Give her blue balayage highlights on her existing hair. Blue is represented by RGB(50, 100, 180).",
+    "RGB": "RGB(50, 100, 180)"
+  },
+  {
+    "Category": "Fashion",
+    "Shade": "Blue",
+    "Technique": "Streaks",
+    "Prompt": "Give her blue streaks in her existing hair. Blue is represented by RGB(50, 100, 180).",
+    "RGB": "RGB(50, 100, 180)"
+  },
+  {
+    "Category": "Fashion",
+    "Shade": "Emerald Green",
+    "Technique": "Global",
+    "Prompt": "Give her emerald green hair. Emerald green is represented by RGB(35, 125, 75).",
+    "RGB": "RGB(35, 125, 75)"
+  },
+  {
+    "Category": "Fashion",
+    "Shade": "Emerald Green",
+    "Technique": "Ombre",
+    "Prompt": "Give her black-to-emerald green ombre hair. Emerald green is represented by RGB(35, 125, 75).",
+    "RGB": "RGB(35, 125, 75)"
+  },
+  {
+    "Category": "Fashion",
+    "Shade": "Emerald Green",
+    "Technique": "Balayage",
+    "Prompt": "Give her emerald green balayage highlights on her existing hair. Emerald green is represented by RGB(35, 125, 75).",
+    "RGB": "RGB(35, 125, 75)"
+  },
+  {
+    "Category": "Fashion",
+    "Shade": "Emerald Green",
+    "Technique": "Streaks",
+    "Prompt": "Give her emerald green streaks in her existing hair. Emerald green is represented by RGB(35, 125, 75).",
+    "RGB": "RGB(35, 125, 75)"
+  }
+]

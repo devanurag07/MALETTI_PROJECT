@@ -1,6 +1,7 @@
 import axios from "axios";
 import axiosClient from "@/core/network/axios-client";
 import { renameMakeupLooks } from "./data/makeup";
+import { fillFluxHairColour } from "./data/haircolor";
 
 /** Studio backend (ADMIN---DJANGO app `studio`), through the template's authenticated axios client. */
 const api = axiosClient;
@@ -19,7 +20,8 @@ async function unwrap<T>(p: Promise<{ data: Envelope<T> }>): Promise<T> {
   try {
     const res = await p;
     // Make-up looks are shown as "Lips - Eyes - Blush" (their FLUX shades) everywhere: renamed once, here.
-    return renameMakeupLooks(res.data.data);
+    // A FLUX colour saved in a look's params shows as its hair colour.
+    return fillFluxHairColour(renameMakeupLooks(res.data.data));
   } catch (err) {
     if (axios.isAxiosError(err)) {
       const body = err.response?.data;

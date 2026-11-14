@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import type { AnalysisTab, CatalogItem, I18n, PublicReport, TryOn } from "../api";
 import { theme } from "../theme";
 import type { SkinServiceCard } from "../context/StudioContext";
+import { fluxShade } from "../data/haircolor";
 import { c, Diamond, SERIF } from "../ui";
 import { markingsOf, SkinMapLegend, SkinMapPhoto, SKIN_METRICS } from "../components/SkinMap";
 import ColourHarmonyPages, { colourHarmonyData } from "./ColourHarmonyPages";
@@ -46,11 +47,14 @@ export default function StudioReport({ report: raw, variant = "screen" }: { repo
     const chosenKey = chosenItem?.key;
     const seen = new Set<string>();
     const list = report.tryons.filter((x) => x.kind === kind && x.status === "done" && x.output_url && !seen.has(x.output_url) && seen.add(x.output_url));
-    const chosenId = [...list].reverse().find((x) => chosenKey && x.params[field] === chosenKey)?.id;
+    // FLUX_VERSION_3 colours are sent as shade_key (not a backend catalogue key).
+    const keyOf = (x: TryOn) => (x.params[field] ?? (kind === "colour" ? x.params.shade_key : undefined)) as string | undefined;
+    const chosenId = [...list].reverse().find((x) => chosenKey && keyOf(x) === chosenKey)?.id;
     return list.map((x) => {
-      const key = x.params[field] as string | undefined;
+      const key = keyOf(x);
       const name = !key ? (kind === "makeup" && (x.params.lip || x.params.eye || x.params.lip_key || x.params.eye_key) ? tr("look.makeup") : tr("tryon.yourPhoto"))
         : key === chosenKey && chosenItem ? tx(chosenItem.name)
+        : fluxShade(key) ? tx(fluxShade(key)!.name)
         : key.replace(/_/g, " ").replace(/^./, (ch) => ch.toUpperCase());
       return { id: x.id, src: x.output_url as string, name, chosen: x.id === chosenId };
     });

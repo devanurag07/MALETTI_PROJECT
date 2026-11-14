@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { studioApi, type Results } from "../api";
-import { useCatalog, useStudio } from "../context/StudioContext";
+import { useAllShades, useCatalog, useStudio } from "../context/StudioContext";
 import { SERVICE_MODULE, SERVICE_TRY, type Service } from "../flows";
 import { saveLookDraft } from "../save-look";
 import { markingsOf, SkinMapPhoto, SKIN_METRICS } from "../components/SkinMap";
@@ -24,7 +24,7 @@ export default function SimpleResultScreen() {
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const cuts = useCatalog("haircut");
-  const shades = useCatalog("hair_shade");
+  const shades = useAllShades(); // backend + FLUX_VERSION_3 colours
   const looks = useCatalog("makeup_look");
   const beards = useCatalog("beard_style");
 

@@ -4,7 +4,8 @@ import { BLUSH, blushByKey, EYESHADOW, eyeByKey, LIPSTICK, LOOK_FLUX, lipByKey, 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { studioApi, type CatalogItem, type Results, type TryKind, type TryOn } from "../api";
-import { UPLOAD, useCatalog, useStudio, type HairMods, type LookDraft } from "../context/StudioContext";
+import { UPLOAD, useAllShades, useCatalog, useStudio, type HairMods, type LookDraft } from "../context/StudioContext";
+import { fluxShadePrompt, isFluxShade } from "../data/haircolor";
 import { SERVICE_MODULE, SERVICE_TRY, tryOrder, type Service } from "../flows";
 import { JourneyBar, Options } from "./JourneyScreen";
 import ScanOverlay from "../components/ScanOverlay";
@@ -102,7 +103,7 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
   const back = search.get("back");
 
   const cutsAll = useCatalog("haircut");
-  const shadesAll = useCatalog("hair_shade");
+  const shadesAll = useAllShades(); // backend (recommended) + FLUX_VERSION_3 (custom) colours
   const techniques = useCatalog("hair_technique");
   const lipsAll = LIPSTICK; // FLUX_VERSION_3 makeup_prompts.json, not the catalogue
   const blushAll = BLUSH; // FLUX_VERSION_3 makeup_prompts.json, not the catalogue
@@ -173,7 +174,12 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
       const extra = Object.fromEntries(Object.entries(mods).filter(([, v]) => !!v));
       return s.item || Object.keys(extra).length ? { ...(s.item ? { item: s.item } : {}), ...extra } : null;
     }
-    if (kind === "colour") return s.shade ? { shade: s.shade, technique: s.technique, intensity: lvl } : null;
+    if (kind === "colour") {
+      if (!s.shade) return null;
+      // FLUX_VERSION_3 colour (custom page): its own prompt goes to the backend, like the make-up shades.
+      if (isFluxShade(s.shade)) return { shade_key: s.shade, shade_prompt: fluxShadePrompt(s.shade, s.technique, gender), technique: s.technique, intensity: lvl };
+      return { shade: s.shade, technique: s.technique, intensity: lvl };
+    }
     if (kind === "makeup") {
       // FLUX_VERSION_3 shades (makeup_prompts.json): their own prompts go to the backend. No blush picked: a look brings its own.
       const bKey = s.blush ?? (s.look ? lookBlush(looksAll.find((x) => x.key === s.look) ?? { key: s.look })?.key ?? null : null);
@@ -417,7 +423,7 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
   const historyName = (p: Record<string, unknown>) => {
     if (kind === "cut") return p.item ? name(cutsAll, p.item as string) : t("tryon", "yourHair");
     if (kind === "beard") return name(beardsAll, (p.beard as string) ?? null);
-    if (kind === "colour") return name(shadesAll, (p.shade as string) ?? null);
+    if (kind === "colour") return name(shadesAll, ((p.shade ?? p.shade_key) as string) ?? null);
     if (p.look || p.look_key) return name(looksAll, (p.look ?? p.look_key) as string);
     const n = [lipByKey(p.lip_key as string)?.name, eyeByKey(p.eye_key as string)?.name, blushByKey(p.blush_key as string)?.name]
       .filter(Boolean).map((x) => tx(x));
@@ -429,7 +435,7 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
     const s: Sel = kind === "cut" ? { ...sel, item: (p.item as string) ?? null }
       : kind === "beard" ? { ...sel, beard: (p.beard as string) ?? null }
       : kind === "colour"
-      ? { ...sel, shade: (p.shade as string) ?? null, technique: (p.technique as string) ?? sel.technique }
+      ? { ...sel, shade: ((p.shade ?? p.shade_key) as string) ?? null, technique: (p.technique as string) ?? sel.technique }
       : (p.look || p.look_key) ? { ...sel, look: (p.look ?? p.look_key) as string, lip: null, eye: null, blush: (p.blush_key as string) ?? null }
       : { ...sel, look: null, lip: (p.lip_key as string) ?? null, eye: (p.eye_key as string) ?? null, blush: (p.blush_key as string) ?? null };
     setSel(s);
