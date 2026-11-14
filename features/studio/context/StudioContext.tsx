@@ -1,5 +1,6 @@
 "use client";
 
+import { preloadOptionImages } from "../preload-images";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter } from "next/navigation";
@@ -146,6 +147,8 @@ export function StudioProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(loadConfig, [loadConfig]);
+  // Option pictures into the browser cache in the background, so the colour / style grids open filled.
+  useEffect(() => preloadOptionImages(config), [config]);
 
   useEffect(() => {
     if (!restored) return;

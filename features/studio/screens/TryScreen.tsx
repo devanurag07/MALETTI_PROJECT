@@ -24,11 +24,19 @@ const GEN_MS = 25_000;
  * FLUX_VERSION_3-style generation screen: the customer's photo with the scan animation, a simulated % and stage messages.
  * Shown on the Result tab while a try-on is generating.
  */
-function GeneratingScan({ image }: { image: string | null }) {
+/** When the current generation's animation began (shared by the route loading screen and the page). */
+let genStart = 0;
+/** Loading screen for /try: start the animation clock now. */
+export const markGenStart = () => { genStart = Date.now(); };
+
+export function GeneratingScan({ image, preview }: { image: string | null; /** the route loading screen */ preview?: boolean }) {
   const { t } = useStudio();
   const [pct, setPct] = useState(0);
   useEffect(() => {
-    const start = Date.now();
+    // Continue from the loading screen shown on the tap (try/[kind]/loading.tsx), so the bar doesn't restart.
+    // The page's scan takes the clock over (one use), so a later try on the same page starts from 0.
+    const start = genStart && Date.now() - genStart < GEN_MS ? genStart : Date.now();
+    if (!preview) genStart = 0;
     // Ease-out towards 92%: fast at first, slower near the end, never "done" before the result arrives.
     const id = setInterval(() => setPct(Math.round(92 * (1 - Math.exp(-(Date.now() - start) / (GEN_MS / 2.5))))), 150);
     return () => clearInterval(id);

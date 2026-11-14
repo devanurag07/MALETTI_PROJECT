@@ -289,7 +289,7 @@ function FaceTab({ a, colour }: { a: AnalysisTab; colour?: AnalysisTab }) {
       active={look.beard === x.key} onClick={() => tryBeard(x.key)} />
   );
   const shadeTile = (x: CatalogItem) => (
-    <ShadeSwatch key={x.key} image={shadeImage(x)} tried={tried("colour", x.key)} name={tx(x.name)} mark={recShadeKeys.has(x.key)}
+    <ShadeSwatch key={x.key} image={shadeImage(x)} hex={x.hex} tried={tried("colour", x.key)} name={tx(x.name)} mark={recShadeKeys.has(x.key)}
       active={look.hair_shade === x.key} onClick={() => tryShade(x.key)} />
   );
   /** Hair colours: FLUX_VERSION_3 style — 4 per row, wide 2:1 swatch, name centred below. */

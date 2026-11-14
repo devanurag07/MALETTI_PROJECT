@@ -147,7 +147,7 @@ export function ServicePage({ service }: { service: Service }) {
     const id = setTimeout(() => {
       try { sessionStorage.setItem(scanKey, "1"); } catch {}
       setScanning(false);
-    }, 5000);
+    }, Math.max(0, SCAN_MS - (Date.now() - scanStart(service))));
     return () => clearTimeout(id);
   }, [scanning, scanKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -265,7 +265,7 @@ export function Options({ service, a, sel, setSel, tab: tabProp, bare }: {
     content = (
       <>
         <Carousel key="colour" perPage={16} columns={4} items={customShades.map((x) => (
-          <ShadeSwatch key={x.key} image={styleImage("hair_shade", x.key, x.image_url) || thumb} name={tx(x.name)} mark={recKeys.has(x.key)}
+          <ShadeSwatch key={x.key} image={styleImage("hair_shade", x.key, x.image_url) || thumb} hex={x.hex} name={tx(x.name)} mark={recKeys.has(x.key)}
             active={sel === x.key} onClick={() => setSel(x.key)} />
         ))} />
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -565,12 +565,20 @@ export function SkinServicesPage() {
  * scan line, brackets, "<stage> NN%" pill), counting to 100 % in 5 s.
  */
 const SCAN_MS = 5000;
-function ServiceScan({ service }: { service: Service }) {
+/** When this service's scan began: the loading screen (tap on Proceed) and the page share it, so the bar never restarts. */
+const scanStarts: Partial<Record<Service, number>> = {};
+function scanStart(service: Service) {
+  const t = scanStarts[service];
+  if (t && Date.now() - t < SCAN_MS + 2000) return t;
+  return (scanStarts[service] = Date.now());
+}
+
+export function ServiceScan({ service }: { service: Service }) {
   const { t, photo } = useStudio();
   const simple = useSearchParams().get("simple") === "1";
   const [pct, setPct] = useState(0);
   useEffect(() => {
-    const start = Date.now();
+    const start = scanStart(service);
     const id = setInterval(() => setPct(Math.min(100, Math.round(((Date.now() - start) / SCAN_MS) * 100))), 100);
     return () => clearInterval(id);
   }, []);

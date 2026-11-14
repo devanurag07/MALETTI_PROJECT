@@ -876,8 +876,8 @@ export function Carousel({ items, perPage, columns }: { items: ReactNode[]; perP
 }
 
 /** Small hair-colour swatch (FLUX_VERSION_3 custom look): 2:1 picture, gold ring when picked, dot = recommended. */
-export function ShadeSwatch({ image, name, mark, tried, busy, active, onClick, none }: {
-  image: string | null; name: string; mark?: boolean; tried?: string; busy?: boolean; active: boolean; onClick: () => void; none?: boolean;
+export function ShadeSwatch({ image, hex, name, mark, tried, busy, active, onClick, none }: {
+  image: string | null; /** Shade colour: shown while the picture loads (or if it fails). */ hex?: string | null; name: string; mark?: boolean; tried?: string; busy?: boolean; active: boolean; onClick: () => void; none?: boolean;
 }) {
   return (
     <button type="button" onClick={onClick} style={{
@@ -886,7 +886,7 @@ export function ShadeSwatch({ image, name, mark, tried, busy, active, onClick, n
     }}>
       <span style={{
         position: "relative", display: "block", width: "100%", aspectRatio: "2 / 1", borderRadius: 10, overflow: "hidden",
-        background: c("photo"), border: `2px solid ${active ? c("accent") : "transparent"}`,
+        background: (!none && hex) || c("photo"), border: `2px solid ${active ? c("accent") : "transparent"}`,
       }}>
         {none ? <NoneIcon size={22} /> : <Photo src={image} />}
         {busy ? (

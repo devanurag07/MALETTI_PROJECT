@@ -25,6 +25,14 @@ const nextConfig: NextConfig = {
     "/api/**": ["node_modules/@sparticuz/chromium/bin/**"],
   },
   output: "standalone",
+  // Option pictures / brand assets: cache them in the browser (Next serves public/ with max-age=0 by default, so a
+  // fresh page re-asked the server for every tile and the grids opened empty). A day, then refreshed in the background.
+  async headers() {
+    return [{
+      source: "/studio/:path*",
+      headers: [{ key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" }],
+    }];
+  },
 };
 
 export default withNextIntl(nextConfig);
