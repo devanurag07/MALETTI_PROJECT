@@ -31,7 +31,7 @@ export default function ServiceScreen() {
   }
 
   return (
-    <Screen step={3}>
+    <Screen>
       <div style={{ flex: "1 1 auto", minHeight: 0, overflow: "hidden", position: "relative", display: "flex", alignItems: "center", justifyContent: "center", padding: "10px 0" }}>
         <HeroBackdrop halo={[360, 340]} squares={[
           { left: 90, top: 20, width: 72, height: 72 },

@@ -36,6 +36,8 @@ export type LookDraft = {
   hairMods: HairMods;
   /** Salon skin services recommended on the Services page; saved with the look (params.skin_services) for the report. */
   skinServices?: SkinServiceCard[];
+  /** Set once the customer taps Male / Female on the Profile screen (nothing is pre-selected before that). */
+  genderPicked?: boolean;
 };
 
 /** What the report needs of a recommended salon skin service. */
@@ -48,6 +50,9 @@ export const HAIR_MOD_OPTIONS = {
   fade: ["taper", "medium", "skin"],
   styling: ["blow_dry", "straight", "curly", "waves"],
 } as const;
+
+/** Languages this client's mirror offers (labels in locales/<l>.json → studio.*). Frontend-owned, like the UI text. */
+export const STUDIO_LOCALES = ["en", "it", "es", "fr", "de"];
 
 /** Look-draft value meaning "the customer's own uploaded style picture" (no catalog item). */
 export const UPLOAD = "upload:own";

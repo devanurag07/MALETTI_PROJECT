@@ -138,7 +138,7 @@ export default function CaptureScreen() {
   if (!config) return <LoadingStage />;
 
   return (
-    <Screen step={1} onBack={() => router.push("/")}>
+    <Screen onBack={() => router.push("/")}>
       <div style={{ flex: "1 1 auto", minHeight: 0, position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <HeroBackdrop squares={[
           { left: 44, top: 26, width: 132, height: 132 },
@@ -166,18 +166,15 @@ export default function CaptureScreen() {
               }}
             />
           ) : null}
-          <svg viewBox="0 0 560 560" width={ARCH.w} height={ARCH.h} aria-hidden="true" style={{ position: "absolute", left: 0, top: 0 }}>
-            <ellipse cx="280" cy="262" rx="150" ry="182" fill="none" stroke="var(--mm-dashed)" strokeWidth="3.6" strokeDasharray="12 13" strokeOpacity="0.95" />
-            <path d="M268 62 L292 62 L284 76 L260 76 Z" fill="var(--mm-accent)" />
-            <path d="M268 450 L292 450 L284 464 L260 464 Z" fill="var(--mm-accent)" />
-          </svg>
           {flash > 0 && (
             <div key={flash} aria-hidden="true" style={{ position: "absolute", inset: 0, background: "#fff", pointerEvents: "none", animation: "mm-shutter 450ms ease-out forwards" }} />
           )}
           <style>{`@keyframes mm-shutter { 0% { opacity: 0.95 } 100% { opacity: 0 } }`}</style>
-          <div style={{ position: "absolute", left: 0, right: 0, bottom: 16, display: "flex", justifyContent: "center" }}>
-            <GuidePill>{camError ? t("capture", "noCamera") : t("capture", "guide")}</GuidePill>
-          </div>
+          {camError ? (
+            <div style={{ position: "absolute", left: 0, right: 0, bottom: 16, display: "flex", justifyContent: "center" }}>
+              <GuidePill>{t("capture", "noCamera")}</GuidePill>
+            </div>
+          ) : null}
         </Arch>
       </div>
 

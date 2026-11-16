@@ -802,8 +802,8 @@
       "capturedSub": "Front light, face well centred",
       "retake": "Retake",
       "title": "Your profile",
-      "woman": "Woman",
-      "man": "Man",
+      "woman": "Female",
+      "man": "Male",
       "note": "Used to suggest cuts, colours, make-up or beard styles that suit you.",
       "pathTitle": "Choose your path",
       "recommended": "Recommended"
@@ -819,7 +819,13 @@
       "scalp": "Scalp",
       "running": "Analysing…",
       "progress": "In progress",
-      "failed": "Not available"
+      "failed": "Not available",
+      "scanTitle": "Analysing your photo",
+      "scanSub": "Face, colour harmony and skin: preparing your consultation…",
+      "listFace": "Facial analysis",
+      "listColour": "Armocromia",
+      "listSkin": "Skin analysis",
+      "faceTitle": "Facial analysis"
     },
     "results": {
       "tabSkin": "Skin",
@@ -1158,7 +1164,7 @@
       "cta": "See your skin map"
     },
     "qr": {
-      "button": "QR",
+      "button": "Download",
       "scan": "Scan with your phone to download this photo",
       "download": "Download photo",
       "hint": "If the download doesn't start, press and hold the photo to save it.",

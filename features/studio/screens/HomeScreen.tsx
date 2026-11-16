@@ -13,7 +13,7 @@ import { c, Icon, ICON, LoadingStage, SERIF, Stage } from "../ui";
 /** Big faint brand parallelograms behind the title (from the Maletti brand guidelines). */
 const SHAPES: CSSProperties[] = [
   { left: 120, top: 200, width: 300, height: 290 },
-  { left: -60, top: 450, width: 150, height: 260 },
+  { left: -60, top: 540, width: 150, height: 240 },
   { right: -40, top: 640, width: 190, height: 150 },
   { left: 110, bottom: -40, width: 210, height: 120 },
 ];

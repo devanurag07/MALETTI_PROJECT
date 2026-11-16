@@ -6,7 +6,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { studioApi, type I18n } from "../api";
 import { catalogKey, useCatalog, useStudio } from "../context/StudioContext";
 import { hairColourOf, isFluxShade } from "../data/haircolor";
-import { lookParams } from "../save-look";
+import { lookParams, savedMakeupLook } from "../save-look";
 import { theme } from "../theme";
 import { ActionBar, c, CompareArch, Diamond, ErrorLine, H1, Icon, ICON, LoadingStage, PrimaryButton, Screen } from "../ui";
 import { useNav } from "../use-nav";
@@ -48,12 +48,12 @@ export default function LookScreen() {
           // A FLUX_VERSION_3 colour is not a backend catalogue key: saved in params.hair_colour instead.
           hair_shade: isFluxShade(shade) ? null : catalogKey(shade),
           technique: catalogKey(shade) && !isFluxShade(shade) ? look.technique ?? lp("colour", "technique") : null,
-          makeup_look: catalogKey(look.makeup_look ?? lp("makeup", "look")),
+          makeup_look: savedMakeupLook(look.makeup_look ?? lp("makeup", "look_key") ?? lp("makeup", "look")),
           lip: look.lip ?? lp("makeup", "lip"),
           eye: look.eye ?? lp("makeup", "eye"),
           beard: catalogKey(look.beard ?? lp("beard", "beard")),
           // Recommended salon skin services ride along in params, so the report (and its PDF) can list them.
-          params: lookParams(look, shade),
+          params: lookParams(look, shade, look.makeup_look ?? lp("makeup", "look_key")),
           products: look.products,
           final_tryon_id: look.lastTryon?.status === "done" ? look.lastTryon.id : null,
           headline,
@@ -100,7 +100,7 @@ export default function LookScreen() {
   const skinProducts = (s?.products ?? []).filter((p) => p.area === "skin").map((p) => tx(p.name)).join(", ");
 
   return (
-    <Screen step={6}>
+    <Screen>
       <div style={{ flex: "0 0 auto", display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 16, padding: "16px 34px 0 34px" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 4, minWidth: 0 }}>
           <H1 size={36}>{t("look", "title")}</H1>

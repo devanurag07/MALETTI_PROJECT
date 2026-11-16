@@ -1,6 +1,7 @@
 import axios from "axios";
 import axiosClient from "@/core/network/axios-client";
-import { renameMakeupLooks } from "./data/makeup";
+import { fillMixLook, renameMakeupLooks } from "./data/makeup";
+import { applyAiRecs } from "./data/ai-recs";
 import { fillFluxHairColour } from "./data/haircolor";
 import { BASE_URL } from "@/core/constants/url-constants";
 
@@ -36,7 +37,8 @@ async function unwrap<T>(p: Promise<{ data: Envelope<T> }>): Promise<T> {
     const res = await p;
     // Make-up looks are shown as "Lips - Eyes - Blush" (their FLUX shades) everywhere: renamed once, here.
     // A FLUX colour saved in a look's params shows as its hair colour.
-    return fillFluxHairColour(renameMakeupLooks(res.data.data));
+    // The AI's own hair colours / make-up looks (Maletti prompt) become the colour tab's recommendations.
+    return applyAiRecs(fillMixLook(fillFluxHairColour(renameMakeupLooks(res.data.data))));
   } catch (err) {
     if (axios.isAxiosError(err)) {
       const body = err.response?.data;
@@ -203,7 +205,11 @@ export const studioApi = {
     fd.append("image", blob, "photo.jpg");
     return unwrap<Session>(api.post(`studio/sessions/${id}/photo/`, fd));
   },
-  analyze: (id: string) => unwrap<Results>(api.post(`studio/sessions/${id}/analyze/`)).then((r) => keepResults(id, r)),
+  /** `modules`: just those (face first, then colour + skin); the response holds every module done so far. */
+  analyze: (id: string, modules?: string[]) =>
+    unwrap<Results>(api.post(`studio/sessions/${id}/analyze/`, modules ? { modules } : {})).then((r) => keepResults(id, r)),
+  /** Remember merged results (two analysis calls running side by side). */
+  keepResults: (id: string, r: Results) => keepResults(id, r),
   results: (id: string) => unwrap<Results>(api.get(`studio/sessions/${id}/results/`)).then((r) => keepResults(id, r)),
   /** Last results fetched for a session (in memory), so going back to a screen shows them at once, no loading. */
   cachedResults: (id: string | null | undefined): Results | null => (id ? RESULTS.get(id) ?? null : null),

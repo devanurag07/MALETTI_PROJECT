@@ -20,7 +20,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
     locale = defaultLocale;
   }
 
-  // Studio labels exist in en/it only; other locales fall back to English for that namespace.
+  // Studio labels exist in en/it/es/fr/de; any other locale falls back to English for that namespace.
   if (!messages.studio) {
     messages = { ...messages, studio: (await import(`./locales/${defaultLocale}.json`)).default.studio };
   }

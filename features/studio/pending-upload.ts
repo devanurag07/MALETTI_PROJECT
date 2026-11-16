@@ -18,27 +18,53 @@ export function waitForPendingUpload(): Promise<unknown> {
 }
 
 /**
- * The analysis (all modules, one backend call) runs once per session in the background: the journey starts straight on
- * the first service intro, and each service page shows its own scan until its module's results are in.
+ * The analysis runs once per session in the background, in two calls side by side: the face first (the consultation
+ * opens on the face analysis page, it shouldn't wait for the longer armocromia), then armocromia + skin.
  */
-const analyses = new Map<string, Promise<Results>>();
+const FACE = ["face"];
+const REST = ["colour", "skin"];
+type Run = { face: Promise<Results>; all: Promise<Results> };
+const analyses = new Map<string, Run>();
 /** Forget the session's analysis run (gender changed: the suggestions are redone, fetch them again). */
 export function forgetAnalysis(sessionId: string) {
   analyses.delete(sessionId);
 }
 
-export function ensureAnalysis(sessionId: string): Promise<Results> {
-  let run = analyses.get(sessionId);
-  if (!run) {
-    run = (async () => {
-      await waitForPendingUpload(); // photo may still be uploading from the Capture screen
-      const r = await studioApi.results(sessionId);
-      const done = r.tabs.some((x) => x.status === "done") ? r : await studioApi.analyze(sessionId);
-      preloadResultImages(done);
-      return done;
-    })();
-    analyses.set(sessionId, run);
-    run.catch(() => analyses.delete(sessionId)); // failed: the next screen tries again
-  }
+/** Tabs of `b` replace `a`'s for the same module (the later call knows more). */
+function merge(a: Results, b: Results): Results {
+  const tabs = new Map(a.tabs.map((t) => [t.module, t]));
+  b.tabs.forEach((t) => { if (t.status === "done" || !tabs.has(t.module)) tabs.set(t.module, t); });
+  return { session: b.session, tabs: [...tabs.values()] };
+}
+
+function start(sessionId: string): Run {
+  const existing = (async () => {
+    await waitForPendingUpload(); // photo may still be uploading from the Capture screen
+    return studioApi.results(sessionId);
+  })();
+  const part = (modules: string[]) => existing.then((r) =>
+    // Already analysed (e.g. back on the mirror after a reload): nothing to run for these modules.
+    r.tabs.some((x) => modules.includes(x.module) && x.status === "done") ? r : studioApi.analyze(sessionId, modules));
+  const face = part(FACE);
+  const rest = part(REST);
+  const all = Promise.all([face, rest]).then(([f, r]) => {
+    const done = studioApi.keepResults(sessionId, merge(f, r));
+    preloadResultImages(done);
+    return done;
+  });
+  face.then(preloadResultImages).catch(() => {});
+  const run = { face, all };
+  analyses.set(sessionId, run);
+  all.catch(() => { if (analyses.get(sessionId) === run) analyses.delete(sessionId); }); // failed: the next screen tries again
   return run;
+}
+
+/** Every module's results (armocromia / skin pages, try-on, report). */
+export function ensureAnalysis(sessionId: string): Promise<Results> {
+  return (analyses.get(sessionId) ?? start(sessionId)).all;
+}
+
+/** Just the face analysis (face analysis page, haircut, beard) — doesn't wait for armocromia + skin. */
+export function ensureFaceAnalysis(sessionId: string): Promise<Results> {
+  return (analyses.get(sessionId) ?? start(sessionId)).face;
 }

@@ -674,8 +674,8 @@
       "capturedSub": "Luce frontale, viso ben centrato",
       "retake": "Rifai",
       "title": "Il tuo profilo",
-      "woman": "Donna",
-      "man": "Uomo",
+      "woman": "Femminile",
+      "man": "Maschile",
       "note": "Serve a proporti tagli, colori, make-up o barba adatti a te.",
       "pathTitle": "Scegli il percorso",
       "recommended": "Consigliato"
@@ -691,7 +691,13 @@
       "scalp": "Cute",
       "running": "Analisi in corso…",
       "progress": "In corso",
-      "failed": "Non disponibile"
+      "failed": "Non disponibile",
+      "scanTitle": "Analisi della foto",
+      "scanSub": "Viso, armocromia e pelle: prepariamo la tua consulenza…",
+      "listFace": "Analisi del viso",
+      "listColour": "Armocromia",
+      "listSkin": "Analisi della pelle",
+      "faceTitle": "Analisi del viso"
     },
     "results": {
       "tabSkin": "Pelle",
@@ -1030,7 +1036,7 @@
       "cta": "Vedi la mappa della pelle"
     },
     "qr": {
-      "button": "QR",
+      "button": "Scarica",
       "scan": "Inquadra con il telefono per scaricare questa foto",
       "download": "Scarica la foto",
       "hint": "Se il download non parte, tieni premuta la foto per salvarla.",

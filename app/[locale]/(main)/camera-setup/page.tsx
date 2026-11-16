@@ -41,7 +41,7 @@ import {
 import { isDebugMode, isDebugSalon, persistDebugMode } from "@/core/utils/debug-mode";
 import { DEFAULT_SCREENSAVER_TIMEOUT_MS } from "@/design-system/components/common/screen-saver";
 import { logoutMirror } from "@/features/auth/utils/logout";
-import { useStudio } from "@/features/studio/context/StudioContext";
+import { STUDIO_LOCALES, useStudio } from "@/features/studio/context/StudioContext";
 
 const languageNames: Record<string, string> = {
   en: "English",
@@ -98,10 +98,9 @@ export default function CameraSetupPage() {
     "microscopic" | "normal" | "language" | "screensaver" | null
   >(null);
 
-  // Same switch as the EN/IT toggle on the Studio screens (cookie + session locale + route),
-  // limited to the languages this client's config offers.
-  const { config: studioConfig, setLocale: setStudioLocale } = useStudio();
-  const locales = studioConfig?.locales?.length ? studioConfig.locales : ["en", "it"];
+  // Same switch as the Studio screens (cookie + session locale + route): the languages this client's frontend offers.
+  const { setLocale: setStudioLocale } = useStudio();
+  const locales = STUDIO_LOCALES;
   const handleLanguageChange = (newLocale: string) => {
     if (newLocale !== locale) setStudioLocale(newLocale);
     setOpenDropdown(null);

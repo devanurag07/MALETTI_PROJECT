@@ -39,7 +39,7 @@ export default function ResultsScreen({ tab }: { tab: Tab }) {
   const current = results?.tabs.find((x) => x.module === MODULE[tab]);
 
   return (
-    <Screen step={4} animKey={tab}>
+    <Screen animKey={tab}>
       <Tabs tabs={tabs} value={tab} onChange={(k) => router.replace(`/results/${k}`)} />
       {status(tab) === "coming_soon" ? (
         <div style={{ flex: 1 }} />
@@ -171,13 +171,16 @@ const SHAPE_PATH: Record<string, string> = {
   oblong: "M42 6 C58 6 68 24 68 50 C68 78 58 98 42 98 C26 98 16 78 16 50 C16 24 26 6 42 6 Z",
   heart: "M42 12 C64 10 74 26 72 44 C70 66 54 90 42 96 C30 90 14 66 12 44 C10 26 20 10 42 12 Z",
   diamond: "M42 8 C52 8 60 24 72 46 C66 72 54 94 42 96 C30 94 18 72 12 46 C24 24 32 8 42 8 Z",
+  rectangle: "M42 6 C62 6 68 16 68 46 C68 76 64 90 52 96 C46 98 38 98 32 96 C20 90 16 76 16 46 C16 16 22 6 42 6 Z",
   triangle: "M42 12 C54 12 62 24 64 40 C70 62 72 80 56 92 C48 96 36 96 28 92 C12 80 14 62 20 40 C22 24 30 12 42 12 Z",
 };
 
 /** Face tab: only the face analysis — shape, description and the three measurements, large. */
-function FaceInfo({ a }: { a: AnalysisTab }) {
+export function FaceInfo({ a }: { a: AnalysisTab }) {
   const { t, tx, photo, look } = useStudio();
   const v = (x: unknown) => (x == null ? "–" : t("face", `values.${x}`).replace(/^values\./, ""));
+  const summary = tx(a.summary);
+  const cover = summary.includes("**");
   const metrics = [
     [t("face", "ratio"), a.metrics.ratio != null ? Number(a.metrics.ratio).toFixed(1) : "–"],
     [t("face", "cheek"), v(a.metrics.cheekbones)],
@@ -187,8 +190,9 @@ function FaceInfo({ a }: { a: AnalysisTab }) {
     <div style={{ flex: "1 1 auto", minHeight: 0, overflowY: "auto", display: "flex", flexDirection: "column", gap: 22, padding: "22px 34px 8px 34px" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
         <div style={{ flex: "1 1 auto", minWidth: 0, display: "flex", flexDirection: "column", gap: 10 }}>
-          <H1 size={40}>{tx(a.label?.name)}</H1>
-          <Muted size={15}>{tx(a.summary) || tx(a.label?.desc)}</Muted>
+          {/* Maletti prompt: the face shape is only named (in bold) inside the summary, no title of its own. */}
+          {cover ? null : <H1 size={40}>{tx(a.label?.name)}</H1>}
+          <Muted size={cover ? 17 : 15}>{cover ? boldText(summary) : summary || tx(a.label?.desc)}</Muted>
         </div>
         <svg width="84" height="104" viewBox="0 0 84 104" fill="none" aria-hidden="true" style={{ flex: "0 0 auto" }}>
           <path d={SHAPE_PATH[a.label?.key ?? ""] ?? SHAPE_PATH.oval} stroke="var(--mm-ink)" strokeWidth="1.6" />
@@ -206,6 +210,7 @@ function FaceInfo({ a }: { a: AnalysisTab }) {
           <Photo src={look.lastTryon?.output_url || photo} />
         </div>
       </div>
+      {a.metrics.ratio == null && !a.metrics.cheekbones ? null : (
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", borderTop: `1px solid ${c("divider")}`, borderBottom: `1px solid ${c("divider")}` }}>
         {metrics.map(([label, value]) => (
           <div key={label} style={{ display: "flex", flexDirection: "column", gap: 4, padding: "14px 0" }}>
@@ -214,8 +219,15 @@ function FaceInfo({ a }: { a: AnalysisTab }) {
           </div>
         ))}
       </div>
+      )}
     </div>
   );
+}
+
+/** "You have an **oval** face" → the bold parts in the accent colour (the AI's Markdown bold, nothing else). */
+export function boldText(text: string): ReactNode {
+  return text.split(/\*\*(.+?)\*\*/g).map((part, i) =>
+    i % 2 ? <strong key={i} style={{ fontWeight: 600, color: c("accent") }}>{part}</strong> : part);
 }
 
 type FaceSub = "recommended" | "catalogue";
@@ -248,7 +260,7 @@ function FaceTab({ a, colour }: { a: AnalysisTab; colour?: AnalysisTab }) {
     ...(isMan ? [{ key: "beard", label: t("face", "beardTitle") }] : [{ key: "makeup", label: t("face", "catMakeup") }]),
   ];
   const shadeDetails = useShadeDetails();
-  const recList: Record<typeof catKind, { visual?: (x: Recommendation) => ReactNode; models?: (x: CatalogItem) => readonly [string, string]; details?: (x: Recommendation) => { label: string; value: ReactNode }[]; items: Recommendation[]; image: (x: CatalogItem) => string | null; focus: string; onTry: (k: string) => void; active: string | null }> = {
+  const recList: Record<typeof catKind, { visual?: (x: Recommendation) => ReactNode; models?: (x: CatalogItem) => readonly [string, string] | null; details?: (x: Recommendation) => { label: string; value: ReactNode }[]; items: Recommendation[]; image: (x: CatalogItem) => string | null; focus: string; onTry: (k: string) => void; active: string | null }> = {
     cut: { items: a.recommendations.haircut ?? [], image: (x) => cutImage(x), focus: "50% 8%", onTry: (k) => tryCut(k), active: look.cut },
     colour: { items: colour?.recommendations.hair_shade ?? [], image: (x) => shadeImage(x), focus: "50% 50%", onTry: (k) => tryShade(k), active: look.hair_shade,
       models: (x) => colourModels(gender, x.key), details: (x) => shadeDetails(x) },
@@ -361,7 +373,7 @@ function FaceTab({ a, colour }: { a: AnalysisTab; colour?: AnalysisTab }) {
 /** All recommendations at once (3 across): picture, Best match / For you, name, why it suits. Tap = select. */
 export function RecommendedGrid({ items, image, focus, onChange, active, models, visual, rows, why, dense }: {
   items: Recommendation[]; image: (x: CatalogItem) => string | null; focus: string; active: string | null;
-  models?: (x: CatalogItem) => readonly [string, string];
+  models?: (x: CatalogItem) => readonly [string, string] | null;
   /** Custom picture (e.g. the make-up palette) when there is no photo. */
   visual?: (x: Recommendation) => ReactNode;
   onChange: (k: string) => void;
@@ -379,7 +391,8 @@ export function RecommendedGrid({ items, image, focus, onChange, active, models,
     <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
       {items.map((x, i) => {
         const on = active === x.key;
-        const src = models ? models(x)[0] : image(x);
+        const pair = models?.(x) ?? null;
+        const src = pair ? pair[0] : image(x);
         const reason = tx(x.reason) || why?.(x) || "";
         return (
           <button key={x.key} type="button" onClick={() => onChange(x.key)} style={{
@@ -387,7 +400,7 @@ export function RecommendedGrid({ items, image, focus, onChange, active, models,
             background: on ? c("surface-raised") : c("surface"), border: `2px solid ${on ? c("accent") : c("line")}`, color: c("ink"), cursor: "pointer",
           }}>
             <span style={{ flex: "0 0 auto", position: "relative", display: "block", width: 128, aspectRatio: "1 / 1", overflow: "hidden", borderRadius: 12, background: c("photo") }}>
-              {!src && visual ? visual(x) : <Photo src={src} style={{ objectPosition: models ? "50% 30%" : focus }} />}
+              {!src && visual ? visual(x) : <Photo src={src} style={{ objectPosition: pair ? "50% 30%" : focus }} />}
             </span>
             <span style={{ flex: "1 1 auto", minWidth: 0, display: "flex", flexDirection: "column", gap: 5 }}>
               <span style={{ ...SERIF, fontSize: dense ? 16 : 20, lineHeight: 1.2 }}>{tx(x.name)}</span>
@@ -408,14 +421,15 @@ export function RecommendedGrid({ items, image, focus, onChange, active, models,
     <div style={{ display: "grid", gridTemplateColumns: `repeat(${Math.min(items.length, 3)}, minmax(0, 1fr))`, gap: 12 }}>
       {items.map((x, i) => {
         const on = active === x.key;
-        const src = models ? models(x)[0] : image(x);
+        const pair = models?.(x) ?? null;
+        const src = pair ? pair[0] : image(x);
         return (
           <button key={x.key} type="button" onClick={() => onChange(x.key)} style={{
             display: "flex", flexDirection: "column", gap: 8, minWidth: 0, padding: 8, paddingBottom: 12, borderRadius: 18, textAlign: "center",
             background: on ? c("surface-raised") : c("surface"), border: `2px solid ${on ? c("accent") : c("line")}`, color: c("ink"), cursor: "pointer",
           }}>
-            <span style={{ position: "relative", display: "block", width: "100%", aspectRatio: models ? "3 / 4" : "1 / 1", overflow: "hidden", borderRadius: 12, background: x.hex ?? c("photo") }}>
-              {!src && visual ? visual(x) : <Photo src={src} style={{ objectPosition: models ? "50% 30%" : focus }} />}
+            <span style={{ position: "relative", display: "block", width: "100%", aspectRatio: pair ? "3 / 4" : "1 / 1", overflow: "hidden", borderRadius: 12, background: x.hex ?? c("photo") }}>
+              {!src && visual ? visual(x) : <Photo src={src} style={{ objectPosition: pair ? "50% 30%" : focus }} />}
             </span>
             <span style={{ ...SERIF, fontSize: 17, lineHeight: 1.15 }}>{tx(x.name)}</span>
             {tx(x.reason) || tx(x.sub) ? (
@@ -432,15 +446,28 @@ export function RecommendedGrid({ items, image, focus, onChange, active, models,
 
 /** FLUX_VERSION_3-style recommendation: one big card at a time, arrows + dots, name, why it suits, try button. */
 /** FLUX_VERSION_3 model photos (front + back) for a recommended hair colour. */
-export const colourModels = (gender: string | null, key: string) => {
+/**
+ * FLUX colours (the AI's own picks, `flux_<shade>`) that look like one of the photographed season shades. The others
+ * (e.g. lavender, blue, salt and pepper) have no model photos: their swatch picture is shown instead.
+ */
+const FLUX_MODEL: Record<string, string> = {
+  flux_soft_black: "warm_black", flux_espresso_brown: "espresso_brown", flux_dark_chocolate: "cool_dark_brown",
+  flux_chocolate_brown: "chocolate_brown", flux_mocha_brown: "cool_mocha", flux_chestnut_brown: "golden_chestnut",
+  flux_caramel_brown: "caramel", flux_honey_blonde: "honey_blonde", flux_ash_blonde: "ash_blonde",
+  flux_dark_blonde: "light_golden_brown", flux_light_copper: "golden_copper", flux_copper: "bright_copper",
+  flux_auburn: "mahogany", flux_burgundy: "burgundy_brown", flux_plum: "plum_black",
+};
+export const colourModels = (gender: string | null, key: string): readonly [string, string] | null => {
   const g = gender === "man" ? "man" : "woman";
-  return [`/studio/recommended/colour/${g}/${key}-front.jpg`, `/studio/recommended/colour/${g}/${key}-back.jpg`] as const;
+  const k = key.startsWith("flux_") ? FLUX_MODEL[key] : key;
+  if (!k) return null;
+  return [`/studio/recommended/colour/${g}/${k}-front.jpg`, `/studio/recommended/colour/${g}/${k}-back.jpg`] as const;
 };
 
-export function RecommendedCard({ items, image, focus, onTry, onChange, active, models, details, visual }: {
+export function RecommendedCard({ items, image, focus, onTry, onChange, active, models, details, visual, nameOnly, subOnly }: {
   items: Recommendation[]; image: (x: CatalogItem) => string | null; focus: string; active: string | null;
   /** Two model photos (front, back) shown side by side instead of the single picture. */
-  models?: (x: CatalogItem) => readonly [string, string];
+  models?: (x: CatalogItem) => readonly [string, string] | null;
   /** Custom picture (e.g. a make-up palette) used when there is no photo. */
   visual?: (x: Recommendation) => ReactNode;
   /** Extra detail rows (label → value) under the name. */
@@ -449,6 +476,10 @@ export function RecommendedCard({ items, image, focus, onTry, onChange, active, 
   onTry?: (k: string) => void;
   /** Called with the shown card's key (the shown card is the selection). */
   onChange?: (k: string) => void;
+  /** Just the pictures and the name (no reason / subtitle text), e.g. the hair colours. */
+  nameOnly?: boolean;
+  /** Only the item's short subtitle under the name (e.g. "True red lips, charcoal eyes"), not the reason. */
+  subOnly?: boolean;
 }) {
   const { t, tx } = useStudio();
   const [i, setI] = useState(() => Math.max(0, items.findIndex((x) => x.key === active)));
@@ -458,6 +489,8 @@ export function RecommendedCard({ items, image, focus, onTry, onChange, active, 
   const n = items.length;
   const go = (d: number) => setI((p) => (p + d + n) % n);
   const x = items[i % n];
+  const pair = models?.(x) ?? null;
+  const bestBadge = x.is_best || x.key === items[0].key;
   const arrow = (d: number, icon: string) => (
     <button type="button" aria-label={d < 0 ? "Previous" : "Next"} onClick={() => go(d)} disabled={n < 2} style={{
       flex: "0 0 auto", width: 40, height: 40, borderRadius: 20, border: `1px solid ${c("line-strong")}`, background: "transparent",
@@ -473,26 +506,46 @@ export function RecommendedCard({ items, image, focus, onTry, onChange, active, 
           display: "flex", flexDirection: "column", gap: 12, padding: 12, borderRadius: 22, touchAction: "pan-y",
           background: c("surface"), border: `2px solid ${active === x.key ? c("accent") : c("line")}`,
         }}>
-        {models ? (
+        {pair ? (
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-            {models(x).map((src, k) => (
+            {pair.map((src, k) => (
               <span key={src} style={{ position: "relative", display: "block", aspectRatio: "3 / 4", overflow: "hidden", borderRadius: 16, background: x.hex ?? c("photo") }}>
                 <Photo src={src} style={{ objectPosition: "50% 30%" }} />
+                {k === 0 && (x.is_best || x.key === items[0].key) ? (
+                  <span style={{ position: "absolute", left: 8, top: 8, fontSize: 11, fontWeight: 500, color: c("on-dark"), background: c("accent-soft"), borderRadius: 8, padding: "3px 9px" }}>
+                    {t("face", "best")}
+                  </span>
+                ) : null}
                 <span style={{ position: "absolute", right: 8, top: 8, fontSize: 11, color: c("ink"), background: c("veil"), borderRadius: 8, padding: "3px 9px" }}>
                   {t("face", k === 0 ? "front" : "back")}
                 </span>
               </span>
             ))}
           </div>
+        ) : !image(x) && visual ? (
+          // A drawn visual (the make-up palette): full width, with the Best match badge.
+          <span style={{ position: "relative", display: "block", width: "100%", aspectRatio: "4 / 3", overflow: "hidden", borderRadius: 16 }}>
+            {visual(x)}
+            {x.is_best || x.key === items[0].key ? (
+              <span style={{ position: "absolute", left: "50%", top: 14, transform: "translateX(-100%)", zIndex: 1, fontSize: 11, fontWeight: 500, color: c("on-dark"), background: c("accent-soft"), borderRadius: 8, padding: "3px 9px" }}>
+                {t("face", "best")}
+              </span>
+            ) : null}
+          </span>
         ) : (
         <span style={{ position: "relative", display: "block", width: "62%", margin: "0 auto", aspectRatio: "1 / 1", overflow: "hidden", borderRadius: 16, background: x.hex ?? c("photo") }}>
-          {!image(x) && visual ? visual(x) : <Photo src={image(x)} style={{ objectPosition: focus }} />}
+          <Photo src={image(x)} style={{ objectPosition: focus }} />
+          {models && bestBadge ? (
+            <span style={{ position: "absolute", left: 8, top: 8, fontSize: 11, fontWeight: 500, color: c("on-dark"), background: c("accent-soft"), borderRadius: 8, padding: "3px 9px" }}>
+              {t("face", "best")}
+            </span>
+          ) : null}
         </span>
         )}
         <span style={{ ...SERIF, fontSize: 26, lineHeight: 1.1, textAlign: "center" }}>{tx(x.name)}</span>
-        {tx(x.reason) || tx(x.sub) ? (
+        {!nameOnly && (subOnly ? tx(x.sub) : tx(x.reason) || tx(x.sub)) ? (
           <span style={{ fontSize: 13, lineHeight: 1.45, color: c("ink-muted"), textAlign: "center", overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 4, WebkitBoxOrient: "vertical" }}>
-            {tx(x.reason) || tx(x.sub)}
+            {subOnly ? tx(x.sub) : tx(x.reason) || tx(x.sub)}
           </span>
         ) : null}
         {details ? (
@@ -528,11 +581,13 @@ export function useShadeDetails() {
   const { t, tx, look } = useStudio();
   const techniques = useCatalog("hair_technique");
   return (x: Recommendation) => {
-    const tech = techniques.find((k) => k.key === (x.attributes.technique as string | undefined) || k.key === look.technique) ?? techniques[0];
+    const own = x.attributes.technique as string | undefined; // the AI's own technique (Maletti), if any
+    const tech = techniques.find((k) => k.key === (own ?? look.technique)) ?? (own ? undefined : techniques[0]);
     const rows: { label: string; value: ReactNode }[] = [
       { label: t("face", "shade"), value: <><span style={{ display: "block", width: 16, height: 16, borderRadius: 8, background: x.hex ?? c("photo"), border: `1px solid ${c("line-strong")}` }} />{tx(x.name)}</> },
     ];
     if (tech) rows.push({ label: t("tryon", "technique"), value: tx(tech.name) });
+    else if (own === "ombre") rows.push({ label: t("tryon", "technique"), value: "Ombré" }); // not a catalogue technique
     const upkeep = x.attributes.maintenance as string | undefined;
     if (upkeep) rows.push({ label: t("face", "maintenance"), value: upkeep });
     return rows;

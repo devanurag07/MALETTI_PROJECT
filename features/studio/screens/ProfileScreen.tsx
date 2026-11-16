@@ -18,18 +18,22 @@ const GENDER_ICON: Record<Gender, { black: string; white: string }> = {
 export default function ProfileScreen() {
   const router = useRouter();
   const { go } = useNav();
-  const { t, config, session, setSession, photo } = useStudio();
+  const { t, config, session, setSession, photo, look, updateLook } = useStudio();
   if (!config || !session) return <LoadingStage />;
 
+  // Nothing is selected until the customer picks (the backend session always holds a default gender).
+  const picked = !!look.genderPicked;
   async function setGender(g: Gender) {
-    if (!session || session.gender === g) return;
+    if (!session) return;
+    updateLook({ genderPicked: true });
+    if (session.gender === g) return;
     // An analysis already fetched for the other gender would keep women's cuts / no beards: fetch it again.
     forgetAnalysis(session.id);
     setSession(await studioApi.updateSession(session.id, { gender: g }));
     forgetAnalysis(session.id);
   }
   async function choose(flow: FlowKey) {
-    if (!session) return;
+    if (!session || !picked) return;
     setSession(await studioApi.updateSession(session.id, { flow, current_step: "profile" }));
     // Consultation: no separate analysis screen — it runs in the background, each service shows its own scan.
     if (flow === "consultant") ensureAnalysis(session.id).catch(() => {});
@@ -37,7 +41,7 @@ export default function ProfileScreen() {
   }
 
   return (
-    <Screen step={2}>
+    <Screen>
       <div style={{
         flex: "0 0 auto", margin: "18px 34px 0 34px", display: "flex", alignItems: "center", gap: 16,
         padding: "12px 12px 12px 14px", borderRadius: 22, background: c("surface"), border: `1px solid ${c("line-card")}`,
@@ -54,8 +58,8 @@ export default function ProfileScreen() {
       <H1 style={{ flex: "0 0 auto", margin: "24px 34px 0 34px" }}>{t("profile", "title")}</H1>
 
       <div style={{ flex: "0 0 auto", display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 14, margin: "14px 34px 0 34px" }}>
-        {(["woman", "man"] as Gender[]).map((g) => {
-          const on = session.gender === g;
+        {(["man", "woman"] as Gender[]).map((g) => {
+          const on = picked && session.gender === g;
           return (
             <button key={g} type="button" aria-pressed={on} onClick={() => setGender(g)} style={{
               position: "relative", display: "flex", flexDirection: "column", alignItems: "center", gap: 10,
@@ -79,13 +83,13 @@ export default function ProfileScreen() {
       <Spacer />
 
       <div style={{ flex: "0 0 auto", padding: "0 34px 34px 34px", display: "flex", flexDirection: "column", gap: 12 }}>
-        <H2 size={26}>{t("profile", "pathTitle")}</H2>
+        <H2 size={26} style={{ opacity: picked ? 1 : 0.45 }}>{t("profile", "pathTitle")}</H2>
         {FLOWS.map((f) =>
           f.recommended ? (
-            <button key={f.key} type="button" onClick={() => choose(f.key)} style={{
-              position: "relative", overflow: "hidden", display: "flex", alignItems: "center", gap: 16, width: "100%",
+            <button key={f.key} type="button" disabled={!picked} onClick={() => choose(f.key)} style={{
+              opacity: picked ? 1 : 0.45, transition: "opacity 200ms", position: "relative", overflow: "hidden", display: "flex", alignItems: "center", gap: 16, width: "100%",
               padding: "20px 20px 20px 24px", border: "none", borderRadius: 24, background: c("path-consultant"), color: c("path-consultant-ink"),
-              textAlign: "left", cursor: "pointer", boxShadow: c("shadow-card"),
+              textAlign: "left", cursor: picked ? "pointer" : "default", boxShadow: c("shadow-card"),
             }}>
               <span style={{ position: "absolute", right: 58, top: -40, display: "block", width: 120, height: 120, border: "1.5px solid rgba(193,154,107,0.4)", transform: "skewX(var(--mm-skew))" }} />
               <span style={{ position: "relative", display: "flex", flexDirection: "column", gap: 8, flex: "1 1 auto" }}>
@@ -100,9 +104,9 @@ export default function ProfileScreen() {
               <Icon d={ICON.next} size={22} style={{ position: "relative" }} />
             </button>
           ) : (
-            <button key={f.key} type="button" onClick={() => choose(f.key)} style={{
-              display: "flex", alignItems: "center", gap: 16, width: "100%", padding: "20px 20px 20px 24px", borderRadius: 24,
-              border: "none", background: c("path-simple"), color: c("path-simple-ink"), textAlign: "left", cursor: "pointer",
+            <button key={f.key} type="button" disabled={!picked} onClick={() => choose(f.key)} style={{
+              opacity: picked ? 1 : 0.45, transition: "opacity 200ms", display: "flex", alignItems: "center", gap: 16, width: "100%", padding: "20px 20px 20px 24px", borderRadius: 24,
+              border: "none", background: c("path-simple"), color: c("path-simple-ink"), textAlign: "left", cursor: picked ? "pointer" : "default",
             }}>
               <span style={{ display: "flex", flexDirection: "column", gap: 8, flex: "1 1 auto" }}>
                 <span style={{ ...SERIF, fontSize: 26, lineHeight: 1.1 }}>{t("flows", `${f.key}.name`)}</span>

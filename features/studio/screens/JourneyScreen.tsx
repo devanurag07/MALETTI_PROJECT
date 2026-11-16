@@ -4,13 +4,13 @@ import ColourHarmonyPages, { colourHarmonyData, harmonyPageCount } from "../repo
 import { BLUSH, EYESHADOW, LIPSTICK } from "../data/makeup";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useSearchParams } from "next/navigation";
-import { ensureAnalysis } from "../pending-upload";
+import { ensureAnalysis, ensureFaceAnalysis } from "../pending-upload";
 import { useNav } from "../use-nav";
 import { GeneratingScan, markGenStart } from "../components/GeneratingScan";
 import { studioApi, type AnalysisTab, type CatalogItem, type Recommendation, type Results, type SkinService } from "../api";
-import { useCatalog, useCustomShades, useStudio } from "../context/StudioContext";
+import { useCatalog, useCustomShades, useStudio, type HairMods } from "../context/StudioContext";
 import {
-  JOURNEY, journeyNext, journeyPage, SERVICE_MODULE, SERVICE_TRY, type Service,
+  journeyNext, journeyPage, numberedServices, SERVICE_MODULE, SERVICE_TRY, type Service,
 } from "../flows";
 import { styleImage } from "../theme/styleImages";
 import {
@@ -20,22 +20,25 @@ import {
 import { markingsOf, SkinMapLegend, SkinMapPhoto } from "../components/SkinMap";
 import PhotoQR from "../components/PhotoQR";
 import ScanOverlay from "../components/ScanOverlay";
-import { colourModels, HairCustomise, MakeupLookCards, forYouFirst, RecommendedGrid, useShadeDetails, SkinProducts, SkinTab, StyleCard, TechniqueCard } from "./ResultsScreen";
+import { colourModels, HairCustomise, MakeupPalette, RecommendedCard, forYouFirst, RecommendedGrid, useShadeDetails, SkinProducts, SkinTab, StyleCard, TechniqueCard } from "./ResultsScreen";
 
 const SERVICE_ICON: Record<Service, string> = {
   hairstyle: ICON.serviceCut, beard: ICON.serviceBeard, armocromia: ICON.colour,
   colour: ICON.serviceColour, makeup: ICON.serviceMakeup, skin: ICON.skin,
 };
 
-/** Service progress: "Service 2 of 5 · Beard" + one segment per service (done / skipped / current / to do). */
+/**
+ * Service progress: "Service 2 of 4 · Beard" + one segment per numbered service (done / skipped / current / to do).
+ * Armocromia isn't numbered: it shows only its name, with the bar as it stands.
+ */
 export function JourneyBar({ service }: { service: Service }) {
   const { t, gender, look } = useStudio();
-  const list = JOURNEY[gender];
+  const list: Service[] = numberedServices(gender);
   const idx = list.indexOf(service);
   return (
     <div style={{ flex: "0 0 auto", display: "flex", flexDirection: "column", gap: 8, padding: "16px 34px 0 34px" }}>
       <span style={{ fontSize: 13, color: c("ink-muted") }}>
-        {t("journey", "progress", { n: idx + 1, total: list.length })} · {t("journey", `${service}.name`)}
+        {idx >= 0 ? `${t("journey", "progress", { n: idx + 1, total: list.length })} · ` : ""}{t("journey", `${service}.name`)}
       </span>
       <div style={{ display: "flex", gap: 7 }}>
         {list.map((s, i) => {
@@ -112,7 +115,7 @@ export function ServiceIntro({ service }: { service: Service }) {
 
 /** The service itself: pick an option, Try it on (AI), or continue to the next service. */
 export function ServicePage({ service }: { service: Service }) {
-  const { t, tx, config, session, gender, photo } = useStudio();
+  const { t, tx, config, session, gender, photo, look, updateLook } = useStudio();
   /** Try tapped: show the processing scan right away while the try-on screen loads (it continues the same scan). */
   const [starting, setStarting] = useState(false);
   // Simple Service (one service on its own): no journey bar, back to the service list when done.
@@ -138,7 +141,11 @@ export function ServicePage({ service }: { service: Service }) {
   // Every service: a 5-second "analysing" animation on the photo before its results (once per service and session).
   // There is no separate analysis screen: the analysis runs in the background from the Profile step.
   const scanKey = session ? `mm-${service}-scan:${session.id}` : "";
+  // Consultation: only Armocromia and Skin show the "processing" scan (the analysis screen already ran the face scan);
+  // haircut / beard / colour / make-up open straight on their recommendations.
+  const noScan = !simple && !needsAnalysis;
   const [scanning, setScanning] = useState(() => {
+    if (noScan) return false;
     try { return !sessionStorage.getItem(scanKey); } catch { return true; }
   });
   useEffect(() => {
@@ -154,7 +161,8 @@ export function ServicePage({ service }: { service: Service }) {
   useEffect(() => {
     if (!session) return;
     // The (shared, once per session) analysis — already running in the background, or started now (Simple Service).
-    ensureAnalysis(session.id).then(setResults).catch((e: Error) => setError(e.message));
+    // Haircut / beard need only the face analysis (its own, faster call); the others every module.
+    (SERVICE_MODULE[service] === "face" ? ensureFaceAnalysis : ensureAnalysis)(session.id).then(setResults).catch((e: Error) => setError(e.message));
   }, [session?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!config || !session) return <LoadingStage />;
@@ -166,7 +174,9 @@ export function ServicePage({ service }: { service: Service }) {
   const a = tab(SERVICE_MODULE[service]);
   const kind = SERVICE_TRY[service];
   const param = kind === "cut" ? "item" : kind === "colour" ? "shade" : kind === "makeup" ? "look" : "beard";
-  const tryIt = () => sel && kind && (markGenStart(), setStarting(true), go(`/try/${kind}?${param}=${encodeURIComponent(sel)}&single=1&next=${encodeURIComponent(next)}&back=${encodeURIComponent(journeyPage(service) + (simple ? "?simple=1" : ""))}`));
+  // No intro page for try-on services in the consultation: record done / skipped here.
+  const mark = (st: "done" | "skipped") => { if (!simple) updateLook({ journey: { ...look.journey, [service]: st } }); };
+  const tryIt = () => sel && kind && (mark("done"), markGenStart(), setStarting(true), go(`/try/${kind}?${param}=${encodeURIComponent(sel)}&single=1&next=${encodeURIComponent(next)}&back=${encodeURIComponent(journeyPage(service) + (simple ? "?simple=1" : ""))}`));
 
   let body: ReactNode;
   if (!results && !error) body = <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}><Spinner size={36} /></div>;
@@ -177,7 +187,8 @@ export function ServicePage({ service }: { service: Service }) {
 
   const last = next === "/look" || next.startsWith("/service");
   // Armocromia: "Next page" until its last page, then the usual label.
-  const armoPages = service === "armocromia" && a ? harmonyPageCount(colourHarmonyData({ colour: a, face: tab("face"), photo: null, tx })) : 1;
+  // Armocromia shows the first two colour-harmony pages (season, undertone + palette), then the hair colours.
+  const armoPages = service === "armocromia" && a ? Math.min(2, harmonyPageCount(colourHarmonyData({ colour: a, face: tab("face"), photo: null, tx }))) : 1;
   const nextLabel = service === "skin" ? t("skinMap", "cta") : armoPage < armoPages - 1 ? t("journey", "nextPage") : t("journey", last ? "finish" : "next");
   return (
     <Screen animKey={`svc-${service}`}>
@@ -186,7 +197,7 @@ export function ServicePage({ service }: { service: Service }) {
       {/* Skin results don't fill the height: push the button to the bottom. */}
       {service === "skin" ? <div style={{ flex: "1 1 auto" }} /> : null}
       {/* Try-on services: "Skip this service" link, then Back · Try it on. Others: Back · Next. */}
-      <ActionBar link={kind ? { label: last ? t("journey", "finish") : t("journey", "skipService"), onClick: () => go(next) } : null}>
+      <ActionBar link={kind ? { label: last ? t("journey", "finish") : t("journey", "skipService"), onClick: () => { if (look.journey?.[service] !== "done") mark("skipped"); go(next); } } : null}>
         {kind ? (
           <PrimaryButton icon={ICON.sparkle} disabled={!sel} onClick={tryIt}>{t("journey", "try")}</PrimaryButton>
         ) : (
@@ -226,13 +237,15 @@ export function Options({ service, a, sel, setSel, tab: tabProp, bare }: {
   const { items, current } = list[service];
   // Beard: always three suggestions, like the hairstyles — the analysis' own picks first (it suggests three for men),
   // topped up from the beard catalogue if it has fewer (e.g. none yet).
-  const rec: Recommendation[] = service !== "beard" ? list[service].rec : (() => {
+  const recAll: Recommendation[] = service !== "beard" ? list[service].rec : (() => {
     const own = list.beard.rec.filter((x) => x.key !== "none").slice(0, 3);
     const taken = new Set(own.map((x) => x.key));
     const extra = beards.filter((b) => !taken.has(b.key)).slice(0, 3 - own.length)
       .map((b, i) => ({ ...b, rank: own.length + i + 1, is_best: own.length === 0 && i === 0, reason: {} }) as Recommendation);
     return [...own, ...extra];
   })();
+  // 3 recommendations for haircut / beard, 5 for hair colour / make-up.
+  const rec = recAll.slice(0, service === "hairstyle" || service === "beard" ? 3 : 5);
   const recKeys = new Set(rec.map((x) => x.key));
   const best = rec.find((x) => x.is_best)?.key ?? rec[0]?.key;
   const ordered = forYouFirst(items, recKeys);
@@ -250,6 +263,18 @@ export function Options({ service, a, sel, setSel, tab: tabProp, bare }: {
   /** Custom make-up: which FLUX category is shown (0 lipstick, 1 blush, 2 eyeshadow). */
   const [makeupCat, setMakeupCat] = useState(0);
   const tab = tabProp ?? tabState;
+  // A recommendation brings its own settings (Maletti AI): a haircut its fade / bangs / styling, a hair colour its
+  // technique — applied when it is the one shown, so "Try" renders exactly the suggestion.
+  const recSel = rec.find((x) => x.key === sel);
+  useEffect(() => {
+    if (!recSel || tab !== "recommended") return;
+    if (service === "hairstyle") {
+      const mods = (a?.metrics.hair_params as unknown as Record<string, HairMods> | undefined)?.[recSel.key];
+      if (mods) updateLook({ hairMods: mods });
+    } else if (service === "colour" && recSel.attributes.technique) {
+      updateLook({ technique: String(recSel.attributes.technique) });
+    }
+  }, [recSel?.key]); // eslint-disable-line react-hooks/exhaustive-deps
   // Hairstyle "why": the backend's reason when it has one, else what the cut does for this face shape.
   const shape = String(a?.label?.key ?? "");
   const hairWhy = t("hair", ["oval", "round", "square", "oblong", "heart", "diamond", "triangle"].includes(shape) ? `why_${shape}` : "why_default");
@@ -259,14 +284,19 @@ export function Options({ service, a, sel, setSel, tab: tabProp, bare }: {
   const shadeWhy = season ? t("colour", "whyShade", { season }) : t("colour", "whyShadeDefault");
   let content: ReactNode;
   if (tab === "recommended" && service === "makeup") {
-    // Make-up: FLUX_VERSION_3-style look cards (one look at a time, its three shades).
-    const makeupWhy = season ? t("makeupLooks", "why", { season }) : t("makeupLooks", "whyDefault");
-    content = <MakeupLookCards items={rec} active={sel} onChange={setSel} why={() => makeupWhy} />;
+    // Make-up: one look at a time (as before) — lipstick, eyeshadow compact and blush drawn in the look's shades,
+    // the shade chips, then the look name and its short description.
+    content = <RecommendedCard key="makeup" items={rec} active={sel} onChange={setSel} subOnly focus="50% 50%"
+      image={() => null} visual={(x) => <MakeupPalette look={x} />} />;
+  } else if (tab === "recommended" && service === "colour") {
+    // Hair colour: one look at a time (as before) — front / back model photos, the shade name, shade + technique rows.
+    content = <RecommendedCard key="colour" items={rec} active={sel} onChange={setSel} nameOnly focus="50% 30%" details={shadeDetails}
+      models={(x) => colourModels(gender, x.key)} image={(x) => styleImage("hair_shade", x.key, x.image_url) || thumb} />;
   } else if (tab === "recommended") {
-    // Haircuts / beards / hair colours / make-up looks: all recommendations on one page.
+    // Haircuts / beards / make-up looks: all recommendations on one page.
     content = (
       <RecommendedGrid key={service} items={rec} active={sel} onChange={setSel}
-        rows={service === "hairstyle" || service === "beard" || service === "colour"}
+        rows={service === "hairstyle" || service === "beard"}
         why={service === "hairstyle" ? () => hairWhy : service === "beard" ? () => beardWhy : service === "colour" ? () => shadeWhy : undefined}
         models={service === "colour" ? (x) => colourModels(gender, x.key) : undefined}
         focus={service === "beard" ? "50% 60%" : "50% 8%"}
@@ -367,7 +397,7 @@ export function Options({ service, a, sel, setSel, tab: tabProp, bare }: {
     content = (
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
       {/* 3×3 page + customise options fit one screen (no scrolling). */}
-      <div style={{ width: service === "hairstyle" ? "62%" : "72%", margin: "0 auto" }}>
+      <div style={{ width: service === "hairstyle" ? "80%" : "92%", margin: "0 auto" }}>
         <Carousel key={service} perPage={9} columns={3} items={ordered.map((x) => (
           <StyleCard key={x.key} compact image={styleImage(imageKind, x.key, x.image_url) || thumb} focus={service === "beard" ? "50% 60%" : "50% 8%"}
             name={tx(x.name)} active={sel === x.key} onClick={() => setSel(x.key)} />
@@ -384,18 +414,24 @@ export function Options({ service, a, sel, setSel, tab: tabProp, bare }: {
       <div style={{ margin: "auto 0", display: "flex", flexDirection: "column", gap: 10 }}>{content}</div>
     </div>
   );
+  // Recommended | Custom right under the service bar; the title + face-shape line only on Recommended, so the Custom
+  // catalogue gets the room.
   return (
-    <div style={{ flex: "1 1 auto", minHeight: 0, overflowY: "auto", display: "flex", flexDirection: "column", gap: 10, padding: "12px 34px 6px 34px" }}>
-      <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-        <span style={{ ...SERIF, fontSize: 24, lineHeight: 1.1 }}>{t("journey", `${service}.name`)}</span>
-        <Muted size={14}>
-          {service === "hairstyle" && a?.label?.name ? `${tx(a.label.name)} · ` : ""}{t("journey", "pickHint")}
-        </Muted>
-      </div>
+    <>
       <Tabs tabs={[{ key: "recommended", label: t("face", "tabRecommended") }, { key: "custom", label: t("face", "tabCatalogue") }]}
         value={tab} onChange={(k) => setTab(k as "recommended" | "custom")} />
-      <div style={{ margin: "auto 0", display: "flex", flexDirection: "column", gap: 10 }}>{content}</div>
-    </div>
+      <div style={{ flex: "1 1 auto", minHeight: 0, overflowY: "auto", display: "flex", flexDirection: "column", gap: 10, padding: "12px 34px 6px 34px" }}>
+        {tab === "recommended" ? (
+          <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <span style={{ ...SERIF, fontSize: 24, lineHeight: 1.1 }}>{t("journey", `${service}.name`)}</span>
+            <Muted size={14}>
+              {service === "hairstyle" && a?.label?.name ? `${tx(a.label.name)} · ` : ""}{t("journey", "pickHint")}
+            </Muted>
+          </div>
+        ) : null}
+        <div style={{ margin: "auto 0", display: "flex", flexDirection: "column", gap: 10 }}>{content}</div>
+      </div>
+    </>
   );
 }
 
@@ -580,20 +616,24 @@ export function SkinServicesPage() {
  */
 const SCAN_MS = 5000;
 /** Hairstyle is the first service: the background analysis is often still running, so its scan is longer. */
-const scanMs = (service: Service) => (service === "hairstyle" ? 9000 : SCAN_MS);
+export const scanMs = (service: Service) => (service === "hairstyle" ? 9000 : SCAN_MS);
 function scanPct(elapsed: number, ms: number) {
   if (elapsed < ms) return Math.round(90 * (1 - Math.pow(1 - elapsed / ms, 2))); // ease-out to 90 %
   return Math.min(99, Math.round(90 + 9 * (1 - Math.exp(-(elapsed - ms) / 12000)))); // then slowly to 99 %
 }
 /** When this service's scan began: the loading screen (tap on Proceed) and the page share it, so the bar never restarts. */
 const scanStarts: Partial<Record<Service, number>> = {};
-function scanStart(service: Service) {
+export function scanStart(service: Service) {
   const t = scanStarts[service];
   if (t && Date.now() - t < scanMs(service) + 60_000) return t;
   return (scanStarts[service] = Date.now());
 }
 
-export function ServiceScan({ service }: { service: Service }) {
+export function ServiceScan({ service, checklist }: {
+  service: Service;
+  /** The Beauty Consultant's analysis screen: a pop-up list ticked off one by one over the scan (no service bar). */
+  checklist?: string[];
+}) {
   const { t, photo } = useStudio();
   const simple = useSearchParams().get("simple") === "1";
   const [pct, setPct] = useState(0);
@@ -608,8 +648,8 @@ export function ServiceScan({ service }: { service: Service }) {
   const stages = [t(ns, "scanStage1"), t(ns, "scanStage2"), t(ns, "scanStage3")];
   const stage = stages[Math.min(stages.length - 1, Math.floor((pct / 100) * stages.length))];
   return (
-    <Screen animKey={`${service}-scan`} onBack={false}>
-      {simple ? null : <JourneyBar service={service} />}
+    <Screen animKey={`${service}-scan${checklist ? "-all" : ""}`} onBack={false}>
+      {simple || checklist ? null : <JourneyBar service={service} />}
       <div style={{ flex: "1 1 auto", minHeight: 0, position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <HeroBackdrop halo={[500, 520]} squares={[
           { left: 56, top: 30, width: 110, height: 110 },
@@ -619,14 +659,45 @@ export function ServiceScan({ service }: { service: Service }) {
           <Photo src={photo} />
           <ScanOverlay pct={pct} />
           <div style={{ position: "absolute", left: 0, right: 0, bottom: 14, display: "flex", justifyContent: "center" }}>
-            <GuidePill>{`${stage} ${pct}%`}</GuidePill>
+            <GuidePill>{checklist ? `${pct}%` : `${stage} ${pct}%`}</GuidePill>
           </div>
         </Arch>
+        {checklist ? <ScanChecklist items={checklist} pct={pct} /> : null}
       </div>
       <div style={{ flex: "0 0 auto", padding: "2px 34px 34px 34px", display: "flex", flexDirection: "column", gap: 8 }}>
-        <H1>{t(ns, "scanning")}</H1>
-        <Muted size={14}>{t(ns, "scanningSub")}</Muted>
+        <H1>{checklist ? t("analysis", "scanTitle") : t(ns, "scanning")}</H1>
+        <Muted size={14}>{checklist ? t("analysis", "scanSub") : t(ns, "scanningSub")}</Muted>
       </div>
     </Screen>
+  );
+}
+
+/** Pop-up over the analysis scan: each item pops in, spins while it runs, then gets its tick (in turn, over the scan). */
+function ScanChecklist({ items, pct }: { items: string[]; pct: number }) {
+  const share = 90 / items.length; // the bar eases to 90 % over the minimum scan time
+  return (
+    <div style={{
+      position: "absolute", left: 34, right: 34, bottom: 6, display: "flex", flexDirection: "column", gap: 10, padding: "14px 18px",
+      borderRadius: 20, background: c("glass"), border: `1px solid ${c("line-card")}`, boxShadow: c("shadow-card"),
+      backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)",
+    }}>
+      <style>{`@keyframes mmPop { from { opacity: 0; transform: translateY(8px) scale(0.96); } to { opacity: 1; transform: none; } }`}</style>
+      {items.map((label, i) => {
+        if (pct < i * share) return null;
+        const done = pct >= (i + 1) * share;
+        return (
+          <div key={label} style={{ display: "flex", alignItems: "center", gap: 12, animation: "mmPop 0.35s ease-out both" }}>
+            <span style={{
+              flex: "0 0 auto", display: "flex", alignItems: "center", justifyContent: "center", width: 26, height: 26, borderRadius: 13,
+              background: done ? c("accent") : "transparent", border: done ? "none" : `1.5px solid ${c("line-strong")}`, color: c("on-dark"),
+              transition: "background 250ms",
+            }}>
+              {done ? <Icon d={ICON.check} size={14} width={2.6} /> : <Spinner size={14} />}
+            </span>
+            <span style={{ fontSize: 16, color: done ? c("ink") : c("ink-muted") }}>{label}</span>
+          </div>
+        );
+      })}
+    </div>
   );
 }

@@ -5,7 +5,7 @@ import type { Gender, TryKind } from "./api";
  * The backend only records which one the customer picked (StudioSession.flow).
  */
 export const FLOWS = [
-  { key: "consultant", recommended: true, start: "/journey/hairstyle" },
+  { key: "consultant", recommended: true, start: "/analysis" },
   { key: "service", recommended: false, start: "/service" },
 ] as const;
 
@@ -26,10 +26,20 @@ export const SERVICE_KINDS: Record<Gender, TryKind[]> = {
  * → the service page (`/journey/<service>/go`). Labels: locales → studio.journey.<service>.*
  */
 export type Service = "hairstyle" | "beard" | "armocromia" | "colour" | "makeup" | "skin";
+/**
+ * Beauty Consultant order, after the analysis scan and the face-analysis page (/analysis):
+ * man: Haircut → Beard → Armocromia → Hair colour → Skin; woman: Haircut → Armocromia → Hair colour → Make-up → Skin.
+ */
 export const JOURNEY: Record<Gender, Service[]> = {
-  man: ["hairstyle", "beard", "colour", "armocromia", "skin"],
-  woman: ["hairstyle", "colour", "armocromia", "makeup", "skin"],
+  man: ["hairstyle", "beard", "armocromia", "colour", "skin"],
+  woman: ["hairstyle", "armocromia", "colour", "makeup", "skin"],
 };
+/** Armocromia is a step of its own, not a numbered "Service n". */
+export const isNumbered = (s: Service) => s !== "armocromia";
+/** The numbered services (Service 1…4) of a gender's journey. */
+export const numberedServices = (gender: Gender) => JOURNEY[gender].filter(isNumbered);
+/** Only these have an intro ("home") page in the consultation; the others open straight on their recommendations. */
+export const HAS_INTRO: Service[] = ["armocromia", "skin"];
 /** Backend analysis module each service reads its recommendations from. */
 export const SERVICE_MODULE: Record<Service, string> = {
   hairstyle: "face", beard: "face", armocromia: "colour", colour: "colour", makeup: "colour", skin: "skin",
@@ -39,9 +49,11 @@ export const SERVICE_TRY: Partial<Record<Service, TryKind>> = { hairstyle: "cut"
 
 export const journeyIntro = (s: Service) => `/journey/${s}`;
 export const journeyPage = (s: Service) => `/journey/${s}/go`;
-/** Intro of the service after `s`, or the look summary after the last one. */
+/** Where the consultation enters a service: its intro page if it has one, else straight to the service page. */
+export const journeyEntry = (s: Service) => (HAS_INTRO.includes(s) ? journeyIntro(s) : journeyPage(s));
+/** Entry of the service after `s`, or the look summary (review + QR) after the last one. */
 export function journeyNext(gender: Gender, s: Service): string {
   const list = JOURNEY[gender];
   const n = list[list.indexOf(s) + 1];
-  return n ? journeyIntro(n) : "/look";
+  return n ? journeyEntry(n) : "/look";
 }

@@ -6,7 +6,8 @@ import { QRCodeSVG } from "qrcode.react";
 import { useStudio } from "../context/StudioContext";
 import { c, Icon, ICON, OutlineButton, SERIF } from "../ui";
 
-const QR_ICON = "M4 4h6v6H4z M14 4h6v6h-6z M4 14h6v6H4z M14 14h2v2h-2z M18 14h2v2h-2z M14 18h2v2h-2z M18 18h2v2h-2z";
+/** Download arrow (tap → the QR to download the photo on the customer's phone). */
+const DOWNLOAD_ICON = "M12 4v11 M7 10l5 5 5-5 M5 20h14";
 
 /** Phone page that shows the photo with a Download button: /<locale>/p?u=<image url>&n=<file name>. */
 export function photoDownloadUrl(locale: string, src: string, name: string) {
@@ -14,7 +15,7 @@ export function photoDownloadUrl(locale: string, src: string, name: string) {
 }
 
 /**
- * Small "QR" button for one photo (taken photo, each try-on result, skin map). Tap → large QR; scanning it on a
+ * Small "Download" button for one photo (taken photo, each try-on result, skin map). Tap → large QR; scanning it on a
  * phone opens the photo with a Download button. Local data: URLs fall back to the uploaded photo.
  */
 export default function PhotoQR({ src, name, style }: { src: string | null | undefined; name: string; style?: CSSProperties }) {
@@ -31,7 +32,7 @@ export default function PhotoQR({ src, name, style }: { src: string | null | und
         borderRadius: 17, border: "none", cursor: "pointer", fontSize: 13, background: c("glass"), color: c("ink"),
         boxShadow: "0 4px 12px rgba(0,0,0,0.25)", ...style,
       }}>
-        <Icon d={QR_ICON} size={16} width={1.6} />
+        <Icon d={DOWNLOAD_ICON} size={16} width={1.8} />
         <span>{t("qr", "button")}</span>
       </button>
       {open ? createPortal(

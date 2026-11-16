@@ -1,10 +1,16 @@
 import { studioApi, type Session } from "./api";
 import { catalogKey, type LookDraft } from "./context/StudioContext";
 import { isFluxShade, savedHairColour } from "./data/haircolor";
+import { isMixLook, mixLook } from "./data/makeup";
+
+/** The look's make-up look key for the backend: a mix look (the AI's own) is not a catalogue key — see lookParams. */
+export const savedMakeupLook = (key: string | null) => (isMixLook(key) ? null : catalogKey(key));
 
 /** Look params + what the backend has no field for: the FLUX colour and the recommended salon skin services. */
-export function lookParams(look: LookDraft, shade: string | null): Record<string, unknown> {
+export function lookParams(look: LookDraft, shade: string | null, makeupLook: string | null = look.makeup_look): Record<string, unknown> {
   const extra: Record<string, unknown> = {};
+  const mix = isMixLook(makeupLook) ? mixLook(makeupLook) : undefined;
+  if (mix) extra.makeup_mix = { key: mix.key, name: mix.name };
   const colour = isFluxShade(shade) ? savedHairColour(shade) : null;
   if (colour) extra.hair_colour = { ...colour, technique: look.technique ?? null };
   if (look.skinServices?.length) extra.skin_services = look.skinServices;
@@ -24,12 +30,12 @@ export async function saveLookDraft(session: Session, look: LookDraft): Promise<
     // A FLUX_VERSION_3 colour is not a backend catalogue key: saved in params.hair_colour instead.
     hair_shade: isFluxShade(shade) ? null : catalogKey(shade),
     technique: catalogKey(shade) && !isFluxShade(shade) ? look.technique ?? lp("colour", "technique") : null,
-    makeup_look: catalogKey(look.makeup_look ?? lp("makeup", "look")),
+    makeup_look: savedMakeupLook(look.makeup_look ?? lp("makeup", "look_key") ?? lp("makeup", "look")),
     lip: look.lip ?? lp("makeup", "lip"),
     eye: look.eye ?? lp("makeup", "eye"),
     beard: catalogKey(look.beard ?? lp("beard", "beard")),
     // Recommended salon skin services ride along in params, so the report (and its PDF) can list them.
-    params: lookParams(look, shade),
+    params: lookParams(look, shade, look.makeup_look ?? lp("makeup", "look_key")),
     products: look.products,
     final_tryon_id: look.lastTryon?.status === "done" ? look.lastTryon.id : null,
     headline: {},

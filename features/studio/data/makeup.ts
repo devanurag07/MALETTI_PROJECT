@@ -60,7 +60,7 @@ export const LOOK_BLUSH: Record<string, string> = {
 
 /** A look's own blush: from the catalogue if the backend has it, else the table above. */
 export const lookBlush = (look: { key: string; attributes?: Record<string, unknown> } | null | undefined) =>
-  look ? blushByKey((look.attributes?.blush as string | undefined) ?? LOOK_BLUSH[look.key]) : undefined;
+  look ? blushByKey((look.attributes?.blush as string | undefined) ?? LOOK_BLUSH[look.key] ?? parseMix(look.key)?.blush) : undefined;
 
 /**
  * Recommended make-up looks, made of FLUX_VERSION_3 shades: the backend still picks which looks suit the colour
@@ -78,9 +78,48 @@ export const LOOK_FLUX: Record<string, { lip: string; eye: string }> = {
   burgundy_charcoal: { lip: "deep_burgundy", eye: "black" }, fuchsia: { lip: "fuchsia", eye: "silver" },
 };
 
+/**
+ * A make-up look the AI composed itself (Maletti armocromia prompt: one lipstick + blush + eyeshadow, FLUX keys): key
+ * `mix.<lip>.<eye>.<blush>`, so any screen can rebuild it from the key alone. Its AI name / reason are kept here
+ * once the results arrive (`registerMixLooks`).
+ */
+const MIX = "mix.";
+export const isMixLook = (key: string | null | undefined) => !!key && key.startsWith(MIX);
+export const mixKey = (lip: string, eye: string, blush: string) => `${MIX}${lip}.${eye}.${blush}`;
+function parseMix(key: string | null | undefined) {
+  if (!isMixLook(key)) return null;
+  const [lip, eye, blush] = key!.slice(MIX.length).split(".");
+  return lip && eye && blush ? { lip, eye, blush } : null;
+}
+const mixLooks = new Map<string, CatalogItem>();
+/** A mix look as a catalogue item (named by the AI when known, else "Lips - Eyes - Blush"). */
+export function mixLook(key: string | null | undefined): CatalogItem | undefined {
+  if (!key) return undefined;
+  const known = mixLooks.get(key);
+  if (known) return known;
+  const m = parseMix(key);
+  if (!m) return undefined;
+  const parts = [lipByKey(m.lip), eyeByKey(m.eye), blushByKey(m.blush)].filter(Boolean) as CatalogItem[];
+  const locales = new Set(parts.flatMap((p) => Object.keys(p.name)));
+  const name = Object.fromEntries([...locales].map((l) => [l, parts.map((p) => p.name[l] ?? p.name.en).join(" - ")]));
+  return {
+    id: -1, kind: "makeup_look", key, gender: "woman", name, sub: {}, hex: lipByKey(m.lip)?.hex ?? null, image_url: null,
+    attributes: { lip: m.lip, eye: m.eye, blush: m.blush, lip_hex: lipByKey(m.lip)?.hex, eye_hex: eyeByKey(m.eye)?.hex, blush_hex: blushByKey(m.blush)?.hex },
+  };
+}
+export function registerMixLook(item: CatalogItem) {
+  mixLooks.set(item.key, item);
+}
+/** Every mix look seen this session (for name lookups next to the catalogue looks). */
+export const knownMixLooks = () => [...mixLooks.values()];
+
+/** A look's FLUX lipstick + eyeshadow keys: the table above, or the mix look's own. */
+export const lookFlux = (key: string | null | undefined): { lip: string; eye: string } | undefined =>
+  key ? LOOK_FLUX[key] ?? parseMix(key) ?? undefined : undefined;
+
 /** A recommended look's FLUX shades (lipstick, eyeshadow, blush), or null for a look not in the table. */
 export function lookShades(look: { key: string; attributes?: Record<string, unknown> } | null | undefined) {
-  const m = look ? LOOK_FLUX[look.key] : undefined;
+  const m = lookFlux(look?.key);
   if (!look || !m) return null;
   return { lip: lipByKey(m.lip), eye: eyeByKey(m.eye), blush: lookBlush(look) };
 }
@@ -103,7 +142,7 @@ export function renameMakeupLooks<T>(value: T, seen = new WeakSet<object>()): T 
   seen.add(value as object);
   if (Array.isArray(value)) { value.forEach((v) => renameMakeupLooks(v, seen)); return value; }
   const o = value as Record<string, unknown>;
-  if (o.kind === "makeup_look" && typeof o.key === "string") {
+  if (o.kind === "makeup_look" && typeof o.key === "string" && !isMixLook(o.key)) {
     const name = makeupLookName(o as { key: string; attributes?: Record<string, unknown> });
     if (name) {
       // Keep the look's own title ("Peach glow") for headings; the name becomes "Lips - Eyes - Blush".
@@ -113,5 +152,23 @@ export function renameMakeupLooks<T>(value: T, seen = new WeakSet<object>()): T 
     }
   }
   for (const v of Object.values(o)) renameMakeupLooks(v, seen);
+  return value;
+}
+
+/**
+ * A mix look is not a backend catalogue key: a saved look keeps it in params.makeup_mix (like params.hair_colour) —
+ * show it as the look's make-up everywhere (look summary, report, phone page). Deep, in place.
+ */
+export function fillMixLook<T>(value: T, seen = new WeakSet<object>()): T {
+  if (!value || typeof value !== "object" || seen.has(value as object)) return value;
+  seen.add(value as object);
+  if (Array.isArray(value)) { value.forEach((v) => fillMixLook(v, seen)); return value; }
+  const o = value as Record<string, unknown>;
+  if ("makeup_look" in o && !o.makeup_look && "params" in o) {
+    const saved = (o.params as Record<string, unknown> | null | undefined)?.makeup_mix as { key?: string; name?: Record<string, string> } | undefined;
+    const item = saved?.key ? mixLook(saved.key) : undefined;
+    if (item) o.makeup_look = saved?.name ? { ...item, name: saved.name } : item;
+  }
+  for (const v of Object.values(o)) fillMixLook(v, seen);
   return value;
 }

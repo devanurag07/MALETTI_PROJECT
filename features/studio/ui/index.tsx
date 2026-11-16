@@ -122,23 +122,6 @@ export function BackButton({ style }: { style?: CSSProperties }) {
   return ctx ? <BackPill onClick={ctx.back} style={style} /> : null;
 }
 
-export function StepBar({ step, total = 6 }: { step: number; total?: number }) {
-  const { t } = useStudio();
-  return (
-    <div style={{ flex: "0 0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 34px 0 34px" }}>
-      <span style={{ fontSize: 13, color: c("ink-muted") }}>{t("common", "step", { n: step, total })}</span>
-      <div style={{ display: "flex", gap: 7 }}>
-        {Array.from({ length: total }, (_, i) => i + 1).map((n) => (
-          <span key={n} style={{
-            display: "block", width: 24, height: 7, transform: `skewX(${theme.shape.stepSkew})`,
-            background: n < step ? c("step-done") : n === step ? c("step-current") : c("step-todo"),
-          }} />
-        ))}
-      </div>
-    </div>
-  );
-}
-
 /** Small underlined text action ("Skip this service", "Try another service", "Show QR code"). */
 export function TextLink({ children, onClick, disabled }: { children: ReactNode; onClick: () => void; disabled?: boolean }) {
   return (
@@ -169,9 +152,9 @@ export function ActionBar({ link, children }: {
   );
 }
 
-/** Header + step bar + content column + Back (`onBack={false}`: none; a function: a step inside the page). */
-export function Screen({ step, onBack, animKey, children }: {
-  step?: number; onBack?: (() => void) | false; animKey?: string; children: ReactNode;
+/** Header + content column (no step bar: only the consultation's JourneyBar shows progress) + Back (`onBack={false}`: none; a function: a step inside the page). */
+export function Screen({ onBack, animKey, children }: {
+  onBack?: (() => void) | false; animKey?: string; children: ReactNode;
 }) {
   const router = useRouter();
   const backRef = useRef<() => void>(() => {});
@@ -185,7 +168,6 @@ export function Screen({ step, onBack, animKey, children }: {
     <Stage animKey={animKey}>
       <BackCtx.Provider value={onBack === false ? null : api}>
         <Header />
-        {step ? <StepBar step={step} /> : null}
         {children}
         {onBack === false || inline > 0 ? null : (
           <div style={{ flex: "0 0 auto", display: "flex", padding: "10px 34px 32px 34px" }}><BackPill onClick={api.back} /></div>
@@ -668,7 +650,7 @@ export function Slider({ label, value, onChange, onCommit, min = 0, max = 100 }:
  */
 export function CompareArch(props: {
   before?: string | null; after?: string | null; height?: number; ry?: number; busy?: boolean; busyLabel?: string;
-  /** Extra element on the photo (e.g. the QR download button, top-left). */
+  /** Extra element on the photo (e.g. the Download button, bottom-right); hidden while comparing. */
   overlay?: ReactNode;
 }) {
   return theme.shape.compare === "square" ? <CompareSquare {...props} /> : <CompareRounded {...props} />;
@@ -706,7 +688,7 @@ function CompareSquare({ before, after, height = 380, busy, busyLabel, overlay }
       ) : before ? (
         single(before)
       ) : null}
-      {busy ? null : overlay}
+      {busy || (canCompare && comparing) ? null : overlay}
       {canCompare ? (
         <button type="button" aria-pressed={comparing} onClick={() => setComparing((v) => !v)} style={{
           position: "absolute", top: 10, right: 10, display: "flex", alignItems: "center", gap: 6, height: 34, padding: "0 12px",

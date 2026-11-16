@@ -8,7 +8,7 @@ import SeasonWheel from "./SeasonWheel";
 
 /**
  * The colour-harmony report pages (content from the color-harmony app's report), drawn in the studio theme:
- *   1. your colour season — photo, face shape / undertone / eye colour / hair colour, 12-season wheel
+ *   1. your colour season — photo, skin undertone / eye colour, 12-season wheel
  *   2. your undertone — what it means, vein + jewellery colours, 10 wardrobe colours
  *   3. suggested colour combinations — 5 × dominant + 3 accents
  * Every page is a `[data-report-page]` (one PDF page each). Colours come from the `--mm-*` theme tokens.
@@ -28,6 +28,8 @@ export type ColourHarmonyData = {
   eyeColour: string;
   hairColour: string;
   wardrobe: Colour[];
+  /** Why the palette suits (Maletti prompt), shown under it. */
+  paletteReason?: string;
   combinations: Combo[];
 };
 
@@ -51,7 +53,8 @@ export function colourHarmonyData(opts: {
     .filter((x) => x.hex).map((x) => ({ name: tx(x.name), hex: x.hex! }));
   const ai = Array.isArray(m.wardrobe) ? (m.wardrobe as Colour[]).filter((x) => x?.hex) : [];
   const seen = new Set<string>();
-  const wardrobe = [...ai, ...clothes, ...palette.map((h) => ({ name: h.toUpperCase(), hex: h }))]
+  // The AI's own palette when it gave a full one (Maletti prompt: exactly 8), else topped up to 10.
+  const wardrobe = (ai.length >= 8 ? ai : [...ai, ...clothes, ...palette.map((h) => ({ name: h.toUpperCase(), hex: h }))])
     .filter((x) => !seen.has(x.hex.toLowerCase()) && seen.add(x.hex.toLowerCase())).slice(0, 10);
 
   let combinations = Array.isArray(m.combinations) ? (m.combinations as Combo[]).filter((x) => x?.dominant) : [];
@@ -74,6 +77,7 @@ export function colourHarmonyData(opts: {
     eyeColour: cap(m.eye_colour),
     hairColour: cap(m.hair_colour),
     wardrobe,
+    paletteReason: tx(m.palette_reasoning as unknown as I18n | undefined),
     combinations: combinations.slice(0, 5),
   };
 }
@@ -112,9 +116,9 @@ export default function ColourHarmonyPages({ data, pad, only }: { data: ColourHa
             </div>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 10 }}>
+            {/* Skin undertone + eye colour only (no face shape / hair colour on the season card). */}
             {[
-              [tr("faceShape"), data.faceShape], [tr("undertone"), data.undertoneLabel],
-              [tr("eyeColour"), data.eyeColour], [tr("hairColour"), data.hairColour],
+              [tr("undertone"), data.undertoneLabel], [tr("eyeColour"), data.eyeColour],
             ].map(([label, value]) => (
               <div key={label} style={{ padding: "10px 14px", borderRadius: 14, background: c("surface-raised"), border: `1px solid ${c("line")}` }}>
                 <div style={{ fontSize: 14, color: c("ink-muted") }}>{label}</div>
@@ -155,6 +159,7 @@ export default function ColourHarmonyPages({ data, pad, only }: { data: ColourHa
                 </div>
               ))}
             </div>
+            {data.paletteReason ? <span style={{ fontSize: 15, lineHeight: 1.45, color: c("ink-muted") }}>{data.paletteReason}</span> : null}
           </div>
         </>
       )}
