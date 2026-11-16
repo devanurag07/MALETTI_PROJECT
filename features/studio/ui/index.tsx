@@ -652,14 +652,17 @@ export function CompareArch(props: {
   before?: string | null; after?: string | null; height?: number; ry?: number; busy?: boolean; busyLabel?: string;
   /** Extra element on the photo (e.g. the Download button, bottom-right); hidden while comparing. */
   overlay?: ReactNode;
+  /** Generating (FLUX_VERSION_3 result page): drawn over `before` in this same frame; no compare, no overlay. */
+  scan?: ReactNode;
 }) {
   return theme.shape.compare === "square" ? <CompareSquare {...props} /> : <CompareRounded {...props} />;
 }
 
 /** Square frame: the captured photo and every try-on result are 1:1, so before and after line up exactly. */
-function CompareSquare({ before, after, height = 380, busy, busyLabel, overlay }: {
-  before?: string | null; after?: string | null; height?: number; busy?: boolean; busyLabel?: string; overlay?: ReactNode;
+function CompareSquare({ before, after: afterProp, height = 380, busy, busyLabel, overlay, scan }: {
+  before?: string | null; after?: string | null; height?: number; busy?: boolean; busyLabel?: string; overlay?: ReactNode; scan?: ReactNode;
 }) {
+  const after = scan ? null : afterProp;
   const { t } = useStudio();
   // Compare toggle (as in FLUX_VERSION_3): off = the result alone, on = before/after slider.
   const [comparing, setComparing] = useState(false);
@@ -688,7 +691,8 @@ function CompareSquare({ before, after, height = 380, busy, busyLabel, overlay }
       ) : before ? (
         single(before)
       ) : null}
-      {busy || (canCompare && comparing) ? null : overlay}
+      {busy || scan || (canCompare && comparing) ? null : overlay}
+      {scan}
       {canCompare ? (
         <button type="button" aria-pressed={comparing} onClick={() => setComparing((v) => !v)} style={{
           position: "absolute", top: 10, right: 10, display: "flex", alignItems: "center", gap: 6, height: 34, padding: "0 12px",
@@ -710,9 +714,10 @@ function CompareSquare({ before, after, height = 380, busy, busyLabel, overlay }
   );
 }
 
-function CompareRounded({ before, after, height = 330, ry = 150, busy, busyLabel, overlay }: {
-  before?: string | null; after?: string | null; height?: number; ry?: number; busy?: boolean; busyLabel?: string; overlay?: ReactNode;
+function CompareRounded({ before, after: afterProp, height = 330, ry = 150, busy, busyLabel, overlay, scan }: {
+  before?: string | null; after?: string | null; height?: number; ry?: number; busy?: boolean; busyLabel?: string; overlay?: ReactNode; scan?: ReactNode;
 }) {
+  const after = scan ? null : afterProp;
   const { t } = useStudio();
   const [split, setSplit] = useState(50);
   const right = after ?? before;
@@ -724,7 +729,8 @@ function CompareRounded({ before, after, height = 330, ry = 150, busy, busyLabel
         outline: `1.5px solid ${c("accent")}`, outlineOffset: 6,
       }}>
         <Photo src={before} />
-        {busy ? null : overlay}
+        {busy || scan ? null : overlay}
+        {scan}
         {busy ? (
           <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12, background: c("veil") }}>
             <Spinner size={34} />

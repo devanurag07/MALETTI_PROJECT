@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { QRCodeSVG } from "qrcode.react";
 import { studioApi, type I18n } from "../api";
-import { catalogKey, useCatalog, useStudio } from "../context/StudioContext";
+import { catalogKey, useCatalog, useStudio, useHairTechniques } from "../context/StudioContext";
 import { hairColourOf, isFluxShade } from "../data/haircolor";
 import { lookParams, savedMakeupLook } from "../save-look";
 import { theme } from "../theme";
@@ -72,7 +72,7 @@ export default function LookScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [config?.client.slug, session?.id]);
 
-  const techniques = useCatalog("hair_technique");
+  const techniques = useHairTechniques();
   if (!config || !session) return <LoadingStage />;
   const s = session.look;
   const fluxColour = hairColourOf(s?.params);

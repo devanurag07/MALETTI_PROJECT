@@ -55,7 +55,7 @@ export default function HomeScreen() {
         </div>
         <style>{`.studio-home-nav > a { padding: 8px !important; } .studio-home-nav svg { width: 36px; height: 36px; }
           .studio-home-nav > a > span { min-width: 18px; height: 18px; font-size: 10px; padding: 0 5px; }`}</style>
-        <img src={theme.brand.logo} alt={theme.brand.name} style={{ display: "block", height: 74, width: "auto", marginTop: 14 }} />
+        <img src={theme.brand.homeLogo ?? theme.brand.logo} alt={theme.brand.name} style={{ display: "block", height: 74, width: "auto", marginTop: 14 }} />
 
         <div style={{ flex: "1 1 auto", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", gap: 26 }}>
           <h1 style={{ margin: 0, ...SERIF, fontWeight: 700, fontSize: 46, lineHeight: 1.18, color: c("home-ink"), maxWidth: 440 }}>

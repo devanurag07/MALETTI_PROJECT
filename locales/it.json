@@ -726,7 +726,15 @@
       "scanningSub": "Leggiamo tono, texture e i 6 parametri della pelle…",
       "scanStage1": "Mappatura della pelle…",
       "scanStage2": "Lettura dei 6 parametri…",
-      "scanStage3": "Scelta dei prodotti…"
+      "scanStage3": "Scelta dei prodotti…",
+      "overall": "Punteggio pelle",
+      "overallSub": "Media delle sei misurazioni",
+      "status_excellent": "Ottimo",
+      "status_good": "Buono",
+      "status_care": "Da curare",
+      "focusTitle": "Il tuo focus",
+      "focusText": "{metric}: qui un po' di cura farà la differenza più grande.",
+      "focusNone": "Tutte le misurazioni sono ottime: continua con la tua routine."
     },
     "face": {
       "ratio": "Lunghezza / larghezza",
@@ -1029,11 +1037,18 @@
       "skipService": "Salta questo servizio"
     },
     "skinMap": {
-      "title": "La tua mappa della pelle",
+      "title": "La tua visualizzazione della pelle",
       "desc": "Ogni cerchio indica dove abbiamo notato qualcosa; tratteggiato = lieve.",
       "none": "Niente da segnalare, la tua pelle è in ottima forma.",
       "areas": "{n} aree segnalate",
-      "cta": "Vedi la mappa della pelle"
+      "cta": "Vedi la visualizzazione della pelle",
+      "generating": "Creazione della visualizzazione…",
+      "generatingSub": "L'AI sta evidenziando ogni aspetto sulla tua foto. Ci vuole circa un minuto.",
+      "unavailable": "La visualizzazione non è disponibile al momento.",
+      "retry": "Riprova",
+      "band_attention": "Da curare",
+      "band_average": "Nella media",
+      "band_good": "Buono"
     },
     "qr": {
       "button": "Scarica",
@@ -1102,6 +1117,20 @@
       "next": "Look successivo",
       "why": "Si adatta alla tua stagione {season} e valorizza i tuoi occhi.",
       "whyDefault": "Scelto per il tuo sottotono e il colore degli occhi."
+    },
+    "technique": {
+      "uniform": "Globale",
+      "highlights": "Riflessi",
+      "ombre": "Ombré",
+      "balayage": "Balayage"
+    },
+    "colourFamily": {
+      "black_deep_brown": "Nero e castano scuro",
+      "chocolate_warm_brown": "Cioccolato e castano caldo",
+      "blonde": "Biondo",
+      "copper_auburn": "Rame e ramato",
+      "burgundy_plum": "Borgogna e prugna",
+      "fashion": "Fashion"
     }
   }
 }

@@ -4,7 +4,7 @@ import { lookShades } from "../data/makeup";
 import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { studioApi, type AnalysisTab, type CatalogItem, type I18n, type Recommendation, type Results } from "../api";
-import { HAIR_MOD_OPTIONS, useCatalog, useCustomShades, useStudio, type HairMods } from "../context/StudioContext";
+import { HAIR_MOD_OPTIONS, useCatalog, useCustomShades, useStudio, type HairMods, useHairTechniques } from "../context/StudioContext";
 import { styleImage } from "../theme/styleImages";
 import { markingsOf, SkinMapPhoto, SKIN_METRICS } from "../components/SkinMap";
 import {
@@ -72,6 +72,13 @@ const metricFill = (n: number) => c(n >= 70 ? "metric-cool" : n >= 40 ? "metric-
 
 export function SkinTab({ a, products: withProducts = true }: { a: AnalysisTab; products?: boolean }) {
   const { t, tx, photo } = useStudio();
+  // Fixed order (Postgres JSONB reorders keys); 0–100, higher is better.
+  const metrics = SKIN_METRICS.filter((k) => k in a.metrics).map((k) => ({ k, n: Math.max(0, Math.min(100, Number(a.metrics[k] ?? 0))) }));
+  const overall = metrics.length ? Math.round(metrics.reduce((sum, m) => sum + m.n, 0) / metrics.length) : null;
+  /** The lowest measurement, when it isn't already excellent: the area to focus on. */
+  const lowest = metrics.reduce<(typeof metrics)[number] | null>((lo, m) => (!lo || m.n < lo.n ? m : lo), null);
+  const focus = lowest && lowest.n < 90 ? lowest : null;
+  const status = (n: number) => (n >= 90 ? "excellent" : n >= 75 ? "good" : "care");
 
   return (
     <>
@@ -97,13 +104,11 @@ export function SkinTab({ a, products: withProducts = true }: { a: AnalysisTab; 
           style={{ flex: "0 0 auto", outline: `1px solid ${c("accent")}`, outlineOffset: 4 }} />
       </div>
 
+      {withProducts ? (
       <div style={{ flex: "0 0 auto", display: "flex", flexDirection: "column", gap: 10, padding: "18px 34px 0 34px" }}>
         <span style={{ fontSize: 12, color: c("ink-muted") }}>{t("skin", "metricScale")}</span>
         {/* Fixed order (Postgres JSONB reorders keys); labels from the frontend locales. */}
-        {SKIN_METRICS.filter((k) => k in a.metrics).map((k) => {
-          const v = a.metrics[k];
-          const n = Math.max(0, Math.min(100, Number(v ?? 0)));
-          return (
+        {metrics.map(({ k, n }) => (
             <div key={k} style={{ display: "flex", alignItems: "center", gap: 14 }}>
               <span style={{ width: 104, fontSize: 14 }}>{t("skin", `metric_${k}`)}</span>
               <span style={{ flex: "1 1 auto", display: "block", height: 6, borderRadius: 3, background: c("track"), overflow: "hidden" }}>
@@ -111,12 +116,70 @@ export function SkinTab({ a, products: withProducts = true }: { a: AnalysisTab; 
               </span>
               <span style={{ width: 34, textAlign: "right", ...SERIF, fontSize: 19, lineHeight: 1 }}>{n}</span>
             </div>
-          );
-        })}
+        ))}
       </div>
+      ) : (
+      // Journey page (no products below): overall score, the six measurements as cards, and the area to focus on.
+      <div style={{ flex: "1 1 auto", minHeight: 0, display: "flex", flexDirection: "column", gap: 14, padding: "20px 34px 0 34px" }}>
+        {overall != null ? (
+          <div style={{ flex: "0 0 auto", display: "flex", alignItems: "center", gap: 18, padding: "14px 18px", borderRadius: 22, background: c("surface"), border: `1px solid ${c("line")}` }}>
+            <ScoreRing value={overall} />
+            <span style={{ display: "flex", flexDirection: "column", gap: 4, minWidth: 0 }}>
+              <span style={{ ...SERIF, fontSize: 24, lineHeight: 1.1 }}>{t("skin", "overall")}</span>
+              <span style={{ fontSize: 13, color: c("accent") }}>{t("skin", `status_${status(overall)}`)}</span>
+              <span style={{ fontSize: 12, color: c("ink-muted") }}>{t("skin", "overallSub")} · {t("skin", "metricScale")}</span>
+            </span>
+          </div>
+        ) : null}
+        <div style={{ flex: "0 0 auto", display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 10 }}>
+          {metrics.map(({ k, n }) => (
+            <div key={k} style={{
+              display: "flex", flexDirection: "column", gap: 8, padding: "12px 14px", borderRadius: 18,
+              background: c("surface"), border: `1px solid ${focus?.k === k ? c("accent") : c("line")}`,
+            }}>
+              <span style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8 }}>
+                <span style={{ fontSize: 14 }}>{t("skin", `metric_${k}`)}</span>
+                <span style={{ ...SERIF, fontSize: 28, lineHeight: 1 }}>{n}</span>
+              </span>
+              <span style={{ display: "block", height: 6, borderRadius: 3, background: c("track"), overflow: "hidden" }}>
+                <span style={{ display: "block", height: 6, width: `${n}%`, borderRadius: 3, background: metricFill(n) }} />
+              </span>
+              <span style={{ fontSize: 12, color: c("ink-muted") }}>{t("skin", `status_${status(n)}`)}</span>
+            </div>
+          ))}
+        </div>
+        {metrics.length ? (
+          <div style={{ flex: "0 0 auto", display: "flex", alignItems: "center", gap: 14, padding: "14px 16px", borderRadius: 18, background: c("surface-raised"), border: `1px solid ${c("line")}` }}>
+            <Diamond size={14} color={c("accent")} />
+            <span style={{ display: "flex", flexDirection: "column", gap: 4, minWidth: 0 }}>
+              <span style={{ ...SERIF, fontSize: 18, lineHeight: 1.15 }}>{t("skin", "focusTitle")}</span>
+              <span style={{ fontSize: 13, lineHeight: 1.45, color: c("ink-muted") }}>
+                {focus ? t("skin", "focusText", { metric: t("skin", `metric_${focus.k}`) }) : t("skin", "focusNone")}
+              </span>
+            </span>
+          </div>
+        ) : null}
+      </div>
+      )}
 
       {withProducts ? <SkinProducts a={a} /> : null}
     </>
+  );
+}
+
+/** Overall skin score: a gold ring filled to the score, the number in the middle. */
+export function ScoreRing({ value, size = 84, fontSize }: { value: number; size?: number; fontSize?: number }) {
+  const r = size / 2 - 5; // stroke 6 inside the box
+  const len = 2 * Math.PI * r;
+  return (
+    <span style={{ flex: "0 0 auto", position: "relative", display: "block", width: size, height: size }}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden="true" style={{ transform: "rotate(-90deg)" }}>
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={c("track")} strokeWidth={6} />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={c("accent")} strokeWidth={6} strokeLinecap="round"
+          strokeDasharray={`${(len * value) / 100} ${len}`} />
+      </svg>
+      <span style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", ...SERIF, fontSize: fontSize ?? 30, lineHeight: 1 }}>{value}</span>
+    </span>
   );
 }
 
@@ -235,7 +298,7 @@ type FaceSub = "recommended" | "catalogue";
 function FaceTab({ a, colour }: { a: AnalysisTab; colour?: AnalysisTab }) {
   const router = useRouter();
   const { t, tx, gender, look, photo, updateLook } = useStudio();
-  const techniques = useCatalog("hair_technique");
+  const techniques = useHairTechniques();
   const technique = look.technique ?? techniques[0]?.key ?? null;
   const isMan = gender === "man";
   const cuts = (a.recommendations.haircut ?? []).slice(0, 2);
@@ -347,7 +410,7 @@ function FaceTab({ a, colour }: { a: AnalysisTab; colour?: AnalysisTab }) {
                   {/* Technique for the colour try-on (the try-on screen uses the one picked here). */}
                   <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                     <span style={{ fontSize: 13, color: c("ink-muted") }}>{t("tryon", "technique")}</span>
-                    <div style={{ display: "grid", gridTemplateColumns: `repeat(${techniques.length || 1}, minmax(0, 1fr))`, gap: 10 }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 10 }}>
                       {techniques.map((x) => (
                         <TechniqueCard key={x.key} techniqueKey={x.key} label={tx(x.name)} active={technique === x.key}
                           onClick={() => updateLook({ technique: x.key })} />
@@ -371,7 +434,7 @@ function FaceTab({ a, colour }: { a: AnalysisTab; colour?: AnalysisTab }) {
 }
 
 /** All recommendations at once (3 across): picture, Best match / For you, name, why it suits. Tap = select. */
-export function RecommendedGrid({ items, image, focus, onChange, active, models, visual, rows, why, dense }: {
+export function RecommendedGrid({ items, image, focus, onChange, active, models, visual, rows, why, dense, details, perPage }: {
   items: Recommendation[]; image: (x: CatalogItem) => string | null; focus: string; active: string | null;
   models?: (x: CatalogItem) => readonly [string, string] | null;
   /** Custom picture (e.g. the make-up palette) when there is no photo. */
@@ -383,29 +446,52 @@ export function RecommendedGrid({ items, image, focus, onChange, active, models,
   why?: (x: Recommendation) => string;
   /** Quieter rows (make-up: long "Lips - Eyes - Blush" names): smaller name, no subtitle, 2-line reason. */
   dense?: boolean;
+  /** Rows: detail lines (label → value) under the name instead of the reason, e.g. a hair colour's shade + technique. */
+  details?: (x: Recommendation) => { label: string; value: ReactNode }[];
+  /** Rows: this many per page, with arrows (e.g. 3 hair colours at a time). */
+  perPage?: number;
 }) {
   const { t, tx } = useStudio();
   useEffect(() => { if (items.length && !items.some((x) => x.key === active)) onChange(items[0].key); }, [items.length]); // eslint-disable-line react-hooks/exhaustive-deps
   if (!items.length) return <Muted size={14}>{t("face", "noRecommendations")}</Muted>;
-  if (rows) return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-      {items.map((x, i) => {
+  if (rows) {
+    // Same photos for two recommendations (e.g. men's browns share one family photo): later ones show their own picture.
+    const seen = new Set<string>();
+    const pairs = new Map(items.map((x) => {
+      const p = models?.(x) ?? null;
+      if (!p || seen.has(p[0])) return [x.key, null] as const;
+      seen.add(p[0]);
+      return [x.key, p] as const;
+    }));
+    const row = (x: Recommendation) => {
         const on = active === x.key;
-        const pair = models?.(x) ?? null;
+        const pair = pairs.get(x.key) ?? null;
         const src = pair ? pair[0] : image(x);
         const reason = tx(x.reason) || why?.(x) || "";
+        const lines = details?.(x) ?? null;
+        const pic = (s: string | null, slot = "pic") => (
+          <span key={slot} style={{ position: "relative", display: "block", width: models ? 92 : 128, aspectRatio: models ? "3 / 4" : "1 / 1", overflow: "hidden", borderRadius: 12, background: x.hex ?? c("photo") }}>
+            {!s && visual ? visual(x) : <Photo src={s} style={{ objectPosition: pair ? "50% 30%" : focus }} />}
+          </span>
+        );
         return (
           <button key={x.key} type="button" onClick={() => onChange(x.key)} style={{
             display: "flex", alignItems: "center", gap: 14, minWidth: 0, padding: 8, borderRadius: 18, textAlign: "left",
             background: on ? c("surface-raised") : c("surface"), border: `2px solid ${on ? c("accent") : c("line")}`, color: c("ink"), cursor: "pointer",
           }}>
-            <span style={{ flex: "0 0 auto", position: "relative", display: "block", width: 128, aspectRatio: "1 / 1", overflow: "hidden", borderRadius: 12, background: c("photo") }}>
-              {!src && visual ? visual(x) : <Photo src={src} style={{ objectPosition: pair ? "50% 30%" : focus }} />}
+            {/* Front + back model photos side by side (hair colours); one picture otherwise. */}
+            <span style={{ flex: "0 0 auto", display: "flex", gap: 6 }}>
+              {pair ? [pic(pair[0], "a"), pic(pair[1], "b")] : pic(src)}
             </span>
             <span style={{ flex: "1 1 auto", minWidth: 0, display: "flex", flexDirection: "column", gap: 5 }}>
               <span style={{ ...SERIF, fontSize: dense ? 16 : 20, lineHeight: 1.2 }}>{tx(x.name)}</span>
-              {!dense && tx(x.sub) ? <span style={{ fontSize: 12, color: c("accent") }}>{tx(x.sub)}</span> : null}
-              {reason ? (
+              {!dense && !lines && tx(x.sub) ? <span style={{ fontSize: 12, color: c("accent") }}>{tx(x.sub)}</span> : null}
+              {lines ? lines.map((d) => (
+                <span key={d.label} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: c("ink-muted"), minWidth: 0 }}>
+                  <span>{d.label}</span>
+                  <span style={{ display: "flex", alignItems: "center", gap: 6, color: c("ink"), minWidth: 0, overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis" }}>{d.value}</span>
+                </span>
+              )) : reason ? (
                 <span style={{ fontSize: dense ? 12 : 13, lineHeight: 1.4, color: c("ink-muted"), overflow: "hidden", display: "-webkit-box", WebkitLineClamp: dense ? 2 : 4, WebkitBoxOrient: "vertical" }}>
                   {reason}
                 </span>
@@ -414,9 +500,10 @@ export function RecommendedGrid({ items, image, focus, onChange, active, models,
             {on ? <Icon d={ICON.check} size={18} width={2.4} stroke="var(--mm-accent)" style={{ flex: "0 0 auto", alignSelf: "flex-start", marginTop: 4 }} /> : null}
           </button>
         );
-      })}
-    </div>
-  );
+    };
+    if (perPage && items.length > perPage) return <Carousel items={items.map(row)} perPage={perPage} columns={1} />;
+    return <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>{items.map(row)}</div>;
+  }
   return (
     <div style={{ display: "grid", gridTemplateColumns: `repeat(${Math.min(items.length, 3)}, minmax(0, 1fr))`, gap: 12 }}>
       {items.map((x, i) => {
@@ -457,8 +544,37 @@ const FLUX_MODEL: Record<string, string> = {
   flux_dark_blonde: "light_golden_brown", flux_light_copper: "golden_copper", flux_copper: "bright_copper",
   flux_auburn: "mahogany", flux_burgundy: "burgundy_brown", flux_plum: "plum_black",
 };
+/** FLUX_VERSION_3 recommender photos (two per haircut, side by side), in public/studio/recommended/haircut. */
+const HAIRCUT_MODELS: Record<"man" | "woman", string[]> = {
+  man: ["buzz_cut", "caesar_cut", "center_parted", "crew_cut", "fade_pompadour", "french_crop", "mullet", "quiff", "slicked_back", "undercut"],
+  woman: ["a_line_bob", "blunt_lob", "butterfly_cut", "classic_pixie", "french_bob", "long_layers", "messy_long_bob", "wolf_cut"],
+};
+export const haircutModels = (gender: string | null, key: string): readonly [string, string] | null => {
+  const g = gender === "man" ? "man" : "woman";
+  if (!HAIRCUT_MODELS[g].includes(key)) return null; // no recommender photos: the catalogue picture is shown
+  return [`/studio/recommended/haircut/${g}/${key}-1.jpg`, `/studio/recommended/haircut/${g}/${key}-2.jpg`] as const;
+};
+/**
+ * FLUX_VERSION_3 recommender photos for the FLUX colours: women have a pair per shade (female-haircolor); men only
+ * where a FLUX men's set (male_haircolor) has exactly the shade's name.
+ */
+const FLUX_WOMAN = new Set([
+  "natural_black", "soft_black", "espresso_brown", "dark_chocolate", "chocolate_brown", "mocha_brown", "chestnut_brown",
+  "caramel_brown", "dark_blonde", "honey_blonde", "salt_and_pepper", "ash_blonde", "light_copper", "copper", "cinnamon_red",
+  "auburn", "deep_red", "burgundy", "wine_red", "plum", "rose_pink", "lavender", "blue", "emerald_green",
+]);
+/** Men: only FLUX photos whose name is exactly the shade (no family look-alikes); the others show their swatch. */
+const FLUX_MAN_EXACT: Record<string, string> = {
+  ash_blonde: "ash_blonde", salt_and_pepper: "salt_and_pepper", copper: "copper", burgundy: "burgundy",
+};
 export const colourModels = (gender: string | null, key: string): readonly [string, string] | null => {
   const g = gender === "man" ? "man" : "woman";
+  if (key.startsWith("flux_")) {
+    const shade = key.slice(5);
+    const file = g === "woman" ? (FLUX_WOMAN.has(shade) ? shade : null) : FLUX_MAN_EXACT[shade] ?? null;
+    // No exact photos for this shade: its swatch (never another shade's or a season's photos).
+    return file ? [`/studio/recommended/colour/${g}/flux/${file}-1.jpg`, `/studio/recommended/colour/${g}/flux/${file}-2.jpg`] as const : null;
+  }
   const k = key.startsWith("flux_") ? FLUX_MODEL[key] : key;
   if (!k) return null;
   return [`/studio/recommended/colour/${g}/${k}-front.jpg`, `/studio/recommended/colour/${g}/${k}-back.jpg`] as const;
@@ -516,9 +632,6 @@ export function RecommendedCard({ items, image, focus, onTry, onChange, active, 
                     {t("face", "best")}
                   </span>
                 ) : null}
-                <span style={{ position: "absolute", right: 8, top: 8, fontSize: 11, color: c("ink"), background: c("veil"), borderRadius: 8, padding: "3px 9px" }}>
-                  {t("face", k === 0 ? "front" : "back")}
-                </span>
               </span>
             ))}
           </div>
@@ -579,7 +692,7 @@ export function RecommendedCard({ items, image, focus, onTry, onChange, active, 
 /** Detail rows for a recommended hair colour: shade swatch, suggested technique, upkeep. */
 export function useShadeDetails() {
   const { t, tx, look } = useStudio();
-  const techniques = useCatalog("hair_technique");
+  const techniques = useHairTechniques();
   return (x: Recommendation) => {
     const own = x.attributes.technique as string | undefined; // the AI's own technique (Maletti), if any
     const tech = techniques.find((k) => k.key === (own ?? look.technique)) ?? (own ? undefined : techniques[0]);
@@ -587,7 +700,6 @@ export function useShadeDetails() {
       { label: t("face", "shade"), value: <><span style={{ display: "block", width: 16, height: 16, borderRadius: 8, background: x.hex ?? c("photo"), border: `1px solid ${c("line-strong")}` }} />{tx(x.name)}</> },
     ];
     if (tech) rows.push({ label: t("tryon", "technique"), value: tx(tech.name) });
-    else if (own === "ombre") rows.push({ label: t("tryon", "technique"), value: "Ombré" }); // not a catalogue technique
     const upkeep = x.attributes.maintenance as string | undefined;
     if (upkeep) rows.push({ label: t("face", "maintenance"), value: upkeep });
     return rows;
@@ -599,8 +711,10 @@ export function useShadeDetails() {
  * Recommended make-up: all looks at once, one card each (like FLUX_VERSION_3's look card) — the look's title as a
  * heading, its three shades (colour circle + shade name: lips · blush · eyes) and a short description. Tap to select.
  */
-export function MakeupLookCards({ items, active, onChange, why }: {
+export function MakeupLookCards({ items, active, onChange, why, compact }: {
   items: Recommendation[]; active: string | null; onChange: (k: string) => void; why?: (x: Recommendation) => string;
+  /** No description, shade chips in a row (dot + name): all 5 looks fit on one page. */
+  compact?: boolean;
 }) {
   const { t, tx } = useStudio();
   useEffect(() => { if (items.length && !items.some((x) => x.key === active)) onChange(items[0].key); }, [items.length]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -610,7 +724,7 @@ export function MakeupLookCards({ items, active, onChange, why }: {
     return v.replace(/(^|\s)\p{Ll}/gu, (m) => m.toUpperCase()); // "Peach glow" → "Peach Glow"
   };
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: compact ? 7 : 12 }}>
       {items.map((look) => {
         const on = look.key === active;
         const flux = lookShades(look);
@@ -619,7 +733,27 @@ export function MakeupLookCards({ items, active, onChange, why }: {
           ["blush", flux?.blush?.hex ?? (look.attributes.blush_hex as string | undefined), tx(flux?.blush?.name)],
           ["eye", flux?.eye?.hex ?? (look.attributes.eye_hex as string | undefined), tx(flux?.eye?.name)],
         ];
-        const desc = tx(look.reason) || why?.(look) || "";
+        const desc = compact ? "" : tx(look.reason) || why?.(look) || "";
+        if (compact) return (
+          <button key={look.key} type="button" onClick={() => onChange(look.key)} style={{
+            display: "flex", flexDirection: "column", gap: 7, padding: "9.2px 13.8px", borderRadius: 18.4, textAlign: "left", cursor: "pointer",
+            background: on ? c("surface-raised") : c("surface"), border: `1.5px solid ${on ? c("accent") : c("line")}`, color: c("ink"),
+          }}>
+            <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+              <span style={{ fontSize: 17, fontWeight: 700, lineHeight: 1.15, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{title(look)}</span>
+              {on ? <Icon d={ICON.check} size={16} width={2.4} stroke="var(--mm-accent)" style={{ flex: "0 0 auto" }} /> : null}
+            </span>
+            {/* Lips · blush · eyes: colour circle above its shade name */}
+            <span style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 6 }}>
+              {shades.map(([k, hex, name]) => (
+                <span key={k} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3.5, padding: "4.6px 4.6px", borderRadius: 11.5, background: c("background"), border: `1px solid ${c("line")}`, minWidth: 0 }}>
+                  <span style={{ flex: "0 0 auto", display: "block", width: 23, height: 23, borderRadius: 11.5, background: hex ?? c("surface-raised"), boxShadow: "inset 0 0 0 2px rgba(255,255,255,0.15)" }} />
+                  <span style={{ fontSize: 12.5, fontWeight: 600, lineHeight: 1.2, maxWidth: "100%", textAlign: "center", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{name || "—"}</span>
+                </span>
+              ))}
+            </span>
+          </button>
+        );
         return (
           <button key={look.key} type="button" onClick={() => onChange(look.key)} style={{
             display: "flex", flexDirection: "column", gap: 12, padding: "14px 16px", borderRadius: 20, textAlign: "left", cursor: "pointer",

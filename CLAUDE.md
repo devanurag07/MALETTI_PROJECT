@@ -22,7 +22,7 @@ feature module: `features/studio/`.
   side (`pending-upload.ts`): face first (`ensureFaceAnalysis`, the face / haircut / beard pages), then colour + skin
   (`ensureAnalysis` = all). Armocromia isn't a numbered "Service n". Only Armocromia and Skin have an intro page and a
   5 s scan (`HAS_INTRO`); try-on services open on their recommendations.
-  Recommendations: 3 for haircut / beard, 5 for hair colour / make-up. Skin: results → map → products → services.
+  Recommendations: 3 for haircut / beard / hair colour, 5 for make-up. Skin: results → map → products → services.
 - No step bar: only the consultation's `JourneyBar` shows progress.
 - **Maletti AI prompts** (backend `studio/maletti_prompts.py`, `CLIENT_PIPELINES` in `studio/pipelines.py`): face +
   armocromia, one prompt per gender; the AI picks the cuts (+ fade / bangs / styling → `metrics.hair_params`), beards,

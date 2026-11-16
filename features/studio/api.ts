@@ -183,6 +183,8 @@ export type SkinService = {
 // ---------- Endpoints ----------
 
 const RESULTS = new Map<string, Results>();
+/** Skin visualisation per session (one request, shared by the skin page's prefetch and the visualisation page). */
+const SKIN_VIS = new Map<string, Promise<string>>();
 function keepResults(id: string, r: Results): Results {
   RESULTS.set(id, r);
   return r;
@@ -211,6 +213,19 @@ export const studioApi = {
   /** Remember merged results (two analysis calls running side by side). */
   keepResults: (id: string, r: Results) => keepResults(id, r),
   results: (id: string) => unwrap<Results>(api.get(`studio/sessions/${id}/results/`)).then((r) => keepResults(id, r)),
+  /**
+   * FLUX_VERSION_3's AI skin visualisation (gpt-image-2, ~1 min): generated once per session, then returned at once.
+   * Started as soon as the skin results show, so it's ready (or nearly) on the visualisation page.
+   */
+  skinVisualization: (id: string): Promise<string> => {
+    let p = SKIN_VIS.get(id);
+    if (!p) {
+      p = unwrap<{ image_url: string }>(api.post(`studio/sessions/${id}/skin-visualization/`, {}, { timeout: 180_000 })).then((r) => r.image_url);
+      p.catch(() => SKIN_VIS.delete(id)); // failed: the page can try again
+      SKIN_VIS.set(id, p);
+    }
+    return p;
+  },
   /** Last results fetched for a session (in memory), so going back to a screen shows them at once, no loading. */
   cachedResults: (id: string | null | undefined): Results | null => (id ? RESULTS.get(id) ?? null : null),
   /** Maletti results carry no salon-logo watermark: the API stamps it unless `watermark: false` is sent. */

@@ -6,21 +6,21 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useSearchParams } from "next/navigation";
 import { ensureAnalysis, ensureFaceAnalysis } from "../pending-upload";
 import { useNav } from "../use-nav";
-import { GeneratingScan, markGenStart } from "../components/GeneratingScan";
+import TryScreen from "./TryScreen";
 import { studioApi, type AnalysisTab, type CatalogItem, type Recommendation, type Results, type SkinService } from "../api";
-import { useCatalog, useCustomShades, useStudio, type HairMods } from "../context/StudioContext";
+import { useCatalog, useCustomShades, useStudio, type HairMods, useHairTechniques } from "../context/StudioContext";
 import {
   journeyNext, journeyPage, numberedServices, SERVICE_MODULE, SERVICE_TRY, type Service,
 } from "../flows";
 import { styleImage } from "../theme/styleImages";
 import {
   Arch, c, Card, Carousel, ColorChip, ColorDot, ErrorLine, GuidePill, H1, HeroBackdrop, Icon, ICON, LoadingStage, Muted, Photo,
-  ActionBar, PrimaryButton, Screen, SectionTitle, SERIF, ShadeSwatch, Spinner, Tabs,
+  ActionBar, PillButton, PrimaryButton, Screen, SectionTitle, SERIF, ShadeSwatch, Spinner, Tabs,
 } from "../ui";
-import { markingsOf, SkinMapLegend, SkinMapPhoto } from "../components/SkinMap";
+import { SKIN_METRICS } from "../components/SkinMap";
 import PhotoQR from "../components/PhotoQR";
 import ScanOverlay from "../components/ScanOverlay";
-import { colourModels, HairCustomise, MakeupPalette, RecommendedCard, forYouFirst, RecommendedGrid, useShadeDetails, SkinProducts, SkinTab, StyleCard, TechniqueCard } from "./ResultsScreen";
+import { colourModels, haircutModels, HairCustomise, MakeupLookCards, MakeupPalette, RecommendedCard, forYouFirst, RecommendedGrid, ScoreRing, useShadeDetails, SkinProducts, SkinTab, StyleCard, TechniqueCard } from "./ResultsScreen";
 
 const SERVICE_ICON: Record<Service, string> = {
   hairstyle: ICON.serviceCut, beard: ICON.serviceBeard, armocromia: ICON.colour,
@@ -116,8 +116,6 @@ export function ServiceIntro({ service }: { service: Service }) {
 /** The service itself: pick an option, Try it on (AI), or continue to the next service. */
 export function ServicePage({ service }: { service: Service }) {
   const { t, tx, config, session, gender, photo, look, updateLook } = useStudio();
-  /** Try tapped: show the processing scan right away while the try-on screen loads (it continues the same scan). */
-  const [starting, setStarting] = useState(false);
   // Simple Service (one service on its own): no journey bar, back to the service list when done.
   const simple = useSearchParams().get("simple") === "1";
   const { go, pending } = useNav();
@@ -130,7 +128,6 @@ export function ServicePage({ service }: { service: Service }) {
     return r?.tabs.some((x) => x.module === SERVICE_MODULE[service] && x.status === "done") ? r : null;
   });
   const [error, setError] = useState<string | null>(null);
-  const [sel, setSel] = useState<string | null>(null);
   /**
    * Armocromia: which of its pages is shown (Next goes through them, then on to the next service). In the URL (`?p=`),
    * so each page is a step of its own: the bottom Back returns to the previous page, and coming back lands on the last one.
@@ -165,27 +162,42 @@ export function ServicePage({ service }: { service: Service }) {
     (SERVICE_MODULE[service] === "face" ? ensureFaceAnalysis : ensureAnalysis)(session.id).then(setResults).catch((e: Error) => setError(e.message));
   }, [session?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Skin: start the AI visualisation now (≈1 min), so it's ready by the visualisation page.
+  const skinReady = service === "skin" && !!results?.tabs.some((x) => x.module === "skin" && x.status === "done");
+  useEffect(() => {
+    if (skinReady && session) studioApi.skinVisualization(session.id).catch(() => {});
+  }, [skinReady, session?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
   if (!config || !session) return <LoadingStage />;
-  if (starting) return <Screen animKey="try-loading" onBack={false}><GeneratingScan image={photo} preview /></Screen>;
   // The scan animation stays until the results are there (at least 5 s the first time).
   if (scanning || (!results && !error))
     return <ServiceScan service={service} />;
   const tab = (m: string) => results?.tabs.find((x) => x.module === m && x.status === "done");
   const a = tab(SERVICE_MODULE[service]);
   const kind = SERVICE_TRY[service];
-  const param = kind === "cut" ? "item" : kind === "colour" ? "shade" : kind === "makeup" ? "look" : "beard";
   // No intro page for try-on services in the consultation: record done / skipped here.
   const mark = (st: "done" | "skipped") => { if (!simple) updateLook({ journey: { ...look.journey, [service]: st } }); };
-  const tryIt = () => sel && kind && (mark("done"), markGenStart(), setStarting(true), go(`/try/${kind}?${param}=${encodeURIComponent(sel)}&single=1&next=${encodeURIComponent(next)}&back=${encodeURIComponent(journeyPage(service) + (simple ? "?simple=1" : ""))}`));
+  const last = next === "/look" || next.startsWith("/service");
+
+  // Try-on services: Recommended | Custom | Result on this page (FLUX_VERSION_3) — Try switches to Result in place,
+  // no navigation / loading screen in between.
+  if (kind) {
+    return (
+      <TryScreen kind={kind} journey={{
+        next,
+        back: journeyPage(service) + (simple ? "?simple=1" : ""),
+        onTry: () => mark("done"),
+        skip: { label: last ? t("journey", "finish") : t("journey", "skipService"), onClick: () => { if (look.journey?.[service] !== "done") mark("skipped"); go(next); } },
+      }} />
+    );
+  }
 
   let body: ReactNode;
   if (!results && !error) body = <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}><Spinner size={36} /></div>;
   else if (needsAnalysis && !a) body = <div style={{ flex: 1 }}><ErrorLine message={error ?? t("analysis", "failed")} /></div>;
   else if (service === "skin") body = <SkinTab a={a!} products={false} />;
   else if (service === "armocromia") body = <Armocromia a={a!} face={tab("face")} page={armoPage} />;
-  else body = <Options service={service} a={a} sel={sel} setSel={setSel} />;
 
-  const last = next === "/look" || next.startsWith("/service");
   // Armocromia: "Next page" until its last page, then the usual label.
   // Armocromia shows the first two colour-harmony pages (season, undertone + palette), then the hair colours.
   const armoPages = service === "armocromia" && a ? Math.min(2, harmonyPageCount(colourHarmonyData({ colour: a, face: tab("face"), photo: null, tx }))) : 1;
@@ -196,19 +208,26 @@ export function ServicePage({ service }: { service: Service }) {
       {body}
       {/* Skin results don't fill the height: push the button to the bottom. */}
       {service === "skin" ? <div style={{ flex: "1 1 auto" }} /> : null}
-      {/* Try-on services: "Skip this service" link, then Back · Try it on. Others: Back · Next. */}
-      <ActionBar link={kind ? { label: last ? t("journey", "finish") : t("journey", "skipService"), onClick: () => { if (look.journey?.[service] !== "done") mark("skipped"); go(next); } } : null}>
-        {kind ? (
-          <PrimaryButton icon={ICON.sparkle} disabled={!sel} onClick={tryIt}>{t("journey", "try")}</PrimaryButton>
-        ) : (
-          <PrimaryButton iconRight={ICON.next} onClick={() => {
-            if (armoPage < armoPages - 1) { setArmoPage(armoPage + 1); return; }
-            go(next);
-          }}>{nextLabel}</PrimaryButton>
-        )}
+      <ActionBar>
+        <PrimaryButton iconRight={ICON.next} onClick={() => {
+          if (armoPage < armoPages - 1) { setArmoPage(armoPage + 1); return; }
+          go(next);
+        }}>{nextLabel}</PrimaryButton>
       </ActionBar>
     </Screen>
   );
+}
+
+/** Locale key of a FLUX colour family ("Black & Deep Brown" → black_deep_brown, studio.colourFamily.*). */
+const familyKey = (group: string) => group.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
+/** FLUX shades grouped by colour family, in FLUX order. */
+function shadeFamilies(shades: CatalogItem[]) {
+  return shades.reduce<{ group: string; shades: CatalogItem[] }[]>((acc, x) => {
+    const g = String(x.attributes.group ?? "");
+    const last = acc[acc.length - 1];
+    if (last?.group === g) last.shades.push(x); else acc.push({ group: g, shades: [x] });
+    return acc;
+  }, []);
 }
 
 /** Selectable options for a try-on service (recommended first, then the catalogue). */
@@ -223,7 +242,7 @@ export function Options({ service, a, sel, setSel, tab: tabProp, bare }: {
   const shades = useCatalog("hair_shade");
   const customShades = useCustomShades();
   const looks = useCatalog("makeup_look");
-  const techniques = useCatalog("hair_technique");
+  const techniques = useHairTechniques();
   const technique = look.technique ?? techniques[0]?.key ?? null;
   const thumb = look.lastTryon?.output_url || photo;
 
@@ -244,8 +263,8 @@ export function Options({ service, a, sel, setSel, tab: tabProp, bare }: {
       .map((b, i) => ({ ...b, rank: own.length + i + 1, is_best: own.length === 0 && i === 0, reason: {} }) as Recommendation);
     return [...own, ...extra];
   })();
-  // 3 recommendations for haircut / beard, 5 for hair colour / make-up.
-  const rec = recAll.slice(0, service === "hairstyle" || service === "beard" ? 3 : 5);
+  // 3 recommendations for haircut / beard / hair colour, 5 for make-up.
+  const rec = recAll.slice(0, service === "makeup" ? 5 : 3);
   const recKeys = new Set(rec.map((x) => x.key));
   const best = rec.find((x) => x.is_best)?.key ?? rec[0]?.key;
   const ordered = forYouFirst(items, recKeys);
@@ -284,13 +303,11 @@ export function Options({ service, a, sel, setSel, tab: tabProp, bare }: {
   const shadeWhy = season ? t("colour", "whyShade", { season }) : t("colour", "whyShadeDefault");
   let content: ReactNode;
   if (tab === "recommended" && service === "makeup") {
-    // Make-up: one look at a time (as before) — lipstick, eyeshadow compact and blush drawn in the look's shades,
-    // the shade chips, then the look name and its short description.
-    content = <RecommendedCard key="makeup" items={rec} active={sel} onChange={setSel} subOnly focus="50% 50%"
-      image={() => null} visual={(x) => <MakeupPalette look={x} />} />;
+    // Make-up: all 5 looks on one page — the look's name and its lipstick · blush · eyeshadow shades (no description).
+    content = <MakeupLookCards key="makeup" compact items={rec} active={sel} onChange={setSel} />;
   } else if (tab === "recommended" && service === "colour") {
-    // Hair colour: one look at a time (as before) — front / back model photos, the shade name, shade + technique rows.
-    content = <RecommendedCard key="colour" items={rec} active={sel} onChange={setSel} nameOnly focus="50% 30%" details={shadeDetails}
+    // Hair colour: 3 at a time, one per row — front + back model photos side by side, the name, shade + technique.
+    content = <RecommendedGrid key="colour" rows perPage={3} items={rec} active={sel} onChange={setSel} focus="50% 30%" details={shadeDetails}
       models={(x) => colourModels(gender, x.key)} image={(x) => styleImage("hair_shade", x.key, x.image_url) || thumb} />;
   } else if (tab === "recommended") {
     // Haircuts / beards / make-up looks: all recommendations on one page.
@@ -298,20 +315,30 @@ export function Options({ service, a, sel, setSel, tab: tabProp, bare }: {
       <RecommendedGrid key={service} items={rec} active={sel} onChange={setSel}
         rows={service === "hairstyle" || service === "beard"}
         why={service === "hairstyle" ? () => hairWhy : service === "beard" ? () => beardWhy : service === "colour" ? () => shadeWhy : undefined}
-        models={service === "colour" ? (x) => colourModels(gender, x.key) : undefined}
+        // FLUX_VERSION_3 recommender: two photos per haircut side by side (hair colour has its own rows above).
+        models={service === "colour" ? (x) => colourModels(gender, x.key) : service === "hairstyle" ? (x) => haircutModels(gender, x.key) : undefined}
         focus={service === "beard" ? "50% 60%" : "50% 8%"}
         image={(x) => service === "makeup" ? styleImage("makeup_look", x.key, x.image_url) || null : styleImage(imageKind, x.key, x.image_url) || thumb} />
     );
   } else if (service === "colour") {
     content = (
       <>
-        <Carousel key="colour" perPage={16} columns={4} items={customShades.map((x) => (
-          <ShadeSwatch key={x.key} image={styleImage("hair_shade", x.key, x.image_url) || thumb} hex={x.hex} name={tx(x.name)} mark={recKeys.has(x.key)}
-            active={sel === x.key} onClick={() => setSel(x.key)} />
+        {/* One colour family per row (its name above its 4 shades), 3 rows per page. */}
+        <Carousel key="colour" perPage={3} columns={1} items={shadeFamilies(customShades).map((f) => (
+          <div key={f.group} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <span style={{ ...SERIF, fontSize: 16, lineHeight: 1.2 }}>{t("colourFamily", familyKey(f.group))}</span>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: 10 }}>
+              {f.shades.map((x) => (
+                <ShadeSwatch key={x.key} image={styleImage("hair_shade", x.key, x.image_url) || thumb} hex={x.hex} name={tx(x.name)} mark={recKeys.has(x.key)}
+                  active={sel === x.key} onClick={() => setSel(x.key)} />
+              ))}
+            </div>
+          </div>
         ))} />
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           <span style={{ fontSize: 13, color: c("ink-muted") }}>{t("tryon", "technique")}</span>
-          <div style={{ display: "grid", gridTemplateColumns: `repeat(${techniques.length || 1}, minmax(0, 1fr))`, gap: 10 }}>
+          {/* 2×2: Global · Highlights / Ombre · Balayage */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 10 }}>
             {techniques.map((x) => (
               <TechniqueCard key={x.key} techniqueKey={x.key} label={tx(x.name)} active={technique === x.key} onClick={() => updateLook({ technique: x.key })} />
             ))}
@@ -451,17 +478,33 @@ function Armocromia({ a, face, page }: { a: AnalysisTab; face?: AnalysisTab; pag
 /** After Skin analysis → Next: one page with every finding marked on the photo (also in the report). */
 export function SkinMapPage() {
   const simple = useSearchParams().get("simple") === "1";
-  const { t, tx, config, session, gender, photo } = useStudio();
-  const [results, setResults] = useState<Results | null>(null);
+  const { t, config, session } = useStudio();
+  const [results, setResults] = useState<Results | null>(() => studioApi.cachedResults(session?.id));
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
     if (session) studioApi.results(session.id).then(setResults).catch((e: Error) => setError(e.message));
   }, [session?.id]); // eslint-disable-line react-hooks/exhaustive-deps
-  const { go, pending } = useNav();
+  // FLUX_VERSION_3 skin visualisation (started on the skin results page; the same request is reused here).
+  const [vis, setVis] = useState<{ url: string | null; failed: boolean }>({ url: null, failed: false });
+  const [attempt, setAttempt] = useState(0);
+  useEffect(() => {
+    if (!session) return;
+    let live = true;
+    setVis({ url: null, failed: false });
+    studioApi.skinVisualization(session.id).then((url) => live && setVis({ url, failed: false })).catch(() => live && setVis({ url: null, failed: true }));
+    return () => { live = false; };
+  }, [session?.id, attempt]); // eslint-disable-line react-hooks/exhaustive-deps
+  const [imgReady, setImgReady] = useState(false);
+  useEffect(() => setImgReady(false), [vis.url]);
+  const { go } = useNav();
   if (!config || !session) return <LoadingStage />;
   const skin = results?.tabs.find((x) => x.module === "skin" && x.status === "done");
-  const markings = markingsOf(skin?.zones);
   const next = `/journey/skin/products${simple ? "?simple=1" : ""}`;
+  // FLUX order: lowest score first; FLUX bands (<60 needs attention, <80 average, else good).
+  const metrics = skin ? SKIN_METRICS.filter((k) => k in skin.metrics)
+    .map((k) => ({ k, n: Math.round(Math.max(0, Math.min(100, Number(skin.metrics[k] ?? 0)))) }))
+    .sort((x, y) => x.n - y.n) : [];
+  const band = (n: number) => (n < 60 ? "band_attention" : n < 80 ? "band_average" : "band_good");
 
   return (
     <Screen animKey="skin-map">
@@ -471,16 +514,41 @@ export function SkinMapPage() {
       ) : !skin ? (
         <div style={{ flex: 1 }}><ErrorLine message={error ?? t("analysis", "failed")} /></div>
       ) : (
-        <div style={{ flex: "1 1 auto", minHeight: 0, overflowY: "auto", display: "flex", flexDirection: "column", gap: 14, padding: "18px 34px 8px 34px" }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-            <H1 size={34}>{t("skinMap", "title")}</H1>
-            <Muted size={14}>{tx(skin.label?.name)} · {markings.length ? t("skinMap", "desc") : t("skinMap", "none")}</Muted>
+        <div style={{ flex: "1 1 auto", minHeight: 0, display: "flex", flexDirection: "column", gap: 12, padding: "16px 34px 4px 34px" }}>
+          <H1 size={30}>{t("skinMap", "title")}</H1>
+          {/* The AI picture (8 cards: each concern marked on the face), or its progress / an error with Try again. */}
+          <div style={{ flex: "1 1 auto", minHeight: 0, position: "relative", borderRadius: 20, overflow: "hidden", background: c("surface"), border: `1px solid ${c("line")}` }}>
+            {vis.url ? (
+              <>
+                <img src={vis.url} alt={t("skinMap", "title")} onLoad={() => setImgReady(true)} onError={() => setVis({ url: null, failed: true })}
+                  style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", visibility: imgReady ? "visible" : "hidden" }} />
+                {imgReady ? <PhotoQR src={vis.url} name={t("skinMap", "title")} /> : null}
+              </>
+            ) : null}
+            {!vis.failed && !(vis.url && imgReady) ? (
+              <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 14, padding: 24, textAlign: "center" }}>
+                <Spinner size={40} />
+                <span style={{ ...SERIF, fontSize: 22, lineHeight: 1.2 }}>{t("skinMap", "generating")}</span>
+                <Muted size={13} style={{ maxWidth: 320 }}>{t("skinMap", "generatingSub")}</Muted>
+              </div>
+            ) : null}
+            {vis.failed ? (
+              <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 14, padding: 24, textAlign: "center" }}>
+                <Muted size={15}>{t("skinMap", "unavailable")}</Muted>
+                <PillButton icon={ICON.retake} onClick={() => setAttempt((n) => n + 1)}>{t("skinMap", "retry")}</PillButton>
+              </div>
+            ) : null}
           </div>
-          <div style={{ position: "relative", alignSelf: "center" }}>
-            <SkinMapPhoto src={photo} markings={markings} size={400} style={{ outline: `1.5px solid ${c("accent")}`, outlineOffset: 5 }} />
-            <PhotoQR src={photo} name={t("skinMap", "title")} />
+          {/* Score circles under the picture (FLUX_VERSION_3): lowest first, status, name. */}
+          <div style={{ flex: "0 0 auto", display: "grid", gridTemplateColumns: `repeat(${Math.max(metrics.length, 1)}, minmax(0, 1fr))`, gap: 6 }}>
+            {metrics.map(({ k, n }) => (
+              <div key={k} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, textAlign: "center", minWidth: 0 }}>
+                <ScoreRing value={n} size={62} fontSize={20} />
+                <span style={{ fontSize: 11, color: c("accent") }}>{t("skinMap", band(n))}</span>
+                <span style={{ fontSize: 12, lineHeight: 1.2 }}>{t("skin", `metric_${k}`)}</span>
+              </div>
+            ))}
           </div>
-          <SkinMapLegend metrics={skin.metrics} markings={markings} label={(k) => t("skin", `metric_${k}`)} areasLabel={(n) => t("skinMap", "areas", { n })} />
         </div>
       )}
       {!results && !error ? null : <ActionBar>

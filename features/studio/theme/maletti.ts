@@ -17,6 +17,8 @@ export const malettiTheme = {
     /** Logo shown centred in the header (light artwork on the dark header). */
     logo: "/studio/maletti/logo.png",
     logoHeight: 50,
+    /** Welcome screen logo (high-resolution white artwork, black background). */
+    homeLogo: "/studio/maletti/logo-home.png",
   },
 
   colors: {

@@ -4,7 +4,7 @@ import { BLUSH, blushByKey, EYESHADOW, eyeByKey, knownMixLooks, LIPSTICK, lipByK
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { studioApi, type CatalogItem, type Results, type TryKind, type TryOn } from "../api";
-import { UPLOAD, useAllShades, useCatalog, useStudio, type HairMods, type LookDraft } from "../context/StudioContext";
+import { UPLOAD, useAllShades, useCatalog, useStudio, type HairMods, type LookDraft, useHairTechniques } from "../context/StudioContext";
 import { fluxShadePrompt, isFluxShade } from "../data/haircolor";
 import { SERVICE_MODULE, SERVICE_TRY, tryOrder, type Service } from "../flows";
 import { JourneyBar, Options } from "./JourneyScreen";
@@ -19,7 +19,7 @@ import { useNav } from "../use-nav";
 // Generating scan + its shared clock live in ../components/GeneratingScan (also used by the service page and
 // try/[kind]/loading.tsx); re-exported here for existing imports.
 export { GeneratingScan, markGenStart } from "../components/GeneratingScan";
-import { GeneratingScan } from "../components/GeneratingScan";
+import { GenerationOverlay } from "../components/GeneratingScan";
 
 const KIND_CAT: Record<TryKind, string> = { cut: "catCut", colour: "catColour", makeup: "catMakeup", beard: "catBeard" };
 type Sel = { item: string | null; shade: string | null; technique: string | null; look: string | null; lip: string | null; eye: string | null; blush: string | null; beard: string | null };
@@ -52,23 +52,33 @@ function ranked(recommended: CatalogItem[] | undefined, all: CatalogItem[], limi
 }
 
 /** Step 5 — Try and customise. Each pick generates an AI try-on stacked on the previous layer. */
-export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
+/** Shown inside a journey's service page (no route change): Recommended | Custom | Result in place. */
+export type TryJourney = {
+  next: string;
+  back: string;
+  /** Try tapped (the service page records it as done). */
+  onTry: () => void;
+  /** "Skip this service" link under Recommended / Custom. */
+  skip: { label: string; onClick: () => void };
+};
+
+export default function TryScreen({ kind: initialKind, journey }: { kind: TryKind; journey?: TryJourney }) {
   // Tabs switch in place (no route change → no page reload); the URL is kept in sync for Back/refresh.
   const [kind, setKind] = useState<TryKind>(initialKind);
   const search = useSearchParams();
   const { go, pending } = useNav();
   const { t, tx, config, session, gender, look, updateLook, photo } = useStudio();
-  const next = search.get("next") ?? "/look";
+  const next = journey?.next ?? search.get("next") ?? "/look";
   // Step-by-step mode (Simple Service): Save goes cut → colour → beard/make-up → next. Edit links return directly.
   const chain = search.get("chain") === "1";
   // Journey mode: one service only (no kind switcher); Save goes on to the next service.
-  const single = search.get("single") === "1";
+  const single = !!journey || search.get("single") === "1";
   // Where "Other looks" goes: the service's option page (journey) / the styles page (results), else back.
-  const back = search.get("back");
+  const back = journey?.back ?? search.get("back");
 
   const cutsAll = useCatalog("haircut");
   const shadesAll = useAllShades(); // backend (recommended) + FLUX_VERSION_3 (custom) colours
-  const techniques = useCatalog("hair_technique");
+  const techniques = useHairTechniques();
   const lipsAll = LIPSTICK; // FLUX_VERSION_3 makeup_prompts.json, not the catalogue
   const blushAll = BLUSH; // FLUX_VERSION_3 makeup_prompts.json, not the catalogue
   const eyesAll = EYESHADOW;
@@ -101,7 +111,9 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
   const [busyKind, setBusyKind] = useState<TryKind | null>(null);
   const busy = busyKind === kind;
   /** While a picture is generating, an earlier result the customer tapped to look at (as in FLUX_VERSION_3). */
-  const [peek, setPeek] = useState<TryOn | null>(null);
+  const [peek, setPeek] = useState<TryOn | "original" | null>(null);
+  /** When the current generation began: the scan continues (no restart) after looking at another picture. */
+  const [genStartedAt, setGenStartedAt] = useState(0);
   useEffect(() => { if (!busy) setPeek(null); }, [busy]);
   const [error, setError] = useState<string | null>(null);
   const autoRan = useRef<string | null>(null);
@@ -200,7 +212,8 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
     : kind === "makeup" ? `${s.look ?? `${s.lip}+${s.eye}`}${s.blush ? `+${s.blush}` : ""}` : s.beard);
   const [processingRaw, setProcessing] = useState<string | null>(null);
   /** FLUX_VERSION_3 tabs: pick another option (Recommended / Custom) → Try → back on Result, generating. */
-  const [view, setView] = useState<"recommended" | "custom" | "result">("result");
+  // On the service page: Recommended first (Result once this step has a picture); /try opens on the Result.
+  const [view, setView] = useState<"recommended" | "custom" | "result">(() => (journey && !look.layers[initialKind] ? "recommended" : "result"));
   const [optSel, setOptSel] = useState<string | null>(null);
   const processing = busy ? processingRaw : null;
 
@@ -234,6 +247,7 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
       return;
     }
     setBusyKind(kind);
+    setGenStartedAt(Date.now());
     setProcessing(optionOf(s));
     setError(null);
     try {
@@ -285,6 +299,7 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
   /** Try the option picked on Recommended / Custom: back to the Result tab, which shows the generation screen. */
   function tryOption() {
     if (!optSel) return;
+    journey?.onTry();
     setView("result");
     if (kind === "cut") pick({ item: optSel });
     else if (kind === "colour") pick({ shade: optSel, technique: look.technique ?? sel.technique });
@@ -413,7 +428,8 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
   }
   const historyRow = (noneActive: boolean, onNone: () => void) => optionRow(t("tryon", "queueTitle"),
     <ImageOption compact height={62} image={photo} focus="50% 20%" label={t("tryon", "original")} sub={status(null, noneActive)}
-      active={noneActive} onClick={onNone} />,
+      // Generating: just look at the original meanwhile (the generating card returns to the scan).
+      active={busy ? peek === "original" : noneActive} onClick={busy ? () => setPeek("original") : onNone} />,
     [
       ...(processing ? [<ImageOption compact height={62} key="processing" image={photo} focus="50% 30%" label={t("tryon", "statusGenerating")}
         sub={t("tryon", "statusGenerating")} active={!peek} busy onClick={() => setPeek(null)} />] : []),
@@ -421,7 +437,7 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
         const active = look.layers[kind]?.id === h.tr.id;
         return (
           <ImageOption compact height={62} key={h.key} image={ready(h.tr.output_url)} focus="50% 30%" label={historyName(h.params)}
-            sub={active ? t("tryon", "statusShowing") : t("tryon", "statusTried")} active={busy ? peek?.id === h.tr.id : active} done
+            sub={active ? t("tryon", "statusShowing") : t("tryon", "statusTried")} active={busy ? peek !== "original" && peek?.id === h.tr.id : active} done
             // Generating: only look at it (the new picture keeps processing); otherwise show it again as the result.
             onClick={() => (busy ? setPeek(h.tr) : showHistory(h))} />
         );
@@ -439,7 +455,6 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
       <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
         <span style={{ ...SERIF, fontSize: 16 }}>{t("tryon", "queueTitle")} <span style={{ fontSize: 12, color: c("ink-muted") }}>· {rest.length}</span></span>
-        <span style={{ fontSize: 11, color: c("ink-muted") }}>{t("tryon", "queueHint")}</span>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(5, minmax(0, 1fr))", gap: 6 }}>
         {first}
@@ -448,6 +463,9 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
     </div>
   );
 
+
+  // Recommended tab: "Make-up · Select an option, then tap Try", not the Result's current choice ("None", "Your hair").
+  const pickTitle = !!journeyService && view === "recommended";
 
   return (
     // Journey (one service): the journey's own progress ("Service 3 of 5 · Hair colour"), not the step bar.
@@ -470,8 +488,8 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
       {journeyService && view === "custom" ? null : (
       <div style={{ flex: "0 0 auto", display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 16, padding: "14px 34px 0 34px" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 3, minWidth: 0 }}>
-          <span style={{ ...SERIF, fontSize: 24, lineHeight: 1.12, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{line1}</span>
-          <span style={{ fontSize: 13, color: c("ink-muted"), whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{line2}</span>
+          <span style={{ ...SERIF, fontSize: 24, lineHeight: 1.12, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{pickTitle ? t("journey", `${journeyService}.name`) : line1}</span>
+          <span style={{ fontSize: 13, color: c("ink-muted"), whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{pickTitle ? t("journey", "pickHint") : line2}</span>
         </div>
         
       </div>
@@ -482,13 +500,16 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
         <>
           <Options bare tab={view} service={journeyService} sel={optSel} setSel={setOptSel}
             a={results?.tabs.find((x) => x.module === SERVICE_MODULE[journeyService] && x.status === "done")} />
-          <ActionBar>
+          <ActionBar link={journey?.skip ?? null}>
             <PrimaryButton icon={ICON.sparkle} disabled={!optSel || !!busyKind} onClick={tryOption}>{t("tryon", "tryThis")}</PrimaryButton>
           </ActionBar>
         </>
       ) : (<>
-      {/* Generating: the scan, with the earlier results still in the row below — tap one to look at it meanwhile. */}
-      {busy && !peek ? <GeneratingScan image={startImage} /> : busy && peek ? (
+      {/* Generating (as FLUX_VERSION_3's result page): the scan inside the Result frame, the earlier results still in
+          the row below — tap one to look at it meanwhile. */}
+      {busy && !peek ? <CompareArch before={ready(startImage)} scan={<GenerationOverlay startedAt={genStartedAt || undefined} />} /> : busy && peek === "original" ? (
+        <CompareArch before={photo} />
+      ) : busy && peek && peek !== "original" ? (
         <CompareArch before={ready(startImage)} after={ready(peek.output_url)} />
       ) : <CompareArch before={ready(startImage)} after={ready(look.layers[kind]?.output_url)} overlay={
         // Download (QR to the phone): the picture shown — this step's result, else the image it starts from.
@@ -506,7 +527,7 @@ export default function TryScreen({ kind: initialKind }: { kind: TryKind }) {
       </div>}
 
       {/* The tried-results row stays while a picture is generating (processing card first to return to the scan). */}
-      <div style={{ flex: busy && !peek ? "0 0 auto" : "1 1 auto", minHeight: 0, overflow: "hidden", display: "flex", flexDirection: "column", gap: 12, padding: "14px 34px 0 34px" }}>
+      <div style={{ flex: "1 1 auto", minHeight: 0, overflow: "hidden", display: "flex", flexDirection: "column", gap: 12, padding: "14px 34px 0 34px" }}>
         {/* Only the original + styles already processed (or processing) — new styles are picked on the Styles tab. */}
         {kind === "cut" && historyRow(!look.layers.cut, original)}
 

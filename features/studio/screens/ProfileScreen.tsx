@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { studioApi, type Gender } from "../api";
 import { useStudio } from "../context/StudioContext";
 import { FLOWS, type FlowKey } from "../flows";
@@ -19,18 +20,33 @@ export default function ProfileScreen() {
   const router = useRouter();
   const { go } = useNav();
   const { t, config, session, setSession, photo, look, updateLook } = useStudio();
+  // The tapped gender, shown at once: session.gender is the backend default ("woman") until the update returns.
+  const [tapped, setTapped] = useState<Gender | null>(null);
+  const [saving, setSaving] = useState(false);
   if (!config || !session) return <LoadingStage />;
 
   // Nothing is selected until the customer picks (the backend session always holds a default gender).
-  const picked = !!look.genderPicked;
+  const selected: Gender | null = tapped ?? (look.genderPicked ? session.gender : null);
+  const picked = !!selected && !saving;
   async function setGender(g: Gender) {
     if (!session) return;
-    updateLook({ genderPicked: true });
-    if (session.gender === g) return;
-    // An analysis already fetched for the other gender would keep women's cuts / no beards: fetch it again.
-    forgetAnalysis(session.id);
-    setSession(await studioApi.updateSession(session.id, { gender: g }));
-    forgetAnalysis(session.id);
+    setTapped(g);
+    if (session.gender === g) {
+      updateLook({ genderPicked: true });
+      return;
+    }
+    setSaving(true);
+    try {
+      // An analysis already fetched for the other gender would keep women's cuts / no beards: fetch it again.
+      forgetAnalysis(session.id);
+      setSession(await studioApi.updateSession(session.id, { gender: g }));
+      forgetAnalysis(session.id);
+      updateLook({ genderPicked: true });
+    } catch {
+      setTapped(null); // not saved: show the server's state again
+    } finally {
+      setSaving(false);
+    }
   }
   async function choose(flow: FlowKey) {
     if (!session || !picked) return;
@@ -59,7 +75,7 @@ export default function ProfileScreen() {
 
       <div style={{ flex: "0 0 auto", display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 14, margin: "14px 34px 0 34px" }}>
         {(["man", "woman"] as Gender[]).map((g) => {
-          const on = picked && session.gender === g;
+          const on = selected === g;
           return (
             <button key={g} type="button" aria-pressed={on} onClick={() => setGender(g)} style={{
               position: "relative", display: "flex", flexDirection: "column", alignItems: "center", gap: 10,

@@ -6,7 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter } from "next/navigation";
 import StudioUnavailable from "../components/StudioUnavailable";
 import { locales as appLocales, defaultLocale as appDefaultLocale } from "@/i18n";
-import { StudioApiError, studioApi, type Gender, type I18n, type Session, type StudioConfig, type TryOn } from "../api";
+import { StudioApiError, studioApi, type CatalogItem, type Gender, type I18n, type Session, type StudioConfig, type TryOn } from "../api";
 import { FLUX_SHADES } from "../data/haircolor";
 
 /** Client-side draft of the look, built up across results + try-on screens (the mockup's `nav.look`). */
@@ -227,6 +227,23 @@ export function useStudio() {
 export function useCatalog(kind: string) {
   const { config, gender } = useStudio();
   return (config?.catalog?.[kind] ?? []).filter((i) => i.gender === "all" || i.gender === gender);
+}
+
+/** Colour techniques on the mirror, in its 2×2 order. Key "uniform" is shown as "Global". */
+export const HAIR_TECHNIQUE_KEYS = ["uniform", "highlights", "ombre", "balayage"] as const;
+
+/**
+ * The four colour techniques (Global, Highlights / Ombre, Balayage). The frontend owns the labels
+ * (locales → studio.technique.*); the backend catalogue rows hold the try-on prompts.
+ */
+export function useHairTechniques(): CatalogItem[] {
+  const { config, locale, t } = useStudio();
+  const rows = config?.catalog?.hair_technique ?? [];
+  return HAIR_TECHNIQUE_KEYS.map((key, i) => {
+    const row = rows.find((r) => r.key === key);
+    const base: CatalogItem = row ?? { id: -(i + 1), kind: "hair_technique", key, gender: "all", name: {}, sub: {}, hex: null, image_url: null, attributes: {} };
+    return { ...base, name: { en: t("technique", key), [locale]: t("technique", key) } };
+  });
 }
 
 /**

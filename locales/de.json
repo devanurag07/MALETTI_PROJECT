@@ -569,7 +569,15 @@
       "scanningSub": "Teint, Struktur und die 6 Hautparameter werden gelesen…",
       "scanStage1": "Haut wird kartiert…",
       "scanStage2": "Die 6 Parameter werden gelesen…",
-      "scanStage3": "Produkte werden ausgewählt…"
+      "scanStage3": "Produkte werden ausgewählt…",
+      "overall": "Haut-Score",
+      "overallSub": "Durchschnitt Ihrer sechs Messwerte",
+      "status_excellent": "Ausgezeichnet",
+      "status_good": "Gut",
+      "status_care": "Pflegebedürftig",
+      "focusTitle": "Ihr Fokus",
+      "focusText": "{metric}: Hier bewirkt etwas Pflege den größten Unterschied.",
+      "focusNone": "Alle Messwerte sind sehr gut: Bleiben Sie bei Ihrer Routine."
     },
     "face": {
       "ratio": "Länge / Breite",
@@ -872,11 +880,18 @@
       "skipService": "Diesen Service überspringen"
     },
     "skinMap": {
-      "title": "Ihre Hautkarte",
+      "title": "Ihre Hautvisualisierung",
       "desc": "Jeder Kreis markiert eine auffällige Stelle; gestrichelt = leicht.",
       "none": "Nichts zu markieren, Ihre Haut sieht toll aus.",
       "areas": "{n} Bereiche markiert",
-      "cta": "Ihre Hautkarte ansehen"
+      "cta": "Hautvisualisierung ansehen",
+      "generating": "Ihre Hautvisualisierung wird erstellt…",
+      "generatingSub": "Die KI markiert jeden Punkt auf Ihrem Foto. Das dauert etwa eine Minute.",
+      "unavailable": "Die Visualisierung ist gerade nicht verfügbar.",
+      "retry": "Erneut versuchen",
+      "band_attention": "Braucht Pflege",
+      "band_average": "Durchschnitt",
+      "band_good": "Gut"
     },
     "qr": {
       "button": "Herunterladen",
@@ -945,6 +960,20 @@
       "next": "Nächster Look",
       "why": "Passt zu Ihrem Farbtyp {season} und betont Ihre Augen.",
       "whyDefault": "Ausgewählt nach Ihrem Unterton und Ihrer Augenfarbe."
+    },
+    "technique": {
+      "uniform": "Global",
+      "highlights": "Strähnchen",
+      "ombre": "Ombré",
+      "balayage": "Balayage"
+    },
+    "colourFamily": {
+      "black_deep_brown": "Schwarz & Dunkelbraun",
+      "chocolate_warm_brown": "Schokolade & Warmbraun",
+      "blonde": "Blond",
+      "copper_auburn": "Kupfer & Kastanienrot",
+      "burgundy_plum": "Burgunder & Pflaume",
+      "fashion": "Fashion"
     }
   }
 }

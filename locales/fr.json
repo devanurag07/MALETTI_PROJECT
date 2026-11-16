@@ -569,7 +569,15 @@
       "scanningSub": "Lecture du teint, de la texture et des 6 paramètres de la peau…",
       "scanStage1": "Cartographie de votre peau…",
       "scanStage2": "Lecture des 6 paramètres…",
-      "scanStage3": "Sélection des produits…"
+      "scanStage3": "Sélection des produits…",
+      "overall": "Score de peau",
+      "overallSub": "Moyenne de vos six mesures",
+      "status_excellent": "Excellent",
+      "status_good": "Bon",
+      "status_care": "À soigner",
+      "focusTitle": "Votre priorité",
+      "focusText": "{metric} : c'est ici qu'un peu de soin fera la plus grande différence.",
+      "focusNone": "Toutes les mesures sont excellentes : continuez votre routine."
     },
     "face": {
       "ratio": "Longueur / largeur",
@@ -872,11 +880,18 @@
       "skipService": "Passer ce service"
     },
     "skinMap": {
-      "title": "Votre carte de peau",
+      "title": "Votre visualisation de peau",
       "desc": "Chaque cercle indique où nous avons remarqué quelque chose ; pointillé = léger.",
       "none": "Rien à signaler, votre peau est superbe.",
       "areas": "{n} zones signalées",
-      "cta": "Voir votre carte de peau"
+      "cta": "Voir la visualisation de peau",
+      "generating": "Création de votre visualisation de peau…",
+      "generatingSub": "L'IA repère chaque point sur votre photo. Cela prend environ une minute.",
+      "unavailable": "La visualisation n'est pas disponible pour le moment.",
+      "retry": "Réessayer",
+      "band_attention": "À surveiller",
+      "band_average": "Moyen",
+      "band_good": "Bon"
     },
     "qr": {
       "button": "Télécharger",
@@ -945,6 +960,20 @@
       "next": "Look suivant",
       "why": "S'accorde à votre colorimétrie {season} et met vos yeux en valeur.",
       "whyDefault": "Choisi selon votre sous-ton et la couleur de vos yeux."
+    },
+    "technique": {
+      "uniform": "Global",
+      "highlights": "Mèches",
+      "ombre": "Ombré",
+      "balayage": "Balayage"
+    },
+    "colourFamily": {
+      "black_deep_brown": "Noir et brun profond",
+      "chocolate_warm_brown": "Chocolat et brun chaud",
+      "blonde": "Blond",
+      "copper_auburn": "Cuivré et auburn",
+      "burgundy_plum": "Bordeaux et prune",
+      "fashion": "Fantaisie"
     }
   }
 }

@@ -854,7 +854,15 @@
       "scanningSub": "Reading tone, texture and the 6 skin parameters…",
       "scanStage1": "Mapping your skin…",
       "scanStage2": "Reading the 6 parameters…",
-      "scanStage3": "Matching products…"
+      "scanStage3": "Matching products…",
+      "overall": "Skin score",
+      "overallSub": "Average of your six measurements",
+      "status_excellent": "Excellent",
+      "status_good": "Good",
+      "status_care": "Needs care",
+      "focusTitle": "Your focus",
+      "focusText": "{metric} is where a little care will make the biggest difference.",
+      "focusNone": "Every measurement is in great shape: keep up your routine."
     },
     "face": {
       "ratio": "Length / width",
@@ -1157,11 +1165,18 @@
       "skipService": "Skip this service"
     },
     "skinMap": {
-      "title": "Your skin map",
+      "title": "Your skin visualisation",
       "desc": "Each circle marks where we noticed something; dashed = mild.",
       "none": "Nothing to mark, your skin looks great.",
       "areas": "{n} areas marked",
-      "cta": "See your skin map"
+      "cta": "See your skin visualisation",
+      "generating": "Creating your skin visualisation…",
+      "generatingSub": "The AI is marking each concern on your photo. This takes about a minute.",
+      "unavailable": "The visualisation isn't available right now.",
+      "retry": "Try again",
+      "band_attention": "Needs attention",
+      "band_average": "Average",
+      "band_good": "Good"
     },
     "qr": {
       "button": "Download",
@@ -1230,6 +1245,20 @@
       "next": "Next look",
       "why": "Suits your {season} colouring and brings out your eyes.",
       "whyDefault": "Chosen for your undertone and eye colour."
+    },
+    "technique": {
+      "uniform": "Global",
+      "highlights": "Highlights",
+      "ombre": "Ombre",
+      "balayage": "Balayage"
+    },
+    "colourFamily": {
+      "black_deep_brown": "Black & Deep Brown",
+      "chocolate_warm_brown": "Chocolate & Warm Brown",
+      "blonde": "Blonde",
+      "copper_auburn": "Copper & Auburn",
+      "burgundy_plum": "Burgundy & Plum",
+      "fashion": "Fashion"
     }
   }
 }

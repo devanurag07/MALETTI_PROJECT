@@ -725,7 +725,15 @@
       "scanningSub": "Leyendo tono, textura y los 6 parámetros de la piel…",
       "scanStage1": "Mapeando tu piel…",
       "scanStage2": "Leyendo los 6 parámetros…",
-      "scanStage3": "Eligiendo productos…"
+      "scanStage3": "Eligiendo productos…",
+      "overall": "Puntuación de la piel",
+      "overallSub": "Media de tus seis mediciones",
+      "status_excellent": "Excelente",
+      "status_good": "Bueno",
+      "status_care": "Necesita cuidado",
+      "focusTitle": "Tu enfoque",
+      "focusText": "{metric}: aquí un poco de cuidado marcará la mayor diferencia.",
+      "focusNone": "Todas las mediciones están en muy buen estado: sigue con tu rutina."
     },
     "face": {
       "ratio": "Largo / ancho",
@@ -1028,11 +1036,18 @@
       "skipService": "Omitir este servicio"
     },
     "skinMap": {
-      "title": "Tu mapa de la piel",
+      "title": "Tu visualización de la piel",
       "desc": "Cada círculo marca dónde notamos algo; discontinuo = leve.",
       "none": "Nada que marcar, tu piel se ve genial.",
       "areas": "{n} zonas marcadas",
-      "cta": "Ver tu mapa de la piel"
+      "cta": "Ver la visualización de la piel",
+      "generating": "Creando tu visualización de la piel…",
+      "generatingSub": "La IA está marcando cada aspecto en tu foto. Tarda alrededor de un minuto.",
+      "unavailable": "La visualización no está disponible en este momento.",
+      "retry": "Reintentar",
+      "band_attention": "Necesita atención",
+      "band_average": "Promedio",
+      "band_good": "Bueno"
     },
     "qr": {
       "button": "Descargar",
@@ -1101,6 +1116,20 @@
       "next": "Look siguiente",
       "why": "Encaja con tu colorido {season} y realza tus ojos.",
       "whyDefault": "Elegido según tu subtono y el color de tus ojos."
+    },
+    "technique": {
+      "uniform": "Global",
+      "highlights": "Mechas",
+      "ombre": "Ombré",
+      "balayage": "Balayage"
+    },
+    "colourFamily": {
+      "black_deep_brown": "Negro y castaño oscuro",
+      "chocolate_warm_brown": "Chocolate y castaño cálido",
+      "blonde": "Rubio",
+      "copper_auburn": "Cobrizo y caoba",
+      "burgundy_plum": "Burdeos y ciruela",
+      "fashion": "Fantasía"
     }
   }
 }
