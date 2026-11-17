@@ -721,7 +721,10 @@
       "sentNote": "An das Tablet des Stylisten gesendet",
       "newSession": "Neue Sitzung",
       "emailSent": "Gesendet an",
-      "hairProductsTitle": "Produkte für Ihr Haar"
+      "hairProductsTitle": "Produkte für Ihr Haar",
+      "finish": "Beratung abschließen",
+      "skinQr": "Haut",
+      "qrButton": "QR-Code"
     },
     "flows": {
       "consultant": {
@@ -974,6 +977,11 @@
       "copper_auburn": "Kupfer & Kastanienrot",
       "burgundy_plum": "Burgunder & Pflaume",
       "fashion": "Fashion"
+    },
+    "header": {
+      "face": "Gesichtsanalyse",
+      "armocromia": "Armocromia",
+      "skin": "Hautanalyse"
     }
   }
 }

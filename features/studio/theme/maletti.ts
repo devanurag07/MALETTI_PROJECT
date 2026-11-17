@@ -14,11 +14,9 @@
 export const malettiTheme = {
   brand: {
     name: "Maletti",
-    /** Logo shown centred in the header (light artwork on the dark header). */
-    logo: "/studio/maletti/logo.png",
+    /** The one logo used everywhere (welcome screen, QR / e-mail page, report…): high-resolution white artwork. */
+    logo: "/studio/maletti/logo-home.png",
     logoHeight: 50,
-    /** Welcome screen logo (high-resolution white artwork, black background). */
-    homeLogo: "/studio/maletti/logo-home.png",
   },
 
   colors: {

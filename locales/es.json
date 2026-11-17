@@ -877,7 +877,10 @@
       "sentNote": "Enviado a la tablet del estilista",
       "newSession": "Nueva sesión",
       "emailSent": "Enviado a",
-      "hairProductsTitle": "Productos para tu cabello"
+      "hairProductsTitle": "Productos para tu cabello",
+      "finish": "Finaliza tu consulta",
+      "skinQr": "Piel",
+      "qrButton": "Código QR"
     },
     "flows": {
       "consultant": {
@@ -1130,6 +1133,11 @@
       "copper_auburn": "Cobrizo y caoba",
       "burgundy_plum": "Burdeos y ciruela",
       "fashion": "Fantasía"
+    },
+    "header": {
+      "face": "Análisis facial",
+      "armocromia": "Armocromía",
+      "skin": "Análisis de piel"
     }
   }
 }

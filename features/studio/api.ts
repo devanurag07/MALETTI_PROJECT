@@ -199,7 +199,7 @@ export const studioApi = {
   updateSession: (id: string, body: Record<string, unknown>) =>
     unwrap<Session>(api.patch(`studio/sessions/${id}/`, body)).then((r) => {
       // New gender: the backend redoes the suggestions (women's cuts → men's cuts + beards), so drop the old copy.
-      if ("gender" in body) RESULTS.delete(id);
+      if ("gender" in body) { RESULTS.delete(id); SKIN_VIS.delete(id); } // the analysis (and its skin picture) is redone
       return r;
     }),
   uploadPhoto: (id: string, blob: Blob) => {
@@ -215,12 +215,16 @@ export const studioApi = {
   results: (id: string) => unwrap<Results>(api.get(`studio/sessions/${id}/results/`)).then((r) => keepResults(id, r)),
   /**
    * FLUX_VERSION_3's AI skin visualisation (gpt-image-2, ~1 min): generated once per session, then returned at once.
-   * Started as soon as the skin results show, so it's ready (or nearly) on the visualisation page.
+   * Started in the background as soon as the skin analysis is done (pending-upload.ts, from the Profile step), so it's
+   * ready on the visualisation page at the end of the journey.
    */
   skinVisualization: (id: string): Promise<string> => {
     let p = SKIN_VIS.get(id);
     if (!p) {
-      p = unwrap<{ image_url: string }>(api.post(`studio/sessions/${id}/skin-visualization/`, {}, { timeout: 180_000 })).then((r) => r.image_url);
+      p = unwrap<{ image_url: string }>(api.post(`studio/sessions/${id}/skin-visualization/`, {}, { timeout: 180_000 })).then((r) => {
+        if (typeof window !== "undefined") new Image().src = r.image_url; // download it now: shown instantly later
+        return r.image_url;
+      });
       p.catch(() => SKIN_VIS.delete(id)); // failed: the page can try again
       SKIN_VIS.set(id, p);
     }

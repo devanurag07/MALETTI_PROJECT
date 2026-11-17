@@ -3,26 +3,28 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { QRCodeSVG } from "qrcode.react";
-import { studioApi, type I18n } from "../api";
-import { catalogKey, useCatalog, useStudio, useHairTechniques } from "../context/StudioContext";
-import { hairColourOf, isFluxShade } from "../data/haircolor";
+import { studioApi, type I18n, type PublicReport } from "../api";
+import { catalogKey, useStudio } from "../context/StudioContext";
+import { isFluxShade } from "../data/haircolor";
+import StudioReport from "../report/StudioReport";
+import { reportPdfUrl, useReportPdf } from "./ReportScreen";
 import { lookParams, savedMakeupLook } from "../save-look";
 import { theme } from "../theme";
-import { ActionBar, c, CompareArch, Diamond, ErrorLine, H1, Icon, ICON, LoadingStage, PrimaryButton, Screen } from "../ui";
-import { useNav } from "../use-nav";
+import { ActionBar, c, ErrorLine, H1, Icon, ICON, LoadingStage, PrimaryButton, Screen, Spinner } from "../ui";
 
-const absolute = (url: string | null) => (!url ? "" : url.startsWith("http") ? url : `${window.location.origin}${url}`);
-
-/** Step 6 — Your look today: before/after, summary, products, QR / e-mail / send to stylist. */
+/**
+ * End of the consultation: saves the look, then shows the report preview. Bottom: Back · QR (scan → the report PDF on
+ * the phone) · Finish your consultation (closes the session, back to the welcome screen).
+ */
 export default function LookScreen() {
   const router = useRouter();
-  const { go, pending } = useNav();
-  const { t, tx, config, session, setSession, look, gender, photo } = useStudio();
-  const [qrUrl, setQrUrl] = useState<string | null>(null);
+  const { t, config, session, setSession, look, resetAll } = useStudio();
   const [shareToken, setShareToken] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
-
+  const [report, setReport] = useState<PublicReport | null>(null);
+  const [qrBig, setQrBig] = useState(false);
+  const [finishing, setFinishing] = useState(false);
   // Save the draft look on the backend, then mint the QR share link.
   useEffect(() => {
     if (!session || !config) return;
@@ -60,11 +62,10 @@ export default function LookScreen() {
         });
         setSession(s);
         setSaved(true);
-        if (config.share_channels.includes("qr")) {
-          const share = await studioApi.share(session.id, { channel: "qr" });
-          setQrUrl(absolute(share.url));
-          setShareToken(share.token);
-        }
+        // The report preview + its QR (phone: download the PDF) come from a QR share of the saved look.
+        const share = await studioApi.share(session.id, { channel: "qr" });
+        setShareToken(share.token);
+        setReport(await studioApi.publicLook(share.token));
       } catch (e) {
         setError((e as Error).message);
       }
@@ -72,109 +73,71 @@ export default function LookScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [config?.client.slug, session?.id]);
 
-  const techniques = useHairTechniques();
+  const { pdf } = useReportPdf(shareToken, report); // PDF stored in the background, ready when the phone asks
   if (!config || !session) return <LoadingStage />;
-  const s = session.look;
-  const fluxColour = hairColourOf(s?.params);
-  const fluxTech = techniques.find((x) => x.key === fluxColour?.technique);
-  const none = t("look", "none");
-  const third = gender === "man"
-    ? { key: "beard", label: t("look", "beard"), value: tx(s?.beard?.name), hex: c("ink") }
-    : {
-        key: "makeup", label: t("look", "makeup"),
-        value: tx(s?.makeup_look?.name) || [tx(s?.lip?.name), tx(s?.eye?.name)].filter(Boolean).join(" - "),
-        hex: s?.lip?.hex ?? (s?.makeup_look?.attributes.lip_hex as string | undefined) ?? c("accent"),
-      };
-  const items = [
-    { key: "cut", label: t("look", "cut"), value: tx(s?.cut?.name), hex: c("ink") },
-    {
-      key: "colour", label: t("look", "colour"),
-      // Backend colour, else the FLUX_VERSION_3 colour saved in params.hair_colour.
-      value: s?.hair_shade ? `${tx(s.hair_shade.name)}${s.technique ? `, ${tx(s.technique.name).toLowerCase()}` : ""}`
-        : fluxColour ? `${tx(fluxColour.name)}${fluxTech ? `, ${tx(fluxTech.name).toLowerCase()}` : ""}` : "",
-      hex: s?.hair_shade?.hex ?? fluxColour?.hex ?? c("ink"),
-    },
-    third,
-  ];
-  // Skin products only: Maletti does no hair analysis, so no hair products.
-  const skinProducts = (s?.products ?? []).filter((p) => p.area === "skin").map((p) => tx(p.name)).join(", ");
+  const qrUrl = report ? reportPdfUrl(shareToken, report.locale ?? "en") : null;
+  const finish = async () => {
+    setFinishing(true);
+    await studioApi.complete(session.id).catch(() => {});
+    resetAll();
+    router.replace("/");
+  };
 
   return (
     <Screen>
-      <div style={{ flex: "0 0 auto", display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 16, padding: "16px 34px 0 34px" }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: 4, minWidth: 0 }}>
-          <H1 size={36}>{t("look", "title")}</H1>
-          <p style={{ margin: 0, fontSize: 14, color: c("ink-muted") }}>{tx(s?.headline) || " "}</p>
-        </div>
-        
+      <div style={{ flex: "0 0 auto", padding: "14px 34px 0 34px" }}>
+        <H1 size={32}>{t("look", "title")}</H1>
       </div>
-
-      <CompareArch before={photo} after={s?.after_url ?? look.lastTryon?.output_url ?? null} height={300} ry={140} />
-
-      <div style={{ flex: "0 0 auto", display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 10, margin: "16px 34px 0 34px" }}>
-        {items.map((it) => (
-          <button key={it.key} type="button" onClick={() => router.push(`/try/${it.key}?next=/look`)} aria-label={`${t("look", "edit")} ${it.label}`} style={{
-            position: "relative", display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 6, minWidth: 0, height: 80,
-            boxSizing: "border-box", padding: "10px 12px", borderRadius: 16, background: c("surface"), border: `1px solid ${c("line")}`,
-            color: c("ink"), textAlign: "left", cursor: "pointer",
-          }}>
-            <span style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: c("ink-muted") }}>
-              <Diamond size={10} color={it.hex} />
-              <span>{it.label}</span>
-            </span>
-            <span style={{ display: "block", maxHeight: 34, overflow: "hidden", fontSize: 13, lineHeight: 1.3, color: it.value ? c("ink") : c("ink-faint") }}>
-              {it.value || none}
-            </span>
-            <Icon d={ICON.pencil} size={14} width={1.8} stroke="var(--mm-ink-muted)" style={{ position: "absolute", top: 11, right: 11 }} />
-          </button>
-        ))}
-      </div>
-
-      <div style={{
-        flex: "0 0 auto", display: "flex", alignItems: "center", gap: 12, margin: "12px 34px 0 34px", padding: "6px 6px 6px 14px",
-        borderRadius: 16, background: c("surface"), border: `1px solid ${c("line")}`,
-      }}>
-        <Icon d={ICON.bottle} size={20} width={1.5} stroke="var(--mm-icon-fg)" />
-        {/* Skin: what the customer added from the AI picks */}
-        <span style={{ flex: "1 1 auto", minWidth: 0, display: "flex", flexDirection: "column", gap: 3 }}>
-          {[["productsTitle", skinProducts]].map(([title, list]) => (
-            <span key={title} style={{ display: "flex", flexDirection: "column", gap: 1, minWidth: 0 }}>
-              <span style={{ fontSize: 12, color: c("ink-muted") }}>{t("look", title)}</span>
-              <span style={{ fontSize: 14, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", color: list ? c("ink") : c("ink-faint") }}>
-                {list || (saved ? t("look", "noProducts") : "…")}
-              </span>
-            </span>
-          ))}
-        </span>
-        {session.flow === "consultant" ? (
-          <button type="button" onClick={() => router.push("/results/skin")} style={{
-            flex: "0 0 auto", height: 44, padding: "0 12px", background: "none", border: "none", fontSize: 14, color: c("ink"),
-            textDecoration: "underline", textUnderlineOffset: 4, cursor: "pointer",
-          }}>
-            {t("look", "review")}
-          </button>
+      {/* The report preview (what the PDF on the phone shows), scrollable. */}
+      <div style={{ flex: "1 1 auto", minHeight: 0, overflowY: "auto", padding: "12px 34px 8px 34px" }}>
+        {report ? <StudioReport report={report} /> : !error ? (
+          <div style={{ display: "flex", justifyContent: "center", paddingTop: 80 }}><Spinner size={36} color={theme.colors.accent} /></div>
         ) : null}
-      </div>
-
-      <div style={{ flex: "1 1 auto", minHeight: 0, display: "flex", alignItems: "center", gap: 16, margin: "12px 34px 0 34px" }}>
-        {qrUrl ? (
-          <div style={{ flex: "0 0 auto", width: 78, height: 78, boxSizing: "border-box", padding: 6, borderRadius: 10, background: c("surface-raised"), border: `1px solid ${c("line")}` }}>
-            <QRCodeSVG value={qrUrl} size={64} fgColor={theme.colors.ink} bgColor="transparent" />
-          </div>
-        ) : null}
-        <div style={{ flex: "1 1 auto", minWidth: 0, display: "flex", flexDirection: "column", gap: 8 }}>
-          <span style={{ fontSize: 14, lineHeight: 1.35 }}>{t("look", "qr")}</span>
-        </div>
       </div>
       <ErrorLine message={error} />
 
-      {/* Like beauty_platform: the journey ends on the report page (QR → PDF download). */}
+      {/* Back · QR (scan → the report PDF on the phone; tap to enlarge) · Finish your consultation */}
       <ActionBar>
-        <PrimaryButton disabled={!saved}
-          onClick={() => go(shareToken ? `/report?token=${encodeURIComponent(shareToken)}` : "/report")}>
-          {t("report", "cta")}
-        </PrimaryButton>
+        {/* QR button → the QR dialog (scan → the report PDF on the phone). */}
+        <button type="button" disabled={!qrUrl} onClick={() => setQrBig(true)} aria-label={t("report", "scan")} style={{
+          flex: "0 0 auto", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, height: 64, padding: "0 18px",
+          boxSizing: "border-box", borderRadius: 32, cursor: qrUrl ? "pointer" : "default", fontSize: 16, color: c("ink"),
+          background: c("surface-raised"), border: `1px solid ${c("line-strong")}`, opacity: qrUrl ? 1 : 0.45,
+        }}>
+          <Icon d={ICON.qr} size={20} width={1.6} />
+          <span>{t("look", "qrButton")}</span>
+        </button>
+        <PrimaryButton disabled={!saved} loading={finishing} onClick={finish}>{t("look", "finish")}</PrimaryButton>
       </ActionBar>
+
+      {qrBig && qrUrl ? (
+        <div role="dialog" aria-modal="true" aria-label={t("report", "scan")} onClick={() => setQrBig(false)} style={{
+          position: "absolute", inset: 0, zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center",
+          background: "rgba(0,0,0,0.72)", padding: 34,
+        }}>
+          <div onClick={(e) => e.stopPropagation()} style={{
+            position: "relative", width: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: 16,
+            padding: "30px 24px 24px", borderRadius: 24, background: c("surface"), border: `1px solid ${c("line")}`, textAlign: "center",
+          }}>
+            <button type="button" aria-label={t("report", "close")} onClick={() => setQrBig(false)} style={{
+              position: "absolute", right: 12, top: 12, width: 36, height: 36, borderRadius: 18, border: `1px solid ${c("line-strong")}`,
+              background: "transparent", color: c("ink"), cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0,
+            }}>
+              <Icon d={ICON.close} size={18} />
+            </button>
+            <H1 size={26}>{t("report", "scan")}</H1>
+            <div style={{ padding: 12, borderRadius: 16, background: "#fff" }}>
+              <QRCodeSVG value={qrUrl} size={240} level="M" />
+            </div>
+            <span style={{ fontSize: 14, color: c("ink-muted") }}>{t("report", "scanSub")}</span>
+            {pdf === "preparing" ? (
+              <span style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: c("ink-muted") }}>
+                <Spinner size={14} /> {t("report", "pdfPreparing")}
+              </span>
+            ) : pdf === "ready" ? <span style={{ fontSize: 13, color: c("accent") }}>{t("report", "pdfReady")}</span> : null}
+          </div>
+        </div>
+      ) : null}
     </Screen>
   );
 }

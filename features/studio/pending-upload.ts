@@ -53,6 +53,11 @@ function start(sessionId: string): Run {
     return done;
   });
   face.then(preloadResultImages).catch(() => {});
+  // Skin analysed (it runs from the Profile step, beside the face): generate the AI skin visualisation now, in the
+  // background (~1 min; the backend keeps it), so it's ready by the Skin service — the last one — with no wait.
+  rest.then((r) => {
+    if (r.tabs.some((x) => x.module === "skin" && x.status === "done")) studioApi.skinVisualization(sessionId).catch(() => {});
+  }).catch(() => {});
   const run = { face, all };
   analyses.set(sessionId, run);
   all.catch(() => { if (analyses.get(sessionId) === run) analyses.delete(sessionId); }); // failed: the next screen tries again

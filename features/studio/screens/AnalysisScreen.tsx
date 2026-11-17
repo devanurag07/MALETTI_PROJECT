@@ -20,6 +20,9 @@ export default function AnalysisScreen() {
   const { go, pending } = useNav();
   const [results, setResults] = useState<Results | null>(() => studioApi.cachedResults(session?.id) ?? null);
   const [error, setError] = useState<string | null>(null);
+  // The cache may hold partial results (the pre-check / colour + skin call) without the face yet: wait for the face call.
+  const [faceSettled, setFaceSettled] = useState(() =>
+    !!studioApi.cachedResults(session?.id)?.tabs.some((x) => x.module === "face" && x.status === "done"));
   const scanKey = session ? `mm-hairstyle-scan:${session.id}` : "";
   const [scanning, setScanning] = useState(() => {
     try { return !sessionStorage.getItem(scanKey); } catch { return true; }
@@ -27,7 +30,10 @@ export default function AnalysisScreen() {
 
   useEffect(() => {
     if (!session) return;
-    ensureFaceAnalysis(session.id).then(setResults).catch((e: Error) => setError(e.message));
+    ensureFaceAnalysis(session.id)
+      .then(setResults)
+      .catch((e: Error) => setError(e.message))
+      .finally(() => setFaceSettled(true));
   }, [session?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
@@ -42,7 +48,7 @@ export default function AnalysisScreen() {
 
   if (!config || !session) return <LoadingStage />;
   const face = results?.tabs.find((x) => x.module === "face" && x.status === "done");
-  if (scanning || (!face && !error && !results))
+  if (scanning || (!face && !faceSettled))
     return <ServiceScan service="hairstyle" />;
 
   return (

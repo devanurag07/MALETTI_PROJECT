@@ -5,7 +5,7 @@
  * every colour/font/shadow is a theme variable — see features/studio/theme/maletti.ts.
  */
 import { createContext, useContext, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode, type SyntheticEvent } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ReactCompareSlider, ReactCompareSliderImage } from "react-compare-slider";
 import { theme } from "../theme";
 import { useStudio } from "../context/StudioContext";
@@ -31,6 +31,7 @@ export const ICON = {
   slash: "M5 19L19 5",
   upload: "M12 16V4 M7 9l5-5 5 5 M5 20h14",
   grid: "M4 4h7v7H4z M13 4h7v7h-7z M4 13h7v7H4z M13 13h7v7h-7z",
+  qr: "M4 4h6v6H4z M14 4h6v6h-6z M4 14h6v6H4z M14 14h2v2h-2z M18 14h2v2h-2z M14 18h2v2h-2z M18 18h2v2h-2z M16 16h2v2h-2z",
   close: "M6 6l12 12 M18 6L6 18",
   skin: "M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z",
   face: "M12 3c4 0 7 3.6 7 9s-3 9-7 9-7-3.6-7-9 3-9 7-9z M9.5 10.5h.01 M14.5 10.5h.01 M10 15.5c1.2.8 2.8.8 4 0",
@@ -81,13 +82,61 @@ export function Stage({ children, animKey }: { children: ReactNode; animKey?: st
   );
 }
 
+/**
+ * The three analyses the header switches between (in place of the logo): where each opens, and the pages it is underlined
+ * on — its own page plus the services built on it (face → haircut / beard, armocromia → hair colour / make-up).
+ */
+const ANALYSIS_TABS = [
+  { key: "face", module: "face", href: "/analysis", label: () => ["header", "face"] as const, match: /\/(analysis\/?$|journey\/(hairstyle|beard)(\/|$)|try\/(cut|beard)(\/|$)|results\/(face|styles)(\/|$))/ },
+  { key: "armocromia", module: "colour", href: "/journey/armocromia/go", label: () => ["header", "armocromia"] as const, match: /\/(journey\/(armocromia|colour|makeup)|try\/(colour|makeup)|results\/colour)(\/|$)/ },
+  { key: "skin", module: "skin", href: "/journey/skin/go", label: () => ["header", "skin"] as const, match: /\/(journey|results)\/skin(\/|$)/ },
+];
+
+/**
+ * Top bar of every screen: the Maletti logo, then the Face · Armocromia · Skin analysis tabs (skewed gold underline on
+ * the open one). The tabs only show once there is something to analyse (photo taken + gender picked), never on the
+ * camera or gender (profile) screens; tapping one opens that analysis page.
+ */
 export function Header() {
+  const { t, config, session, photo, look } = useStudio();
+  const router = useRouter();
+  const path = usePathname() ?? "";
+  const ready = !!session && !!photo && !!look.genderPicked;
+  // Only once there is something to analyse (photo + gender), never on the camera / gender screens: logo alone there.
+  const showTabs = ready && !/\/(capture|camera-setup|profile)\/?$/.test(path);
+  const tabs = !showTabs ? [] : ANALYSIS_TABS.filter((tb) => {
+    const st = config?.modules.find((m) => m.module === tb.module)?.status;
+    return !config || (st && st !== "off");
+  });
   return (
     <div style={{
-      flex: "0 0 auto", height: 88, boxSizing: "border-box", padding: "0 22px", background: c("header"),
-      borderBottom: `1px solid ${c("header-line")}`, display: "flex", alignItems: "center", justifyContent: "center",
+      flex: "0 0 auto", boxSizing: "border-box", padding: "14px 22px 6px 22px", background: c("header"),
+      borderBottom: `1px solid ${c("header-line")}`, display: "flex", flexDirection: "column", alignItems: "center", gap: 8,
     }}>
+      {/* Maletti logo on top, the analysis tabs under it (the screen's own Recommended / Custom / Result tabs follow). */}
       <img src={theme.brand.logo} alt={theme.brand.name} style={{ display: "block", height: theme.brand.logoHeight, width: "auto" }} />
+      {tabs.length ? <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 34 }}>
+      {tabs.map((tb) => {
+        const on = tb.match.test(path);
+        const [ns, key] = tb.label();
+        return (
+          <button key={tb.key} type="button" disabled={!ready} aria-current={on ? "page" : undefined}
+            onClick={() => { if (!on) router.push(tb.href); }} style={{
+              position: "relative", display: "flex", alignItems: "center", gap: 8, height: 34, padding: "0 4px", background: "none", border: "none",
+              fontSize: 17, letterSpacing: 0.4, cursor: ready && !on ? "pointer" : "default",
+              color: on ? c("ink") : ready ? c("ink-muted") : c("ink-faint"),
+            }}>
+            {!ready ? <Icon d={ICON.lock} size={14} /> : null}
+            <span>{t(ns, key)}</span>
+            <span style={{
+              // Just under the label (the tab is only as tall as its text), not at the bottom of the bar.
+              position: "absolute", left: 0, right: 0, bottom: 0, display: "block", height: 3,
+              transform: `skewX(${theme.shape.stepSkew})`, background: on ? c("accent") : "transparent",
+            }} />
+          </button>
+        );
+      })}
+      </div> : null}
       {/* Language is changed in Settings (camera setup), not from the header. Back is at the bottom (BackBar). */}
     </div>
   );
@@ -152,7 +201,7 @@ export function ActionBar({ link, children }: {
   );
 }
 
-/** Header + content column (no step bar: only the consultation's JourneyBar shows progress) + Back (`onBack={false}`: none; a function: a step inside the page). */
+/** Header + content column (no step / progress bar) + Back (`onBack={false}`: none; a function: a step inside the page). */
 export function Screen({ onBack, animKey, children }: {
   onBack?: (() => void) | false; animKey?: string; children: ReactNode;
 }) {
@@ -827,6 +876,7 @@ export function Carousel({ items, perPage, columns }: { items: ReactNode[]; perP
   const [page, setPage] = useState(0);
   const pages = Math.max(1, Math.ceil(items.length / perPage));
   const go = (d: number) => setPage((p) => (p + d + pages) % pages);
+  const shown = items.slice(page * perPage, page * perPage + perPage);
   const [startX, setStartX] = useState<number | null>(null);
   const arrow = (d: number, icon: string, label: string) => (
     <button type="button" aria-label={label} onClick={() => go(d)} disabled={pages < 2} style={{
@@ -846,7 +896,11 @@ export function Carousel({ items, perPage, columns }: { items: ReactNode[]; perP
           display: "grid", gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`, alignContent: "start", gap: 10,
           touchAction: "pan-y",
         }}>
-        {items.slice(page * perPage, page * perPage + perPage)}
+        {shown}
+        {/* A short last page keeps the full page's height: invisible copies fill the empty slots. */}
+        {items.slice(0, perPage - shown.length).map((x, i) => (
+          <div key={`fill-${i}`} aria-hidden style={{ visibility: "hidden", pointerEvents: "none" }}>{x}</div>
+        ))}
       </div>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         {arrow(-1, ICON.back, "Previous")}

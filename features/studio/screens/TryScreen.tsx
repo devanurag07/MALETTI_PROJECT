@@ -7,7 +7,7 @@ import { studioApi, type CatalogItem, type Results, type TryKind, type TryOn } f
 import { UPLOAD, useAllShades, useCatalog, useStudio, type HairMods, type LookDraft, useHairTechniques } from "../context/StudioContext";
 import { fluxShadePrompt, isFluxShade } from "../data/haircolor";
 import { SERVICE_MODULE, SERVICE_TRY, tryOrder, type Service } from "../flows";
-import { JourneyBar, Options } from "./JourneyScreen";
+import { Options } from "./JourneyScreen";
 import PhotoQR from "../components/PhotoQR";
 import { styleImage } from "../theme/styleImages";
 import {
@@ -472,7 +472,6 @@ export default function TryScreen({ kind: initialKind, journey }: { kind: TryKin
     // Try-on chain (cut → colour → make-up/beard on one page): Back goes to the previous try-on step first.
     <Screen
       onBack={busy ? false : chain && kinds.indexOf(kind) > 0 ? () => switchTab(kinds[kinds.indexOf(kind) - 1]) : undefined}>
-      {single && journeyService && !back?.includes("simple=1") ? <JourneyBar service={journeyService} /> : null}
       {journeyService ? (
         <Tabs tabs={[
           { key: "recommended", label: t("face", "tabRecommended") },

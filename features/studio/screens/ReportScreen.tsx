@@ -35,48 +35,8 @@ export default function ReportScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.id]);
 
-  // Render + store the PDF in the background as soon as the report exists (no waiting on the phone later).
-  // Its state shows in the QR dialog; a failure can be retried from there.
   const locale = report?.locale ?? "en";
-  const [pdf, setPdf] = useState<"idle" | "preparing" | "ready" | "failed">("idle");
-  const [attempt, setAttempt] = useState(0);
-  const [pdfError, setPdfError] = useState<string | null>(null);
-  useEffect(() => {
-    if (!token || !report) return;
-    if (report.pdf_url) { setPdf("ready"); return; }
-    const started = `mm-pdf:${token}`;
-    try {
-      const v = sessionStorage.getItem(started);
-      if (v === "done") { setPdf("ready"); return; }
-      // Another render started less than 3 min ago (e.g. this screen remounted): don't start a second one.
-      // Older markers are stale (the page was reloaded mid-render) and are ignored.
-      if (v && attempt === 0 && Date.now() - Number(v) < 180_000) {
-        setPdf("preparing");
-        // Watch for that render's result (the share gets its pdf_url once stored).
-        const id = setInterval(() => {
-          studioApi.publicLook(token).then((r) => { if (r.pdf_url) { clearInterval(id); setPdf("ready"); } }).catch(() => {});
-          if (Date.now() - Number(v) > 180_000) { clearInterval(id); setPdf("failed"); setPdfError("Timed out"); }
-        }, 5000);
-        return () => clearInterval(id);
-      }
-      sessionStorage.setItem(started, String(Date.now()));
-    } catch {}
-    let alive = true;
-    setPdf("preparing");
-    // Time limit: show "could not be prepared" + Try again instead of "Preparing…" forever.
-    fetch(`/api/studio-report/${encodeURIComponent(token)}/pdf?locale=${locale}&store=1`, { signal: AbortSignal.timeout(180_000) })
-      .then(async (r) => {
-        if (!r.ok) throw new Error((await r.json().catch(() => null))?.error ?? String(r.status));
-        try { sessionStorage.setItem(started, "done"); } catch {}
-        if (alive) setPdf("ready");
-      })
-      .catch((e) => {
-        console.error("[report] PDF store failed:", e);
-        try { sessionStorage.removeItem(started); } catch {}
-        if (alive) { setPdf("failed"); setPdfError(e instanceof Error ? e.message : String(e)); }
-      });
-    return () => { alive = false; };
-  }, [token, report, locale, attempt]);
+  const { pdf, pdfError, retry } = useReportPdf(token, report);
 
   if (!session && !token) return <LoadingStage />;
   // QR → phone page: name form + direct download of the stored PDF. The phone must be able to open this address:
@@ -134,7 +94,7 @@ export default function ReportScreen() {
             ) : pdf === "failed" ? (
               <span style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 13, color: c("ink-muted") }}>
                 {t("report", "pdfFailed")}
-                <TextLink onClick={() => setAttempt((n) => n + 1)}>{t("report", "retry")}</TextLink>
+                <TextLink onClick={retry}>{t("report", "retry")}</TextLink>
               </span>
             ) : null}
             {/* Why it failed (from the PDF route), small — for staff / support. */}
@@ -147,4 +107,60 @@ export default function ReportScreen() {
       ) : null}
     </Screen>
   );
+}
+
+/**
+ * Render + store the report PDF in the background as soon as the report exists (no waiting on the phone later).
+ * Used by the look page (report preview + QR) and the report screen; `retry` after a failure.
+ */
+export function useReportPdf(token: string | null, report: PublicReport | null) {
+  const locale = report?.locale ?? "en";
+  const [pdf, setPdf] = useState<"idle" | "preparing" | "ready" | "failed">("idle");
+  const [attempt, setAttempt] = useState(0);
+  const [pdfError, setPdfError] = useState<string | null>(null);
+  useEffect(() => {
+    if (!token || !report) return;
+    if (report.pdf_url) { setPdf("ready"); return; }
+    const started = `mm-pdf:${token}`;
+    try {
+      const v = sessionStorage.getItem(started);
+      if (v === "done") { setPdf("ready"); return; }
+      // Another render started less than 3 min ago (e.g. this screen remounted): don't start a second one.
+      // Older markers are stale (the page was reloaded mid-render) and are ignored.
+      if (v && attempt === 0 && Date.now() - Number(v) < 180_000) {
+        setPdf("preparing");
+        // Watch for that render's result (the share gets its pdf_url once stored).
+        const id = setInterval(() => {
+          studioApi.publicLook(token).then((r) => { if (r.pdf_url) { clearInterval(id); setPdf("ready"); } }).catch(() => {});
+          if (Date.now() - Number(v) > 180_000) { clearInterval(id); setPdf("failed"); setPdfError("Timed out"); }
+        }, 5000);
+        return () => clearInterval(id);
+      }
+      sessionStorage.setItem(started, String(Date.now()));
+    } catch {}
+    let alive = true;
+    setPdf("preparing");
+    // Time limit: show "could not be prepared" + Try again instead of "Preparing…" forever.
+    fetch(`/api/studio-report/${encodeURIComponent(token)}/pdf?locale=${locale}&store=1`, { signal: AbortSignal.timeout(180_000) })
+      .then(async (r) => {
+        if (!r.ok) throw new Error((await r.json().catch(() => null))?.error ?? String(r.status));
+        try { sessionStorage.setItem(started, "done"); } catch {}
+        if (alive) setPdf("ready");
+      })
+      .catch((e) => {
+        console.error("[report] PDF store failed:", e);
+        try { sessionStorage.removeItem(started); } catch {}
+        if (alive) { setPdf("failed"); setPdfError(e instanceof Error ? e.message : String(e)); }
+      });
+    return () => { alive = false; };
+  }, [token, report, locale, attempt]);
+  return { pdf, pdfError, retry: () => setAttempt((n) => n + 1) };
+}
+
+/** The phone address behind the report QR: its page downloads the stored PDF (waits for it if not ready yet). */
+export function reportPdfUrl(token: string | null, locale: string): string | null {
+  if (!token || typeof window === "undefined") return null;
+  // NEXT_PUBLIC_SITE_URL (the mirror's public address) wins over the address the mirror itself is opened on.
+  const origin = (process.env.NEXT_PUBLIC_SITE_URL || window.location.origin).replace(/\/$/, "");
+  return `${origin}/${locale}/l/${encodeURIComponent(token)}?download=1`;
 }

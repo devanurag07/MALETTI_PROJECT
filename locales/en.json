@@ -1006,7 +1006,10 @@
       "sentNote": "Sent to the stylist's tablet",
       "newSession": "New session",
       "emailSent": "Sent to",
-      "hairProductsTitle": "Products for your hair"
+      "hairProductsTitle": "Products for your hair",
+      "finish": "Finish your consultation",
+      "skinQr": "Skin",
+      "qrButton": "QR code"
     },
     "flows": {
       "consultant": {
@@ -1259,6 +1262,11 @@
       "copper_auburn": "Copper & Auburn",
       "burgundy_plum": "Burgundy & Plum",
       "fashion": "Fashion"
+    },
+    "header": {
+      "face": "Face analysis",
+      "armocromia": "Armocromia",
+      "skin": "Skin analysis"
     }
   }
 }

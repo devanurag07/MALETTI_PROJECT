@@ -18,7 +18,13 @@ export function photoDownloadUrl(locale: string, src: string, name: string) {
  * Small "Download" button for one photo (taken photo, each try-on result, skin map). Tap → large QR; scanning it on a
  * phone opens the photo with a Download button. Local data: URLs fall back to the uploaded photo.
  */
-export default function PhotoQR({ src, name, style }: { src: string | null | undefined; name: string; style?: CSSProperties }) {
+export default function PhotoQR({ src, name, style, label, contain }: {
+  src: string | null | undefined; name: string; style?: CSSProperties;
+  /** Button text (default "Download"). */
+  label?: string;
+  /** Show the whole picture in the dialog (e.g. the skin visualisation), not a face crop. */
+  contain?: boolean;
+}) {
   const { t, locale, session } = useStudio();
   const [open, setOpen] = useState(false);
   const url = src?.startsWith("http") ? src : session?.source_image_url ?? null;
@@ -33,7 +39,7 @@ export default function PhotoQR({ src, name, style }: { src: string | null | und
         boxShadow: "0 4px 12px rgba(0,0,0,0.25)", ...style,
       }}>
         <Icon d={DOWNLOAD_ICON} size={16} width={1.8} />
-        <span>{t("qr", "button")}</span>
+        <span>{label ?? t("qr", "button")}</span>
       </button>
       {open ? createPortal(
         <div role="dialog" onClick={() => setOpen(false)} style={{
@@ -50,7 +56,7 @@ export default function PhotoQR({ src, name, style }: { src: string | null | und
             </div>
             {/* Photo and QR at the same size, side by side. */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-              <img src={url} alt="" style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", objectPosition: "50% 25%", borderRadius: 18, display: "block", border: `1px solid ${c("line")}` }} />
+              <img src={url} alt="" style={{ width: "100%", aspectRatio: "1 / 1", objectFit: contain ? "contain" : "cover", objectPosition: contain ? "50% 50%" : "50% 25%", background: contain ? "#000" : undefined, borderRadius: 18, display: "block", border: `1px solid ${c("line")}` }} />
               <div style={{ aspectRatio: "1 / 1", boxSizing: "border-box", padding: 12, borderRadius: 18, background: "#FFFFFF", display: "flex" }}>
                 <QRCodeSVG value={photoDownloadUrl(locale, url, file)} size={256} level="M" style={{ width: "100%", height: "100%" }} />
               </div>

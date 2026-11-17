@@ -878,7 +878,10 @@
       "sentNote": "Inviato al tablet dello stylist",
       "newSession": "Nuova sessione",
       "emailSent": "Inviato a",
-      "hairProductsTitle": "Prodotti per i tuoi capelli"
+      "hairProductsTitle": "Prodotti per i tuoi capelli",
+      "finish": "Termina la consulenza",
+      "skinQr": "Pelle",
+      "qrButton": "Codice QR"
     },
     "flows": {
       "consultant": {
@@ -1131,6 +1134,11 @@
       "copper_auburn": "Rame e ramato",
       "burgundy_plum": "Borgogna e prugna",
       "fashion": "Fashion"
+    },
+    "header": {
+      "face": "Analisi viso",
+      "armocromia": "Armocromia",
+      "skin": "Analisi pelle"
     }
   }
 }

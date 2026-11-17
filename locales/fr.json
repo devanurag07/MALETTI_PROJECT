@@ -721,7 +721,10 @@
       "sentNote": "Envoyé sur la tablette du coiffeur",
       "newSession": "Nouvelle séance",
       "emailSent": "Envoyé à",
-      "hairProductsTitle": "Produits pour vos cheveux"
+      "hairProductsTitle": "Produits pour vos cheveux",
+      "finish": "Terminez votre consultation",
+      "skinQr": "Peau",
+      "qrButton": "QR code"
     },
     "flows": {
       "consultant": {
@@ -974,6 +977,11 @@
       "copper_auburn": "Cuivré et auburn",
       "burgundy_plum": "Bordeaux et prune",
       "fashion": "Fantaisie"
+    },
+    "header": {
+      "face": "Analyse du visage",
+      "armocromia": "Armocromie",
+      "skin": "Analyse de peau"
     }
   }
 }

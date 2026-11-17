@@ -10,7 +10,7 @@ import TryScreen from "./TryScreen";
 import { studioApi, type AnalysisTab, type CatalogItem, type Recommendation, type Results, type SkinService } from "../api";
 import { useCatalog, useCustomShades, useStudio, type HairMods, useHairTechniques } from "../context/StudioContext";
 import {
-  journeyNext, journeyPage, numberedServices, SERVICE_MODULE, SERVICE_TRY, type Service,
+  journeyNext, journeyPage, SERVICE_MODULE, SERVICE_TRY, type Service,
 } from "../flows";
 import { styleImage } from "../theme/styleImages";
 import {
@@ -27,35 +27,6 @@ const SERVICE_ICON: Record<Service, string> = {
   colour: ICON.serviceColour, makeup: ICON.serviceMakeup, skin: ICON.skin,
 };
 
-/**
- * Service progress: "Service 2 of 4 · Beard" + one segment per numbered service (done / skipped / current / to do).
- * Armocromia isn't numbered: it shows only its name, with the bar as it stands.
- */
-export function JourneyBar({ service }: { service: Service }) {
-  const { t, gender, look } = useStudio();
-  const list: Service[] = numberedServices(gender);
-  const idx = list.indexOf(service);
-  return (
-    <div style={{ flex: "0 0 auto", display: "flex", flexDirection: "column", gap: 8, padding: "16px 34px 0 34px" }}>
-      <span style={{ fontSize: 13, color: c("ink-muted") }}>
-        {idx >= 0 ? `${t("journey", "progress", { n: idx + 1, total: list.length })} · ` : ""}{t("journey", `${service}.name`)}
-      </span>
-      <div style={{ display: "flex", gap: 7 }}>
-        {list.map((s, i) => {
-          const st = look.journey?.[s];
-          return (
-            <span key={s} style={{
-              display: "block", flex: "1 1 0", height: 7, transform: "skewX(var(--mm-skew))",
-              background: i === idx ? c("step-current") : st === "done" ? c("step-done") : c("step-todo"),
-              opacity: st === "skipped" && i !== idx ? 0.5 : 1,
-            }} />
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
 /** Intro page shown before each service: what it is, then Skip or Proceed. */
 export function ServiceIntro({ service }: { service: Service }) {
   const { t, config, session, gender, look, updateLook } = useStudio();
@@ -71,7 +42,6 @@ export function ServiceIntro({ service }: { service: Service }) {
 
   return (
     <Screen animKey={`intro-${service}`}>
-      {simple ? null : <JourneyBar service={service} />}
       <div style={{ flex: "1 1 auto", minHeight: 0, position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <HeroBackdrop halo={[460, 460]} squares={[
           { left: 70, top: 40, width: 96, height: 96 },
@@ -204,7 +174,6 @@ export function ServicePage({ service }: { service: Service }) {
   const nextLabel = service === "skin" ? t("skinMap", "cta") : armoPage < armoPages - 1 ? t("journey", "nextPage") : t("journey", last ? "finish" : "next");
   return (
     <Screen animKey={`svc-${service}`}>
-      {simple ? null : <JourneyBar service={service} />}
       {body}
       {/* Skin results don't fill the height: push the button to the bottom. */}
       {service === "skin" ? <div style={{ flex: "1 1 auto" }} /> : null}
@@ -508,7 +477,6 @@ export function SkinMapPage() {
 
   return (
     <Screen animKey="skin-map">
-      {simple ? null : <JourneyBar service="skin" />}
       {!results && !error ? (
         <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}><Spinner size={36} /></div>
       ) : !skin ? (
@@ -575,7 +543,6 @@ export function SkinProductsPage() {
   const next = `/journey/skin/services${simple ? "?simple=1" : ""}`;
   return (
     <Screen animKey="skin-products">
-      {simple ? null : <JourneyBar service="skin" />}
       {!results && !error ? (
         <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}><Spinner size={36} /></div>
       ) : !skin ? (
@@ -628,7 +595,6 @@ export function SkinServicesPage() {
 
   return (
     <Screen animKey="skin-services">
-      {simple ? null : <JourneyBar service="skin" />}
       <div style={{ flex: "1 1 auto", minHeight: 0, overflowY: "auto", display: "flex", flexDirection: "column", gap: 10, padding: "20px 34px 0 34px" }}>
         <SectionTitle title={t("skinServices", "title")} hint={t("skinServices", "hint")} />
         {!services && !error ? (
@@ -717,7 +683,6 @@ export function ServiceScan({ service, checklist }: {
   const stage = stages[Math.min(stages.length - 1, Math.floor((pct / 100) * stages.length))];
   return (
     <Screen animKey={`${service}-scan${checklist ? "-all" : ""}`} onBack={false}>
-      {simple || checklist ? null : <JourneyBar service={service} />}
       <div style={{ flex: "1 1 auto", minHeight: 0, position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <HeroBackdrop halo={[500, 520]} squares={[
           { left: 56, top: 30, width: 110, height: 110 },
