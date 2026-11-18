@@ -20,7 +20,7 @@ import {
 import { SKIN_METRICS } from "../components/SkinMap";
 import PhotoQR from "../components/PhotoQR";
 import ScanOverlay from "../components/ScanOverlay";
-import { colourModels, haircutModels, HairCustomise, MakeupLookCards, MakeupPalette, RecommendedCard, forYouFirst, RecommendedGrid, ScoreRing, useShadeDetails, SkinProducts, SkinTab, StyleCard, TechniqueCard } from "./ResultsScreen";
+import { beardModels, colourModels, haircutModels, HairCustomise, MakeupLookCards, MakeupPalette, RecommendedCard, forYouFirst, RecommendedGrid, ScoreRing, useShadeDetails, SkinProducts, SkinTab, StyleCard, TechniqueCard } from "./ResultsScreen";
 
 const SERVICE_ICON: Record<Service, string> = {
   hairstyle: ICON.serviceCut, beard: ICON.serviceBeard, armocromia: ICON.colour,
@@ -285,7 +285,7 @@ export function Options({ service, a, sel, setSel, tab: tabProp, bare }: {
         rows={service === "hairstyle" || service === "beard"}
         why={service === "hairstyle" ? () => hairWhy : service === "beard" ? () => beardWhy : service === "colour" ? () => shadeWhy : undefined}
         // FLUX_VERSION_3 recommender: two photos per haircut side by side (hair colour has its own rows above).
-        models={service === "colour" ? (x) => colourModels(gender, x.key) : service === "hairstyle" ? (x) => haircutModels(gender, x.key) : undefined}
+        models={service === "colour" ? (x) => colourModels(gender, x.key) : service === "hairstyle" ? (x) => haircutModels(gender, x.key) : service === "beard" ? (x) => beardModels(x.key) : undefined}
         focus={service === "beard" ? "50% 60%" : "50% 8%"}
         image={(x) => service === "makeup" ? styleImage("makeup_look", x.key, x.image_url) || null : styleImage(imageKind, x.key, x.image_url) || thumb} />
     );

@@ -53,9 +53,13 @@ export function GenerationOverlay({ startedAt }: { /** When this generation bega
       }} />
       <div style={{ position: "absolute", left: 0, right: 0, bottom: 26, display: "flex", justifyContent: "center", padding: "0 40px" }}>
         <span key={stage} style={{
-          maxWidth: "100%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", padding: "7px 16px",
+          maxWidth: "100%", display: "flex", gap: 6, whiteSpace: "nowrap", padding: "7px 16px",
           borderRadius: 18, background: c("glass"), border: `1px solid ${c("accent")}`, color: c("ink"), fontSize: 13, fontWeight: 500,
-        }}>{stage}</span>
+        }}>
+          <span style={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis" }}>{stage}</span>
+          {/* The % never gets cut by the ellipsis. */}
+          <span style={{ flex: "0 0 auto", color: c("accent"), fontVariantNumeric: "tabular-nums" }}>{pct}%</span>
+        </span>
       </div>
       <div role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}
         style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 4, background: "rgba(255,255,255,0.3)", overflow: "hidden" }}>

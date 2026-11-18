@@ -6,6 +6,9 @@ import { useRouter } from "next/navigation";
 import { studioApi, type AnalysisTab, type CatalogItem, type I18n, type Recommendation, type Results } from "../api";
 import { HAIR_MOD_OPTIONS, useCatalog, useCustomShades, useStudio, type HairMods, useHairTechniques } from "../context/StudioContext";
 import { styleImage } from "../theme/styleImages";
+import { beardModels, colourModels, haircutModels } from "../data/model-photos";
+
+export { beardModels, colourModels, haircutModels };
 import { markingsOf, SkinMapPhoto, SKIN_METRICS } from "../components/SkinMap";
 import {
   ActionBar, c, Card, ColorChip, ColorDot, Diamond, ErrorLine, H1, Icon, ICON, LoadingStage, Muted, OutlineButton, Photo,
@@ -532,54 +535,6 @@ export function RecommendedGrid({ items, image, focus, onChange, active, models,
 }
 
 /** FLUX_VERSION_3-style recommendation: one big card at a time, arrows + dots, name, why it suits, try button. */
-/** FLUX_VERSION_3 model photos (front + back) for a recommended hair colour. */
-/**
- * FLUX colours (the AI's own picks, `flux_<shade>`) that look like one of the photographed season shades. The others
- * (e.g. lavender, blue, salt and pepper) have no model photos: their swatch picture is shown instead.
- */
-const FLUX_MODEL: Record<string, string> = {
-  flux_soft_black: "warm_black", flux_espresso_brown: "espresso_brown", flux_dark_chocolate: "cool_dark_brown",
-  flux_chocolate_brown: "chocolate_brown", flux_mocha_brown: "cool_mocha", flux_chestnut_brown: "golden_chestnut",
-  flux_caramel_brown: "caramel", flux_honey_blonde: "honey_blonde", flux_ash_blonde: "ash_blonde",
-  flux_dark_blonde: "light_golden_brown", flux_light_copper: "golden_copper", flux_copper: "bright_copper",
-  flux_auburn: "mahogany", flux_burgundy: "burgundy_brown", flux_plum: "plum_black",
-};
-/** FLUX_VERSION_3 recommender photos (two per haircut, side by side), in public/studio/recommended/haircut. */
-const HAIRCUT_MODELS: Record<"man" | "woman", string[]> = {
-  man: ["buzz_cut", "caesar_cut", "center_parted", "crew_cut", "fade_pompadour", "french_crop", "mullet", "quiff", "slicked_back", "undercut"],
-  woman: ["a_line_bob", "blunt_lob", "butterfly_cut", "classic_pixie", "french_bob", "long_layers", "messy_long_bob", "wolf_cut"],
-};
-export const haircutModels = (gender: string | null, key: string): readonly [string, string] | null => {
-  const g = gender === "man" ? "man" : "woman";
-  if (!HAIRCUT_MODELS[g].includes(key)) return null; // no recommender photos: the catalogue picture is shown
-  return [`/studio/recommended/haircut/${g}/${key}-1.jpg`, `/studio/recommended/haircut/${g}/${key}-2.jpg`] as const;
-};
-/**
- * FLUX_VERSION_3 recommender photos for the FLUX colours: women have a pair per shade (female-haircolor); men only
- * where a FLUX men's set (male_haircolor) has exactly the shade's name.
- */
-const FLUX_WOMAN = new Set([
-  "natural_black", "soft_black", "espresso_brown", "dark_chocolate", "chocolate_brown", "mocha_brown", "chestnut_brown",
-  "caramel_brown", "dark_blonde", "honey_blonde", "salt_and_pepper", "ash_blonde", "light_copper", "copper", "cinnamon_red",
-  "auburn", "deep_red", "burgundy", "wine_red", "plum", "rose_pink", "lavender", "blue", "emerald_green",
-]);
-/** Men: only FLUX photos whose name is exactly the shade (no family look-alikes); the others show their swatch. */
-const FLUX_MAN_EXACT: Record<string, string> = {
-  ash_blonde: "ash_blonde", salt_and_pepper: "salt_and_pepper", copper: "copper", burgundy: "burgundy",
-};
-export const colourModels = (gender: string | null, key: string): readonly [string, string] | null => {
-  const g = gender === "man" ? "man" : "woman";
-  if (key.startsWith("flux_")) {
-    const shade = key.slice(5);
-    const file = g === "woman" ? (FLUX_WOMAN.has(shade) ? shade : null) : FLUX_MAN_EXACT[shade] ?? null;
-    // No exact photos for this shade: its swatch (never another shade's or a season's photos).
-    return file ? [`/studio/recommended/colour/${g}/flux/${file}-1.jpg`, `/studio/recommended/colour/${g}/flux/${file}-2.jpg`] as const : null;
-  }
-  const k = key.startsWith("flux_") ? FLUX_MODEL[key] : key;
-  if (!k) return null;
-  return [`/studio/recommended/colour/${g}/${k}-front.jpg`, `/studio/recommended/colour/${g}/${k}-back.jpg`] as const;
-};
-
 export function RecommendedCard({ items, image, focus, onTry, onChange, active, models, details, visual, nameOnly, subOnly }: {
   items: Recommendation[]; image: (x: CatalogItem) => string | null; focus: string; active: string | null;
   /** Two model photos (front, back) shown side by side instead of the single picture. */

@@ -7,6 +7,7 @@
 import { FLUX_SHADES } from "./data/haircolor";
 import { STYLE_IMAGES } from "./theme/styleImages";
 import type { Results, StudioConfig } from "./api";
+import { beardModels, colourModels, haircutModels } from "./data/model-photos";
 
 const done = new Set<string>();
 
@@ -19,17 +20,20 @@ export function preloadOptionImages(config: StudioConfig | null) {
 }
 
 /**
- * As soon as the (background) analysis is back: the pictures of what it recommends — the hair-colour model photos
- * (front + back, the largest local images) and each recommended option's picture — so the service pages open filled.
+ * As soon as the (background) analysis is back: the pictures of what it recommends — the recommender model photos
+ * (hair colour / haircut / beard pairs, the largest local images) and each recommended option's picture — so the service pages open filled.
  * Goes ahead of the general preload.
  */
 export function preloadResultImages(r: Results) {
   const g = r.session?.gender === "man" ? "man" : "woman";
+  const pairs: Record<string, (key: string) => readonly [string, string] | null> = {
+    hair_shade: (k) => colourModels(g, k), haircut: (k) => haircutModels(g, k), beard_style: (k) => beardModels(k),
+  };
   const urls: (string | null | undefined)[] = [];
   for (const tab of r.tabs) {
     for (const [kind, recs] of Object.entries(tab.recommendations ?? {})) {
       for (const x of recs) {
-        if (kind === "hair_shade") urls.push(`/studio/recommended/colour/${g}/${x.key}-front.jpg`, `/studio/recommended/colour/${g}/${x.key}-back.jpg`);
+        urls.push(...(pairs[kind]?.(x.key) ?? []));
         urls.push(x.image_url, STYLE_IMAGES[kind]?.[x.key]);
       }
     }
